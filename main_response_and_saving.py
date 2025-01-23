@@ -1,8 +1,8 @@
 import os
 from datetime import datetime
 from dotenv import load_dotenv
-from prompt.openai_func import generate_text_content_openai
-from prompt.prompts_2 import context
+from openai_func import generate_text_content_openai
+from compilation.prompts_2 import context
 
 load_dotenv()
 OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
