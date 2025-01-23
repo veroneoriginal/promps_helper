@@ -2,7 +2,7 @@ import os
 from datetime import datetime
 from dotenv import load_dotenv
 from openai_func import generate_text_content_openai
-from compilation.prompts_2 import context
+from prompt.main_prompts import context
 
 load_dotenv()
 OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
@@ -25,7 +25,10 @@ def response_and_save():
     # сохраняю в папку history_prompt
     # Получение текущей даты и времени
     current_date = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-    folder_name = 'history_prompt'
+    folder_name = 'prompt/history_prompt'
+
+    # Убедиться, что папка существует, иначе создать её
+    os.makedirs(folder_name, exist_ok=True)
 
     # Формирование имени файла
     file_name = f"{current_date}.md"
@@ -37,5 +40,5 @@ def response_and_save():
     print(f"Файл успешно сохранен: {file_path}")
 
 
-for _ in range(10):
+for _ in range(5):
     response_and_save()

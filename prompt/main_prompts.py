@@ -1,4 +1,35 @@
-from prompt.prompts_1 import (
+# from prompt.prompts_1 import (
+#     gender,
+#     age,
+#     type_hair,
+#     type_scalp,
+#     features,
+#     features_or_problem,
+#     sostav_1,
+#     sostav_2,
+#     sostav_3,
+#     sostav_4,
+#     sostav_5,
+#     sostav_6,
+# )
+
+# from prompt.prompts_2 import (
+#     gender,
+#     age,
+#     type_hair,
+#     type_scalp,
+#     features,
+#     features_or_problem,
+#     sostav_1,
+#     sostav_2,
+#     sostav_3,
+#     sostav_4,
+#     sostav_5,
+#     sostav_6,
+#     sostav_7,
+# )
+
+from prompt.prompts_3 import (
     gender,
     age,
     type_hair,
@@ -13,10 +44,11 @@ from prompt.prompts_1 import (
     sostav_6,
 )
 
+
 system_prompt = """
 Ты профессиональный трихолог с медицинским образованием.
 Твоя задача подобрать максимально подходящее средство для человека. 
-Данные человека буду даны. 
+Данные человека будут даны. 
 Отвечай всегда в Markdown.
 """
 
