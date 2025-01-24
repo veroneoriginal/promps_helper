@@ -31,7 +31,7 @@ def response_and_save():
     os.makedirs(folder_name, exist_ok=True)
 
     # Формирование имени файла
-    file_name = f"{current_date}.md"
+    file_name = f"Новый запрос_{current_date}.md"
     file_path = os.path.join(folder_name, file_name)
        # Сохранение текста в файл
     with open(file_path, "w", encoding="utf-8") as file:

@@ -5,12 +5,7 @@
 #     type_scalp,
 #     features,
 #     features_or_problem,
-#     sostav_1,
-#     sostav_2,
-#     sostav_3,
-#     sostav_4,
-#     sostav_5,
-#     sostav_6,
+#     info_about_cosmetics,
 # )
 
 # from prompt.prompts_2 import (
@@ -20,13 +15,7 @@
 #     type_scalp,
 #     features,
 #     features_or_problem,
-#     sostav_1,
-#     sostav_2,
-#     sostav_3,
-#     sostav_4,
-#     sostav_5,
-#     sostav_6,
-#     sostav_7,
+#     info_about_cosmetics,
 # )
 
 from prompt.prompts_3 import (
@@ -36,13 +25,23 @@ from prompt.prompts_3 import (
     type_scalp,
     features,
     features_or_problem,
-    sostav_1,
-    sostav_2,
-    sostav_3,
-    sostav_4,
-    sostav_5,
-    sostav_6,
+    info_about_cosmetics,
 )
+
+
+# from prompt.prompts_4 import (
+#     gender,
+#     age,
+#     type_hair,
+#     type_scalp,
+#     features,
+#     features_or_problem,
+#     info_about_cosmetics,
+# )
+
+from prompt.wishes import user_request
+
+
 
 
 system_prompt = """
@@ -60,26 +59,12 @@ prompt = f"""
 Особенности: {features}
 Дополнительная информация: {features_or_problem}
 
-Информация о составах средств:
-
-Состав первого средства: {sostav_1}.
-Состав второго средства: {sostav_2}.
-Состав третьего средства: {sostav_3}.
-Состав четвертого средства: {sostav_4}.
-Состав пятого средства: {sostav_5}.
-Состав шестого средства: {sostav_6}.
-
+Информация о составах средств = {info_about_cosmetics}
 
 Учти всю вышепредставленную информацию и проведи анализ составов.
-В ответе ты должен дать информацию о:
-1) составе всех средств с пояснительными комментариями
-2) выдать рекомендации по наиболее подходящему средству по составу.
-3) для каждого средства написать плюсы и минусы
 
-Создай рейтинг средств по приоритету от наиболее подходящего до наименее подходящего по твоему мнению.
-При составлении рейтинга отдавай предпочтение средствам с минимальным количеством вредных веществ в составе.
-Об этом обязательно сообщи в ответе.
-В итоговой рекомендации укажи только одно лучшее средство.
+Ответ ты должен дать в следующем виде: {user_request}
+
 """
 
 context = [
