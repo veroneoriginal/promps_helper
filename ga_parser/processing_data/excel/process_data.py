@@ -1,3 +1,5 @@
+""" Работа с книгой Excel """
+
 from pathlib import Path
 
 from openpyxl import load_workbook
@@ -143,5 +145,9 @@ class ExcelProcess:
             )
 
     def wb_close(self):
+        """
+        Сохраняет и закрывает книгу Excel
+        """
+
         self.wb.save(self.excel_file_path)
         self.wb.close()

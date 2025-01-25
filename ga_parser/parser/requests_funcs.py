@@ -1,3 +1,7 @@
+"""
+Запросы на сайт Золотого яблока и cdn за изображением
+"""
+
 import requests
 from requests import Response
 
@@ -20,15 +24,14 @@ def get_page(url: str) -> str | None:
     :return:
     """
 
-    response = requests.get(url, headers=HEADERS)
+    response = requests.get(url, headers=HEADERS, timeout=5)
 
     if response.status_code == 200:
         html = response.text  # HTML содержимое страницы
         print("Страница успешно загружена!")
         return html
-    else:
-        print(f"Ошибка при загрузке страницы. Статус код: {response.status_code}")
-        return None
+    print(f"Ошибка при загрузке страницы. Статус код: {response.status_code}")
+    return None
 
 
 def get_image(url: str) -> Response | None:
@@ -40,7 +43,7 @@ def get_image(url: str) -> Response | None:
     """
 
     try:
-        response = requests.get(url, stream=True, headers=HEADERS)
+        response = requests.get(url, stream=True, headers=HEADERS, timeout=5)
         response.raise_for_status()
         return response
     except requests.exceptions.RequestException as e:

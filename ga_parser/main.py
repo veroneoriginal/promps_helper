@@ -1,3 +1,5 @@
+""" Модуль для запуска парсера """
+
 from pathlib import Path
 from time import sleep
 
@@ -26,7 +28,6 @@ def _process_product(
     :param image_dir_path: базовый путь к папке, в которую сохранять изображения
     :param base_delay: базовая задержка в парсинге между запросами (в секундах)
     """
-
     products_for_parse_len = len(products_for_parse)
     for index, product_link in enumerate(products_for_parse.keys(), 0):
         row = products_for_parse[product_link]

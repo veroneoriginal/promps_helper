@@ -1,3 +1,9 @@
+# pylint: disable=R0914: wildcard-import
+
+"""
+Логика для обработки данных из словаря с карточной средства
+"""
+
 from ga_parser.utils.utils import (
     clean_value_str_in_dict,
     list_to_dict,

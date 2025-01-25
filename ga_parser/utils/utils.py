@@ -1,3 +1,7 @@
+"""
+Вспомогательные функции
+"""
+
 import re
 from html import unescape
 from pathlib import Path
