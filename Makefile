@@ -1,3 +1,4 @@
 # запуск линтера
+
 lint:
-    pylint (git ls-files '*.py')
+	pylint $(shell git ls-files '*.py')
