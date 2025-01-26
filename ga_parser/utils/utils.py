@@ -115,7 +115,12 @@ def download_image(
     """
 
     response = get_image(url)
-    sanitized_title = re.sub(r"\s+", "_", product_title.strip().lower())
+    # Удаляем все символы, кроме букв и цифр, заменяем их на "_"
+    sanitized_title = re.sub(
+        pattern=r"[^a-zA-Z0-9]+",
+        repl="_",
+        string=product_title.strip().lower()
+    )
     save_path = image_dir_path / f"{sanitized_title}.jpg"
 
     # Открываем файл в бинарном режиме для записи

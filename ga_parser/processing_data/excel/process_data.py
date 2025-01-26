@@ -144,7 +144,7 @@ class ExcelProcess:
                 row=row
             )
 
-    def wb_close(self):
+    def wb_close(self) -> None:
         """
         Сохраняет и закрывает книгу Excel
         """
