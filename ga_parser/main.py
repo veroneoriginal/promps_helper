@@ -82,8 +82,8 @@ def start_parser(
 
 if __name__ == '__main__':
     start_parser(
-        table_path='../base/00_Средства.xlsx',
+        table_path='../00_base/00_Средства.xlsx',
         ws_title='Средства',
-        image_dir_path='../base/01_products/00_img/',
+        image_dir_path='../00_base/01_products/00_img/',
         base_delay=10,
     )
