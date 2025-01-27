@@ -1,4 +1,4 @@
-class PromptConstructor():
+class PromptConstructor:
     """
     Класс для создания промптов для отправки в контекст
     """

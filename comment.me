@@ -23,5 +23,8 @@
 # pylint: skip-file
 
 
-# запуск линтера
+# запуск линтера на windows
 pylint (git ls-files '*.py')
+
+# запуск линтера на ubuntu
+pylint $(git ls-files '*.py')
