@@ -3,6 +3,7 @@
 """
 
 import re
+from functools import wraps
 from html import unescape
 from pathlib import Path
 import random
@@ -165,3 +166,23 @@ def random_between(num: int, lag: int = 5) -> int:
     :return: случайное число из полученного диапазона
     """
     return random.randint(num, num + lag)
+
+
+def handle_index_error():
+    """
+    Декоратор для обработки IndexError и возврата заданного значения.
+
+    :param default_value: Значение, которое будет возвращено при ошибке IndexError.
+    """
+
+    def decorator(func):
+        @wraps(func)
+        def wrapper(*args, **kwargs):
+            try:
+                return func(*args, **kwargs)
+            except IndexError:
+                return None
+
+        return wrapper
+
+    return decorator
