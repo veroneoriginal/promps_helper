@@ -24,6 +24,7 @@ def main(
     :param folder_name: папка, в которую будет сохраняться ответ openai
     :param prompt: сформированный промпт для отправки запроса
     :param system_prompt: системный промпт для отправки запроса
+    :return: None
     """
 
     print('Формирование контекста')
