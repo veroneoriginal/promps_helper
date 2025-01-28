@@ -8,7 +8,7 @@ from ga_parser.utils.utils import (
     clean_value_str_in_dict,
     list_to_dict,
     create_full_link_to_image,
-    calculate_price_ml,
+    calculate_price_ml, handle_index_error,
 )
 
 
@@ -135,6 +135,7 @@ def get_attributes(_product_card: dict) -> tuple:
     )
 
 
+@handle_index_error()
 def get_application_instruction(_product_card: dict) -> str:
     """
     Для получения:  Применение
@@ -146,6 +147,7 @@ def get_application_instruction(_product_card: dict) -> str:
     return _get_product_description(_product_card)[1].get('content')
 
 
+@handle_index_error()
 def get_compound(_product_card: dict) -> str:
     """
     Для получения:  Cостав
@@ -157,6 +159,7 @@ def get_compound(_product_card: dict) -> str:
     return _get_product_description(_product_card)[2].get('content')
 
 
+@handle_index_error()
 def get_brand(_product_card: dict) -> tuple:
     """
     Для получения:  Бренд, Страна бренда, Описание бренда
@@ -173,6 +176,7 @@ def get_brand(_product_card: dict) -> tuple:
     return brand_name, brand_country, brand_description
 
 
+@handle_index_error()
 def get_additional_info(_product_card: dict) -> str:
     """
     Для получения:  Дополнительная информация
