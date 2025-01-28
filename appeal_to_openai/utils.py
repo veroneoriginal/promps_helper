@@ -10,7 +10,7 @@ from openai import OpenAI
 from openai.types.chat import ChatCompletion
 
 
-def formation_context(
+def _formation_context(
         prompt: str,
         system_prompt: str,
 ) -> list:
@@ -43,7 +43,7 @@ def formation_context(
     ]
 
 
-def generate_text_content_openai(
+def _generate_text_content_openai(
         api_key: str,
         context: list,
         model: Literal["gpt-4o", "gpt-4o-mini", "gpt-3.5-turbo"],
@@ -76,9 +76,9 @@ def generate_text_content_openai(
     )
 
 
-def save(
+def _save(
         result: ChatCompletion,
-        folder_name: str = 'prompt/history_prompt',
+        folder_name: str,
 ) -> None:
     """
     Функция для сохранения ответа, полученного от OpenAI
