@@ -8,20 +8,28 @@ from dotenv import load_dotenv
 
 from openai.openai_func import generate_text_content_openai
 
-
 load_dotenv()
 OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
 
 
-def response_and_save(
-        context: list
+def get_response(
+        context: list,
 ):
-    print('Передаю контекст в generate_text_content_openai.')
-    result = generate_text_content_openai(
+    """Функция для вызова функции отправки запроса в OpenAI"""
+
+    return generate_text_content_openai(
         api_key=OPENAI_API_KEY,
         context=context,
         model="gpt-4o",
     )
+
+
+def save(result):
+    """
+    Функция для сохранения ответа, полученного от OpenAI
+
+    param: result - ответ от OpenAI
+    """
 
     # вычленяю нужное
     content = result.choices[0].message.content
@@ -42,3 +50,10 @@ def response_and_save(
         file.write(content)
 
     print(f"Файл успешно сохранен: {file_path}")
+
+
+if __name__ == "__main__":
+    print('Передаю контекст в generate_text_content_openai.')
+    list_with_info = []
+    answer_gpt = get_response(context=list_with_info)
+    save(answer_gpt)
