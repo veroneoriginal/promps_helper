@@ -1,25 +1,30 @@
 """ В этом модуле реализована логика отправки запроса на генерацию тестового контента в OpenAI."""
 
 from typing import Literal
-
-import openai
+from openai import OpenAI
+from openai.types.chat import ChatCompletion
 
 
 def generate_text_content_openai(
         api_key: str,
         context: list,
         model: Literal["gpt-4o", "gpt-4o-mini", "gpt-3.5-turbo"],
-):
+) -> ChatCompletion:
     """
     Отправляем запрос на генерацию тестового контента в OpenAI.
 
-    context: ранее сформированный контекст запроса
+    :param api_key: ключ для подключения к OpenAI,
+    :param context: сформированный контекст запроса,
+    :param model: название используемой модели OpenAI
+
+    :return: объект ChatCompletion
     """
 
     # Устанавливаем ключ API
-    openai.api_key = api_key
 
-    return openai.ChatCompletion.create(
+    client = OpenAI(api_key=api_key)
+
+    return client.chat.completions.create(
         model=model,
         messages=context,
         temperature=1,

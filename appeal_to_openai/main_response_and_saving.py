@@ -5,30 +5,39 @@
 import os
 from datetime import datetime
 from dotenv import load_dotenv
-
-from openai.openai_func import generate_text_content_openai
-
-load_dotenv()
-OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
+from openai.types.chat import ChatCompletion
+from appeal_to_openai.openai_func import generate_text_content_openai
 
 
 def get_response(
         context: list,
-):
-    """Функция для вызова функции отправки запроса в OpenAI"""
+) -> ChatCompletion:
+    """
+    Функция для вызова функции отправки запроса в OpenAI
+
+    param: context: сформированный контекст запроса
+    """
+
+    load_dotenv()
+    openai_api_key = os.getenv('OPENAI_API_KEY')
 
     return generate_text_content_openai(
-        api_key=OPENAI_API_KEY,
+        api_key=openai_api_key,
         context=context,
         model="gpt-4o",
     )
 
 
-def save(result):
+def save(
+        result: ChatCompletion,
+        folder_name: str = 'prompt/history_prompt',
+) -> None:
     """
     Функция для сохранения ответа, полученного от OpenAI
 
-    param: result - ответ от OpenAI
+    :param result: ответ от OpenAI
+    :param folder_name: путь, куда сохранять ответ от OpenAI
+    :return: None
     """
 
     # вычленяю нужное
@@ -37,7 +46,6 @@ def save(result):
     # сохраняю в папку history_prompt
     # Получение текущей даты и времени
     current_date = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-    folder_name = 'prompt/history_prompt'
 
     # Убедиться, что папка существует, иначе создать её
     os.makedirs(folder_name, exist_ok=True)
