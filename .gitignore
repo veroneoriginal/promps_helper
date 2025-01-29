@@ -1,5 +1,8 @@
 00_base/
-tables
+tables/
+info_about_hair/
+first_compilations/
+
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
