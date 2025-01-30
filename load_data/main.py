@@ -1,6 +1,4 @@
 """ В этом модуле реализована логика вызовов функций для загрузки данных из таблиц """
-from pprint import pprint
-
 # from pprint import pprint
 
 from load_data.load_data_from_table import ExcelManager
