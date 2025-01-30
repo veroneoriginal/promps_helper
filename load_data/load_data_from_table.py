@@ -248,10 +248,8 @@ class ExcelManager:
             "Состав": "Состав",
         }
 
-        return {
-            "Средства": self._load_data(
+        return self._load_data(
                 ws_title,
                 mapping,
                 filter_column="Новое",
-                filter_value="да"),
-        }
+                filter_value="да")
