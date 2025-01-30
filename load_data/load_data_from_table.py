@@ -1,124 +1,75 @@
 """ В этом модуле реализована логика загрузки данных из таблицы """
 
 from openpyxl import load_workbook
+from openpyxl.worksheet.worksheet import Worksheet
 
 
-def _load_info_about_user(
-        file_path: str,
-        ws_title: str,
-) -> dict | None:
-    """
-    Загрузка данных из таблицы 00_Средства -> лист "Подборки"
-    Из этих данных формируется словарь вида
-    {
-     "Пол": "содержимое ячейки",
-     "Возраст": "содержимое ячейки",
-     "Тип волос": "содержимое ячейки",
-     "Тип кожи головы": "содержимое ячейки",
-     "Особенности": "содержимое ячейки",
-     "Проблемы или пожелания": "содержимое ячейки",
-    }
+class ExcelManager:
 
-    :param file_path: путь до документа xlsx
-    :param ws_title: название листа, с которого забирать информацию
-    :return: словарь с информацией о пользователе или пустой словарь,
-    если новых данных о пользователе нет
+    def __init__(self, file_path):
+        self.file_path = file_path
+        self.wb = load_workbook(self.file_path)
 
-    """
-    # Открытие файла Excel
-    workbook = load_workbook(file_path)
-    sheet = workbook[ws_title]
+    def _create_dict_headings(
+            self,
+            sheet: Worksheet,
+    ) -> dict:
+        """
+        В этой функции создается словарь заголовков, присутствующих на листе
 
-    # Создание словаря заголовков через цикл
-    headers = {}
-    for index, cell in enumerate(sheet[1]):
-        headers[cell.value] = index
+        :param sheet: страница, с которой нужно взять заголовкм
+        :return: словарь с заголовками и их индексамим
+        """
 
-    # Поиск первой строки, где ячейка в столбце "Лучшее средство" пустая
-    for row in sheet.iter_rows(min_row=2, values_only=True):
-        # Если ячейка "Лучшее средство" пустая
-        if not row[headers["Лучшее средство"]]:
-            return {
-                "Пол": row[headers["Пол"]],
-                "Возраст": row[headers["Возраст"]],
-                "Тип волос": row[headers["Тип волос"]],
-                "Тип кожи головы": row[headers["Тип кожи головы"]],
-                "Проблема": row[headers["Проблема"]],
-                "Пожелания": row[headers["Пожелания"]],
-            }
+        headers = {}
+        for index, cell in enumerate(sheet[1]):
+            headers[cell.value] = index
 
-    workbook.close()
+        return headers
 
-    # Если не нашли пустую строку - значит новых данных о пользователе нет
-    return {}
-
-
-def _load_info_about_products(
-        file_path: str,
-        ws_title: str,
-) -> dict:
-    """
-    Загрузка данных из таблицы 00_Средства -> лист "Средства"
-    Из этих данных формируется словарь вида
-
-    {
-        1: {
-            "Название": "содержимое ячейки",
-            "Состав": "содержимое ячейки",
+    def load_hair_type_data(
+            self,
+            ws_title: str,
+    ) -> dict:
+        """
+        Загрузка данных из таблицы 00_Средства -> лист "Типы волос"
+        Из этих данных формируется словарь вида
+        {
+        "1": {
+            "Нормальные волосы": (
+                                "содержимое ячейки с описанием",
+                                "содержимое ячейки с хештегом",
+             )
         },
-        2: {
-            "Название": "содержимое ячейки",
-            "Состав": "содержимое ячейки",
+
+        "2": {
+            "Сухие волосы": (
+                            "содержимое ячейки с описанием",
+                            "содержимое ячейки с хештегом",
+             )
         },
-        3: {
-            "Название": "содержимое ячейки",
-            "Состав": "содержимое ячейки",
         }
-    }
 
-    :param file_path: путь до документа xlsx
-    :param ws_title: название листа, с которого забирать информацию
-    :return: словарь с информацией о продуктах (название и состав)
-    """
-    # Загрузка файла Excel
-    workbook = load_workbook(file_path)
+        :param ws_title: название листа, с которого забирать информацию
+        :return: словарь с информацией о типе волос и их характеристике
+        """
+        # Открытие файла Excel на нужном листе
+        sheet = self.wb[ws_title]
 
-    # Открытие листа "Средства"
-    sheet = workbook[ws_title]
+        # Создание словаря заголовков
+        headers = self._create_dict_headings(sheet=sheet)
 
-    # Определение индексов ключевых столбцов
-    headers = {}
-    for col_index, cell in enumerate(sheet[1]):
-        headers[cell.value] = col_index
+        hair_type_data = {}
 
-    # Индексы столбцов
-    index_filled = headers["Заполнено"]
-    index_name = headers["Название"]
-    index_composition = headers["Состав"]
+        # Проходим по строкам, начиная со второй (первая - заголовки)
+        for row in sheet.iter_rows(min_row=2, values_only=True):
 
-    # Словарь для сохранения данных
-    products_info = {"Средства": {}}
+            key = str(row[headers["№"]])
+            hair_type = row[headers["Тип"]]
+            description = row[headers["Описание"]]
+            hashtag = row[headers["Хештег"]]
 
-    # Начальный идентификатор
-    product_id = 1
+            if hair_type and description and hashtag:
+                hair_type_data[key] = {hair_type: (description, hashtag)}
 
-    # Проходим по строкам начиная со второй (первая строка — заголовки)
-    for row_index, row in enumerate(sheet.iter_rows(min_row=2), start=2):
-        filled_value = row[index_filled].value
-        # Если "Заполнено" = "да"
-        if filled_value == "да":
-            # Сохраняем данные в словарь
-            products_info["Средства"][product_id] = {
-                "Название": row[index_name].value,
-                "Состав": row[index_composition].value,
-            }
-            product_id += 1
-
-            # Обновляем ячейку "Заполнено" на "проанализировано"
-            sheet.cell(row=row_index, column=index_filled + 1, value="проанализировано")
-
-    # Сохраняем изменения в Excel
-    workbook.save(file_path)
-    workbook.close()
-
-    return products_info
+        return hair_type_data
