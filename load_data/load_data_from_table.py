@@ -36,6 +36,49 @@ class ExcelManager:
 
         return headers
 
+    def _load_data(
+            self,
+            ws_title: str,
+            mapping: dict,
+            filter_column: str = None,
+            filter_value: str = None,
+    ) -> dict:
+        """
+        Универсальный метод для загрузки данных из Excel.
+
+        :param ws_title: название листа
+        :param mapping: соответствие между заголовками в Excel и ключами в выходном словаре
+        :param filter_column: название столбца, по кот. нужно фильтровать данные (опционально)
+        :param filter_value: значение-фильтр (опционально)
+        :return: словарь с загруженными данными
+        """
+        sheet = self.wb[ws_title]
+        headers = self._create_dict_headings(sheet=sheet)
+        data = {}
+
+        # Определение индекса столбца для фильтрации (если указано)
+        filter_index = headers.get(filter_column) if filter_column else None
+
+        item_id = 1
+        for row in sheet.iter_rows(min_row=2, values_only=True):
+            # Если указан фильтр, проверяем значение в соответствующем столбце
+            if filter_index is not None and row[filter_index] != filter_value:
+                continue  # Пропускаем строки, которые не соответствуют фильтру
+
+            # Создаём пустой словарь
+            entry = {}
+
+            # Проходим по соответствию ключей
+            for excel_key, output_key in mapping.items():
+                value = row[headers[excel_key]]
+                entry[output_key] = value
+
+            if all(entry.values()):
+                data[item_id] = entry
+                item_id += 1
+
+        return data
+
     def load_hair_type_data(
             self,
             ws_title: str,
@@ -45,15 +88,8 @@ class ExcelManager:
         Из этих данных формируется словарь вида
         {
             1: {
-            'Тип': 'Сухие волосы',
+            'Тип': 'содержимое ячейки',
             'Описание': 'содержимое ячейки',
-            'Хештег': 'содержимое ячейки',
-            },
-
-            2: {
-            'Тип': 'Нормальные волосы',
-            'Описание': 'содержимое ячейки',
-            'Хештег': 'содержимое ячейки',
             },
         }
 
@@ -61,30 +97,12 @@ class ExcelManager:
         :return: словарь с информацией о типе волос и их характеристике
         """
 
-        # Открытие файла Excel на нужном листе
-        sheet = self.wb[ws_title]
+        mapping = {
+            "Тип": "Тип",
+            "Описание": "Описание",
+        }
 
-        # Создание словаря заголовков
-        headers = self._create_dict_headings(sheet=sheet)
-
-        hair_type_data = {}
-
-        # Проходим по строкам, начиная со второй (первая - заголовки)
-        for row in sheet.iter_rows(min_row=2, values_only=True):
-
-            key = row[headers["№"]]
-            hair_type = row[headers["Тип"]]
-            description = row[headers["Описание"]]
-            hashtag = row[headers["Хештег"]]
-
-            if all([hair_type, description, hashtag]):
-                hair_type_data[int(key)] = {
-                    "Тип": hair_type,
-                    "Описание": description,
-                    "Тег": hashtag,
-                }
-
-        return hair_type_data
+        return self._load_data(ws_title, mapping)
 
     def load_head_skin_data(
             self,
@@ -95,12 +113,7 @@ class ExcelManager:
         Из этих данных формируется словарь вида
         {
             1: {
-            'Тип': 'Нормальная кожа головы',
-            'Описание': 'содержимое ячейки',
-            },
-
-            2: {
-            'Тип': 'Сухая кожа головы',
+            'Тип': 'содержимое ячейки',
             'Описание': 'содержимое ячейки',
             },
         }
@@ -109,28 +122,12 @@ class ExcelManager:
         :return: словарь с информацией о типах кожи головы и их характеристике
         """
 
-        # Открытие файла Excel на нужном листе
-        sheet = self.wb[ws_title]
+        mapping = {
+            "Тип": "Тип",
+            "Описание": "Описание",
+        }
 
-        # Создание словаря заголовков
-        headers = self._create_dict_headings(sheet=sheet)
-
-        head_skin_type_data = {}
-
-        # Проходим по строкам, начиная со второй (первая - заголовки)
-        for row in sheet.iter_rows(min_row=2, values_only=True):
-
-            key = row[headers["№"]]
-            head_skin_type = row[headers["Тип"]]
-            description = row[headers["Описание"]]
-
-            if all([head_skin_type, description]):
-                head_skin_type_data[int(key)] = {
-                    "Тип": head_skin_type,
-                    "Описание": description,
-                }
-
-        return head_skin_type_data
+        return self._load_data(ws_title, mapping)
 
     def load_problems_data(
             self,
@@ -141,12 +138,7 @@ class ExcelManager:
         Из этих данных формируется словарь вида
         {
             1: {
-            'Проблема': 'Восстановление поврежденной структуры',
-            'Описание': 'содержимое ячейки',
-            },
-
-            2: {
-            'Проблема': 'Выпадение волос',
+            'Проблема': 'содержимое ячейки',
             'Описание': 'содержимое ячейки',
             },
         }
@@ -155,28 +147,12 @@ class ExcelManager:
         :return: словарь с информацией о проблемах и их характеристиках
         """
 
-        # Открытие файла Excel на нужном листе
-        sheet = self.wb[ws_title]
+        mapping = {
+            "Проблема": "Проблема",
+            "Описание": "Описание",
+        }
 
-        # Создание словаря заголовков
-        headers = self._create_dict_headings(sheet=sheet)
-
-        problems_data = {}
-
-        # Проходим по строкам, начиная со второй (первая - заголовки)
-        for row in sheet.iter_rows(min_row=2, values_only=True):
-
-            key = row[headers["№"]]
-            problem = row[headers["Проблема"]]
-            description = row[headers["Описание"]]
-
-            if all([problem, description]):
-                problems_data[int(key)] = {
-                    "Проблема": problem,
-                    "Описание": description,
-                }
-
-        return problems_data
+        return self._load_data(ws_title, mapping)
 
     def load_wishes_data(
             self,
@@ -190,39 +166,18 @@ class ExcelManager:
             'Потребность': 'Очищение у корней, баланс увлажнения',
             'Описание': 'содержимое ячейки',
             },
-
-            2: {
-            'Потребность': 'Интенсивное увлажнение и питание кончиков',
-            'Описание': 'содержимое ячейки',
-            },
         }
 
         :param ws_title: название листа, с которого забирать информацию
         :return: словарь с информацией о потребностях клиента и их детальном описании
         """
 
-        # Открытие файла Excel на нужном листе
-        sheet = self.wb[ws_title]
+        mapping = {
+            "Потребность": "Потребность",
+            "Описание": "Описание",
+        }
 
-        # Создание словаря заголовков
-        headers = self._create_dict_headings(sheet=sheet)
-
-        wishes_data = {}
-
-        # Проходим по строкам, начиная со второй (первая - заголовки)
-        for row in sheet.iter_rows(min_row=2, values_only=True):
-
-            key = row[headers["№"]]
-            wish = row[headers["Потребность"]]
-            description = row[headers["Описание"]]
-
-            if all([wish, description]):
-                wishes_data[int(key)] = {
-                    "Потребность": wish,
-                    "Описание": description,
-                }
-
-        return wishes_data
+        return self._load_data(ws_title, mapping)
 
     def load_info_about_user(
             self,
@@ -267,3 +222,36 @@ class ExcelManager:
 
         # Если не нашли пустую строку - значит новых данных о пользователе нет
         return {}
+
+    def load_info_about_products(
+            self,
+            ws_title: str,
+    ) -> dict:
+        """
+        Загрузка данных из таблицы 00_Средства -> лист "Средства",
+        учитывая только строки, где 'Новое' == 'да'.
+        Из этих данных формируется словарь вида
+
+        {
+            1: {
+                "Название": "содержимое ячейки",
+                "Состав": "содержимое ячейки",
+            },
+        }
+
+        :param ws_title: название листа, с которого забирать информацию
+        :return: словарь с информацией о продуктах (название и состав)
+        """
+
+        mapping = {
+            "Название": "Название",
+            "Состав": "Состав",
+        }
+
+        return {
+            "Средства": self._load_data(
+                ws_title,
+                mapping,
+                filter_column="Новое",
+                filter_value="да"),
+        }
