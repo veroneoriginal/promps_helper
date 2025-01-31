@@ -234,7 +234,7 @@ class ExcelManager:
         """
 
         return self._load_data(
-            ws_title,
+            ws_title=ws_title,
             fields=("Название", "Состав"),
             filter_column="Новое",
             filter_value="да")
