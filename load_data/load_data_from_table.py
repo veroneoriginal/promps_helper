@@ -95,9 +95,10 @@ class ExcelManager:
         :return: словарь с информацией о типе волос и их характеристике
         """
 
-        fields = ("Тип", "Описание")
-
-        return self._load_data(ws_title, fields)
+        return self._load_data(
+            ws_title=ws_title,
+            fields=("Тип", "Описание"),
+        )
 
     def load_head_skin_data(
             self,
@@ -117,9 +118,10 @@ class ExcelManager:
         :return: словарь с информацией о типах кожи головы и их характеристике
         """
 
-        fields = ("Тип", "Описание")
-
-        return self._load_data(ws_title, fields)
+        return self._load_data(
+            ws_title=ws_title,
+            fields=("Тип", "Описание"),
+        )
 
     def load_problems_data(
             self,
@@ -139,9 +141,10 @@ class ExcelManager:
         :return: словарь с информацией о проблемах и их характеристиках
         """
 
-        fields = ("Проблема", "Описание")
-
-        return self._load_data(ws_title, fields)
+        return self._load_data(
+            ws_title=ws_title,
+            fields=("Проблема", "Описание"),
+        )
 
     def load_wishes_data(
             self,
@@ -161,14 +164,15 @@ class ExcelManager:
         :return: словарь с информацией о потребностях клиента и их детальном описании
         """
 
-        fields = ("Потребность", "Описание")
-
-        return self._load_data(ws_title, fields)
+        return self._load_data(
+            ws_title=ws_title,
+            fields=("Потребность", "Описание"),
+        )
 
     def load_info_about_user(
             self,
             ws_title: str,
-    ) -> dict | None:
+    ) -> dict:
         """
         Загрузка данных из таблицы 00_Средства -> лист "Подборки"
 
