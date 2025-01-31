@@ -1,9 +1,12 @@
-# from pprint import pprint
+"""В этом модуле происходит формирование словарей из листов excel"""
 
+from load_data.load_data_from_table import ExcelManager
 from load_data.utils.utils import extract_text
 
 
-def load_data_table(instance_excel) -> dict:
+def load_data_table(
+        instance_excel: ExcelManager,
+) -> dict:
     """
     Функция для создания общего словаря из листов Excel
 
@@ -21,36 +24,53 @@ def load_data_table(instance_excel) -> dict:
     }
 
 
+def create_final_dict(
+        data: dict,
+) -> dict:
+    """
+    Функция для формирования единого словаря с параметрами пользователя и средствами,
+    который имеет вид
 
-def create_final_dict(data: dict) -> dict:
+    data = {
+        'Пользователь': {
+            "Пол": "содержимое ячейки",
+            "Возраст": "содержимое ячейки",
+            "Тип волос": "содержимое ячейки",
+            "Тип кожи головы": "содержимое ячейки",
+            "Проблема": "содержимое ячейки",
+            "Потребности": "содержимое ячейки",
+        },
 
-
-    final_user_data = {
-        'Пол': data['Пользователь']['Пол'],
-        'Возраст': data['Пользователь']['Возраст'],
-        'Тип волос': extract_text(data['Типы волос'][data['Пользователь']['Тип волос']], 'Тип', )
-
-        #     dict_with_type_hair[dict_with_info_about_user['Тип волос']],
-        #     'Тип',
-        # ),
-        # 'Тип кожи головы': extract_text(
-        #     dict_with_head_skin[dict_with_info_about_user['Тип кожи головы']],
-        #     'Тип',
-        # ),
-        # 'Проблема': extract_text(
-        #     dict_with_problem[dict_with_info_about_user['Проблема']],
-        #     'Проблема',
-        # ),
-        # 'Пожелания': extract_text(
-        #     dict_with_wishes[dict_with_info_about_user['Пожелания']],
-        #     'Потребность',
-        # ),
+        "Средства": {
+            1: {
+                "Название": "содержимое ячейки",
+                "Состав": "содержимое ячейки",
+            },
+        },
     }
-    return final_user_data
 
+    :param data: словарь с загруженными данными
+    :return: финальный словарь с подготовленной структурой с параметрами пользователя и средствами
+    """
 
-    # Формирование общего словаря
-    # pprint({
-    #     "Пользователь": final_user_data,
-    #     "Средства": dict_with_product["Средства"],
-    # }, sort_dicts=False)
+    return {
+        'Пользователь': {
+            'Пол': data['Пользователь']['Пол'],
+
+            'Возраст': data['Пользователь']['Возраст'],
+
+            'Тип волос': extract_text(
+                data['Типы волос'][data['Пользователь']['Тип волос']], 'Тип', ),
+
+            'Тип кожи головы': extract_text(
+                data["Типы кожи головы"][data['Пользователь']['Тип кожи головы']], 'Тип', ),
+
+            'Проблемы': extract_text(
+                data["Проблемы"][data['Пользователь']['Проблема']], 'Проблема', ),
+
+            'Потребности': extract_text(
+                data["Потребности"][data['Пользователь']['Потребности']], 'Потребность', ),
+        },
+
+        'Средства': data["Средства"],
+    }
