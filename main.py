@@ -21,7 +21,7 @@ class ControlManager:
 
     def take_data_from_the_table(
             self,
-            file_path,
+            file_path: str,
     ) -> dict:
         """
         Функция для загрузки данных из таблицы
@@ -77,7 +77,7 @@ if __name__ == '__main__':
     instance = ControlManager()
 
     print('Забираю данные из таблицы')
-    data = instance.take_data_from_the_table(file_path='../00_base/00_Средства.xlsx')
+    data = instance.take_data_from_the_table(file_path='00_base/00_Средства.xlsx')
 
     print('Собираю промпт.')
     prompt = instance.bring_prompt(data=data)

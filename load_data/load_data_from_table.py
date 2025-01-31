@@ -143,7 +143,7 @@ class ExcelManager:
 
         return self._load_data(
             ws_title=ws_title,
-            fields=("Проблема", "Описание"),
+            fields=("Проблемы", "Описание"),
         )
 
     def load_wishes_data(
@@ -166,7 +166,7 @@ class ExcelManager:
 
         return self._load_data(
             ws_title=ws_title,
-            fields=("Потребность", "Описание"),
+            fields=("Потребности", "Описание"),
         )
 
     def load_info_about_user(
@@ -182,8 +182,8 @@ class ExcelManager:
         'Возраст': 30,
         'Тип волос': '2, 4',
         'Тип кожи головы': 1,
-        'Проблема': 2,
-        'Пожелания': 1,
+        'Проблемы': 2,
+        'Потребности': 1,
         }
 
         :param ws_title: название листа, с которого забирать информацию
@@ -206,8 +206,8 @@ class ExcelManager:
                     "Возраст": row[headers["Возраст"]],
                     "Тип волос": row[headers["Тип волос"]],
                     "Тип кожи головы": row[headers["Тип кожи головы"]],
-                    "Проблема": row[headers["Проблема"]],
-                    "Потребности": row[headers["Пожелания"]],
+                    "Проблемы": row[headers["Проблемы"]],
+                    "Потребности": row[headers["Потребности"]],
                 }
 
         # Если не нашли пустую строку - значит новых данных о пользователе нет
