@@ -27,13 +27,13 @@ def main(
     :return: None
     """
 
-    print('Формирование контекста')
+    # print('Формирование контекста')
     context = _formation_context(
         prompt=prompt,
         system_prompt=system_prompt,
     )
 
-    print('Передаю контекст в OpenAI.')
+    # print('Передаю контекст в OpenAI.')
     result = _generate_text_content_openai(
         api_key=api_key,
         context=context,
