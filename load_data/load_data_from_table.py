@@ -39,7 +39,7 @@ class ExcelManager:
     def _load_data(
             self,
             ws_title: str,
-            mapping: dict,
+            fields: tuple,
             filter_column: str = None,
             filter_value: str = None,
     ) -> dict:
@@ -47,7 +47,7 @@ class ExcelManager:
         Универсальный метод для загрузки данных из Excel.
 
         :param ws_title: название листа
-        :param mapping: соответствие между заголовками в Excel и ключами в выходном словаре
+        :param fields: список заголовков Excel, которые нужно загрузить
         :param filter_column: название столбца, по кот. нужно фильтровать данные (опционально)
         :param filter_value: значение-фильтр (опционально)
         :return: словарь с загруженными данными
@@ -68,10 +68,8 @@ class ExcelManager:
             # Создаём пустой словарь
             entry = {}
 
-            # Проходим по соответствию ключей
-            for excel_key, output_key in mapping.items():
-                value = row[headers[excel_key]]
-                entry[output_key] = value
+            for key in fields:
+                entry[key] = row[headers[key]]
 
             if all(entry.values()):
                 data[item_id] = entry
@@ -97,12 +95,9 @@ class ExcelManager:
         :return: словарь с информацией о типе волос и их характеристике
         """
 
-        mapping = {
-            "Тип": "Тип",
-            "Описание": "Описание",
-        }
+        fields = ("Тип", "Описание")
 
-        return self._load_data(ws_title, mapping)
+        return self._load_data(ws_title, fields)
 
     def load_head_skin_data(
             self,
@@ -122,12 +117,9 @@ class ExcelManager:
         :return: словарь с информацией о типах кожи головы и их характеристике
         """
 
-        mapping = {
-            "Тип": "Тип",
-            "Описание": "Описание",
-        }
+        fields = ("Тип", "Описание")
 
-        return self._load_data(ws_title, mapping)
+        return self._load_data(ws_title, fields)
 
     def load_problems_data(
             self,
@@ -147,12 +139,9 @@ class ExcelManager:
         :return: словарь с информацией о проблемах и их характеристиках
         """
 
-        mapping = {
-            "Проблема": "Проблема",
-            "Описание": "Описание",
-        }
+        fields = ("Проблема", "Описание")
 
-        return self._load_data(ws_title, mapping)
+        return self._load_data(ws_title, fields)
 
     def load_wishes_data(
             self,
@@ -172,12 +161,9 @@ class ExcelManager:
         :return: словарь с информацией о потребностях клиента и их детальном описании
         """
 
-        mapping = {
-            "Потребность": "Потребность",
-            "Описание": "Описание",
-        }
+        fields = ("Потребность", "Описание")
 
-        return self._load_data(ws_title, mapping)
+        return self._load_data(ws_title, fields)
 
     def load_info_about_user(
             self,
@@ -243,13 +229,8 @@ class ExcelManager:
         :return: словарь с информацией о продуктах (название и состав)
         """
 
-        mapping = {
-            "Название": "Название",
-            "Состав": "Состав",
-        }
-
         return self._load_data(
-                ws_title,
-                mapping,
-                filter_column="Новое",
-                filter_value="да")
+            ws_title,
+            fields=("Название", "Состав"),
+            filter_column="Новое",
+            filter_value="да")

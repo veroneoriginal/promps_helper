@@ -10,20 +10,19 @@ from load_data.formation_single_dict import (
 )
 
 
-def main():
+def main(
+        instance_class: ExcelManager,
+) -> dict:
     """
     Главный метод, в котором вызываются функции по работе с формированием данных с листов excel
 
     :return: словарь c лаконичным описанием параметров
     """
 
-    instance_excel = ExcelManager(file_path='../00_base/00_Средства.xlsx')
-    result = load_data_table(instance_excel=instance_excel)
-
+    result = load_data_table(instance_excel=instance_class)
     # pprint(create_final_dict(data=result))
-
     return create_final_dict(data=result)
 
 
 if __name__ == '__main__':
-    main()
+    main(instance_class=ExcelManager(file_path='../00_base/00_Средства.xlsx'))
