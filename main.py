@@ -17,7 +17,7 @@ class ControlManager:
     Класс, управляющий логикой весго проекта
     """
 
-    def take_data_from_the_table(
+    def _take_data_from_the_table(
             self,
             file_path: str,
     ) -> dict:
@@ -30,7 +30,7 @@ class ControlManager:
 
         return load_data_main(file_path=file_path)
 
-    def bring_prompt(
+    def _bring_prompt(
             self,
             dict_with_info: dict,
     ) -> str:
@@ -47,7 +47,7 @@ class ControlManager:
             settings_response=SETTINGS_RESPONSE,
         )
 
-    def create_context_for_request_to_openai(
+    def _create_context_for_request_to_openai(
             self,
             prompt_for_convert: str,
     ) -> None:
@@ -70,19 +70,31 @@ class ControlManager:
             api_key=openai_api_key,
         )
 
+    def create_collection(
+            self,
+            file_path: str,
+    ) -> None:
+        """
+        Главный метод класса, в котором собрана вся логика программы
+
+        :param file_path: путь до документа .xlsx
+        :return: None
+        """
+
+        print('Забираю данные из таблицы')
+        data = self._take_data_from_the_table(file_path=file_path)
+
+        print('Собираю промпт.')
+        prompt = self._bring_prompt(dict_with_info=data)
+
+        print('Отправляю запрос в OpenAI.')
+        self._create_context_for_request_to_openai(prompt_for_convert=prompt)
+
+        # print('Разбираю ответ от OpenAI.')
+        #
+        # print('Готовлю изображения со средствами.')
+
 
 if __name__ == '__main__':
     instance = ControlManager()
-
-    print('Забираю данные из таблицы')
-    data = instance.take_data_from_the_table(file_path='00_base/00_Средства.xlsx')
-
-    print('Собираю промпт.')
-    prompt = instance.bring_prompt(dict_with_info=data)
-
-    print('Отправляю запрос в OpenAI.')
-    instance.create_context_for_request_to_openai(prompt_for_convert=prompt)
-
-    # print('Разбираю ответ от OpenAI.')
-    #
-    # print('Готовлю изображения со средствами.')
+    instance.create_collection(file_path='00_base/00_Средства.xlsx')
