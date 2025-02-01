@@ -4,11 +4,12 @@
 """
 
 import os
-from datetime import datetime
+import re
+import json
+# from datetime import datetime
 from typing import Literal
 from openai import OpenAI
 from openai.types.chat import ChatCompletion
-
 
 def _formation_context(
         prompt: str,
@@ -65,7 +66,7 @@ def _generate_text_content_openai(
     return client.chat.completions.create(
         model=model,
         messages=context,
-        temperature=1,
+        temperature=0,
         max_tokens=2048,
         top_p=1,
         frequency_penalty=0,
@@ -91,15 +92,29 @@ def _save(
     # вычленяю нужное
     content = result.choices[0].message.content
 
+    # очищаю, чтобы был очищенный json
+    cleaned_response = re.sub(r'```json|```', '', content).strip()
+
+    try:
+        json.loads(cleaned_response)
+        print("✅ JSON корректный!")
+    except json.JSONDecodeError as e:
+        print(f"❌ Ошибка в JSON перед сохранением: {e}")
+        return  # Не сохраняем файл, если JSON сломан
+
     # сохраняю в папку history_prompt
     # Получение текущей даты и времени
-    current_date = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+    # current_date = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+    # current_date = datetime.now().strftime("%d-%m-%Y_%H-%M-%S")
 
     # Убедиться, что папка существует, иначе создать её
     os.makedirs(folder_name, exist_ok=True)
 
     # Формирование имени файла
-    file_name = f"Новый запрос_{current_date}.md"
+    # file_name = f"Новый запрос_{current_date}.md"
+    # file_name = f"Анализ средств от {current_date}.json"
+    file_name = "Анализ_средств.json"
+
     file_path = os.path.join(folder_name, file_name)
     # Сохранение текста в файл
     with open(file_path, "w", encoding="utf-8") as file:
