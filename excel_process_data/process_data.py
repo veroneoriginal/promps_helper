@@ -7,7 +7,7 @@ from typing import (
     Optional,
     Any,
 )
-import openpyxl
+
 from openpyxl import load_workbook
 from openpyxl.worksheet.worksheet import Worksheet
 
@@ -84,6 +84,21 @@ class ExcelManager:
                 item_id += 1
 
         return data
+
+    def _save_wb(
+            self,
+            file_path: str = None,
+    ) -> None:
+        """
+        Функция для сохранения информации по нужному пути
+
+        :param file_path: путь файла, в который нужно сохранять информацию
+        :return: None
+        """
+        if file_path is None:
+            self.wb.save(self.file_path)
+        else:
+            self.wb.save(file_path)
 
     def load_hair_type_data(
             self,
@@ -263,8 +278,8 @@ class ExcelManager:
             sys.exit()
 
         # Загружаем существующий Excel-файл
-        wb = openpyxl.load_workbook(self.file_path)
-        ws = wb["Подборки"]
+
+        ws = self.wb["Подборки"]
 
         # Считываем заголовки и определяем их позиции
         headers = {cell.value: cell.column for cell in ws[1] if cell.value}
@@ -285,10 +300,10 @@ class ExcelManager:
                 break
 
         # Заполняем "Лучшее средство"
-        ws.cell(row=empty_row, column=col_best_product, value=data["лучшее средство"])
+        ws.cell(row=empty_row, column=col_best_product, value=data["Лучшее средство"])
 
         # Заполняем рейтинг
-        for i, item in enumerate(data["рейтинг_средств"]):
+        for i, item in enumerate(data["Рейтинг средств"]):
             # Столбец для названия средства
             col_name = rating_columns[i]
 
@@ -303,9 +318,9 @@ class ExcelManager:
             ws.cell(row=empty_row, column=col_minuses, value="\n".join(item["минусы"]))
 
         # Заполняем "Итоговую рекомендацию"
-        ws.cell(row=empty_row, column=col_recommendation, value=data["итоговая_рекомендация"])
+        ws.cell(row=empty_row, column=col_recommendation, value=data["Итоговая рекомендация"])
 
         # Сохраняем изменения
-        wb.save(self.file_path)
+        self._save_wb()
 
         print(f"Лист 'Подборки' успешно обновлен: {self.file_path}")

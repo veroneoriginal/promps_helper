@@ -72,6 +72,26 @@ class ControlManager:
             api_key=openai_api_key,
         )
 
+    def _reviewing_response_from_openai(
+            self,
+            file_path: str,
+            json_file_path: str,
+    ) -> None:
+        """
+        В этой функции разбираю ответ от OpenAI.
+
+        :param file_path: путь до документа .xlsx
+        :param json_file_path: путь до json-файла
+
+        :return: None
+        """
+
+        data = checking_file_with_response(json_file_path=json_file_path)
+
+        instance_excel = ExcelManager(file_path=file_path)
+
+        instance_excel.writing_data_from_json_to_excel(data=data)
+
     def create_collection(
             self,
             file_path: str,
@@ -95,10 +115,9 @@ class ControlManager:
         self._create_context_for_request_to_openai(prompt_for_convert=prompt)
 
         print('Разбираю ответ от OpenAI.')
-        data = checking_file_with_response(json_file_path=json_file_path)
+        self._reviewing_response_from_openai(file_path=file_path, json_file_path=json_file_path)
 
-        instance_excel = ExcelManager(file_path=file_path)
-        instance_excel.writing_data_from_json_to_excel(data=data)
+        print('Следующим шагом будет создание картинок.')
 
         # print('Готовлю изображения со средствами.')
 
