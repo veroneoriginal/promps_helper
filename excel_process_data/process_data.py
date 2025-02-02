@@ -1,5 +1,13 @@
-""" В этом модуле реализована логика загрузки данных из таблицы """
-
+"""
+В этом модуле реализована логика загрузки данных из таблицы
+и добавление данных из json в таблицу
+"""
+import sys
+from typing import (
+    Optional,
+    Any,
+)
+import openpyxl
 from openpyxl import load_workbook
 from openpyxl.worksheet.worksheet import Worksheet
 
@@ -19,7 +27,7 @@ class ExcelManager:
         self.file_path = file_path
         self.wb = load_workbook(self.file_path)
 
-    def _create_dict_headings(
+    def _create_dict_headers(
             self,
             sheet: Worksheet,
     ) -> dict:
@@ -53,7 +61,7 @@ class ExcelManager:
         :return: словарь с загруженными данными
         """
         sheet = self.wb[ws_title]
-        headers = self._create_dict_headings(sheet=sheet)
+        headers = self._create_dict_headers(sheet=sheet)
         data = {}
 
         # Определение индекса столбца для фильтрации (если указано)
@@ -195,7 +203,7 @@ class ExcelManager:
         sheet = self.wb[ws_title]
 
         # Создание словаря заголовков
-        headers = self._create_dict_headings(sheet=sheet)
+        headers = self._create_dict_headers(sheet=sheet)
 
         # Поиск первой строки, где ячейка в столбце "Лучшее средство" пустая
         for row in sheet.iter_rows(min_row=2, values_only=True):
@@ -238,3 +246,66 @@ class ExcelManager:
             fields=("Название", "Состав"),
             filter_column="Новое",
             filter_value="да")
+
+    def writing_data_from_json_to_excel(
+            self,
+            data: Optional[Any],
+    ) -> None:
+        """ Функция для записи данных из json-файла с ответом OpenAI
+        в Excel в лист "Подборки".
+
+        :param data: JSON-данные
+        :return: None
+        """
+
+        if data is None:
+            print("⛔ Ошибка: JSON-файл пустой или некорректный. Останавливаю выполнение.")
+            sys.exit()
+
+        # Загружаем существующий Excel-файл
+        wb = openpyxl.load_workbook(self.file_path)
+        ws = wb["Подборки"]
+
+        # Считываем заголовки и определяем их позиции
+        headers = {cell.value: cell.column for cell in ws[1] if cell.value}
+
+        # Определяем нужные столбцы
+        col_best_product = headers["Лучшее средство"]
+        col_recommendation = headers["Итоговая рекомендация"]
+
+        # Определяем столбцы для рейтинга (ищем только "Средство 1", остальное идёт подряд)
+        rating_columns = [headers[f"Средство {i}"] for i in range(1, 7)]
+
+        # Ищем первую пустую строку в колонке "Лучшее средство"
+        empty_row = ws.max_row + 1  # По умолчанию добавляем в конец
+
+        for row in range(2, ws.max_row + 2):
+            if ws.cell(row=row, column=col_best_product).value is None:
+                empty_row = row
+                break
+
+        # Заполняем "Лучшее средство"
+        ws.cell(row=empty_row, column=col_best_product, value=data["лучшее средство"])
+
+        # Заполняем рейтинг
+        for i, item in enumerate(data["рейтинг_средств"]):
+            # Столбец для названия средства
+            col_name = rating_columns[i]
+
+            # Следующий столбец для плюсов
+            col_pluses = col_name + 1
+
+            # Через один столбец для минусов
+            col_minuses = col_name + 2
+
+            ws.cell(row=empty_row, column=col_name, value=item["название"])
+            ws.cell(row=empty_row, column=col_pluses, value="\n".join(item["плюсы"]))
+            ws.cell(row=empty_row, column=col_minuses, value="\n".join(item["минусы"]))
+
+        # Заполняем "Итоговую рекомендацию"
+        ws.cell(row=empty_row, column=col_recommendation, value=data["итоговая_рекомендация"])
+
+        # Сохраняем изменения
+        wb.save(self.file_path)
+
+        print(f"Лист 'Подборки' успешно обновлен: {self.file_path}")

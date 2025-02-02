@@ -6,11 +6,12 @@ import os
 from dotenv import load_dotenv
 
 from appeal_to_openai.main import main as appeal_to_openai_main
-from load_data.main import main as load_data_main
+from appeal_to_openai.utils import checking_file_with_response
+from excel_process_data.main import main as load_data_main
+from excel_process_data.process_data import ExcelManager
 from prompt_constructor.constructor import PromptConstructor
 from prompt_constructor.settings_constructor.settings_response import SETTINGS_RESPONSE
 from prompt_constructor.settings_constructor.system_prompt import SYSTEM_PROMPT
-from processing_response_openai.main import main as processing_response_openai_main
 
 
 class ControlManager:
@@ -74,11 +75,13 @@ class ControlManager:
     def create_collection(
             self,
             file_path: str,
+            json_file_path: str,
     ) -> None:
         """
         Главный метод класса, в котором собрана вся логика программы
 
         :param file_path: путь до документа .xlsx
+        :param json_file_path: путь до json-файла
         :return: None
         """
 
@@ -92,14 +95,17 @@ class ControlManager:
         self._create_context_for_request_to_openai(prompt_for_convert=prompt)
 
         print('Разбираю ответ от OpenAI.')
-        processing_response_openai_main(
-            file_path="prompt/history_prompt/Анализ_средств.json",
-            excel_file="00_base/00_Средства.xlsx",
-        )
+        data = checking_file_with_response(json_file_path=json_file_path)
+
+        instance_excel = ExcelManager(file_path=file_path)
+        instance_excel.writing_data_from_json_to_excel(data=data)
 
         # print('Готовлю изображения со средствами.')
 
 
 if __name__ == '__main__':
     instance = ControlManager()
-    instance.create_collection(file_path='00_base/00_Средства.xlsx')
+    instance.create_collection(
+        file_path='00_base/00_Средства.xlsx',
+        json_file_path="prompt/history_prompt/Анализ_средств.json",
+    )

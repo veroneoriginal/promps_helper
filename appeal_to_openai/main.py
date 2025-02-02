@@ -6,7 +6,7 @@
 from appeal_to_openai.utils import (
     _formation_context,
     _generate_text_content_openai,
-    _save,
+    _save, _processing_content_from_openai,
 )
 
 
@@ -33,8 +33,6 @@ def main(
         system_prompt=system_prompt,
     )
 
-
-
     # print('Передаю контекст в OpenAI.')
     result = _generate_text_content_openai(
         api_key=api_key,
@@ -42,8 +40,12 @@ def main(
         model="gpt-4o",
     )
 
+    # print('Обрабатываю контент полученный от OpenAI')
+    data = _processing_content_from_openai(result=result)
+
+
     print('Сохраняю ответ, полученный от OpenAI')
     _save(
-        result=result,
+        data=data,
         folder_name=folder_name,
     )

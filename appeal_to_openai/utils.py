@@ -6,10 +6,10 @@
 import os
 import re
 import json
-# from datetime import datetime
-from typing import Literal
+from typing import Literal, Optional, Any
 from openai import OpenAI
 from openai.types.chat import ChatCompletion
+
 
 def _formation_context(
         prompt: str,
@@ -77,30 +77,39 @@ def _generate_text_content_openai(
     )
 
 
-def _save(
+def _processing_content_from_openai(
         result: ChatCompletion,
+) -> Optional[Any] | None:
+    """ Функция для обработки контента из ответа от OpenAI
+
+    :param result: ответ от OpenAI
+    :return: контент в json или None
+    """
+
+    # вычленяю нужное из ответа OpenAi
+    content = result.choices[0].message.content
+
+    # очищаю контент, чтобы был очищенный json
+    cleaned_response = re.sub(r'```json|```', '', content).strip()
+
+    try:
+        return json.loads(cleaned_response)
+    except json.JSONDecodeError as e:
+        print(f"❌ Ошибка в JSON перед сохранением: {e}")
+        return None
+
+
+def _save(
+        data: Optional[Any],
         folder_name: str,
 ) -> None:
     """
     Функция для сохранения ответа, полученного от OpenAI
 
-    :param result: ответ от OpenAI
+    :param data: обработанный контент от OpenAI
     :param folder_name: путь, куда сохранять ответ от OpenAI
     :return: None
     """
-
-    # вычленяю нужное
-    content = result.choices[0].message.content
-
-    # очищаю, чтобы был очищенный json
-    cleaned_response = re.sub(r'```json|```', '', content).strip()
-
-    try:
-        data = json.loads(cleaned_response)
-        # print("✅ JSON корректный!")
-    except json.JSONDecodeError as e:
-        print(f"❌ Ошибка в JSON перед сохранением: {e}")
-        return  # Не сохраняем файл, если JSON сломан
 
     # Убедиться, что папка prompt/history_prompt существует, иначе создать её
     os.makedirs(folder_name, exist_ok=True)
@@ -114,3 +123,22 @@ def _save(
         json.dump(data, file, ensure_ascii=False, indent=4)
 
     print(f"Файл успешно сохранен: {file_path}")
+
+
+def checking_file_with_response(
+        json_file_path: str,
+) -> Optional[Any] | None:
+    """ С помощью этой функции открываю файл с ответом OpenAI
+    и проверяю, что формат файла с ответом соответствует заданному
+
+    :param json_file_path: путь до файла с ответом OpenAI
+    :return: JSON-данные или None
+    """
+
+    with open(json_file_path, "r", encoding="utf-8") as file:
+        try:
+            return json.load(file)
+
+        except json.JSONDecodeError as e:
+            print(f"❌ Ошибка в JSON: {e}")
+            return None
