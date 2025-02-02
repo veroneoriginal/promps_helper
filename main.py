@@ -10,6 +10,7 @@ from load_data.main import main as load_data_main
 from prompt_constructor.constructor import PromptConstructor
 from prompt_constructor.settings_constructor.settings_response import SETTINGS_RESPONSE
 from prompt_constructor.settings_constructor.system_prompt import SYSTEM_PROMPT
+from processing_response_openai.main import main as processing_response_openai_main
 
 
 class ControlManager:
@@ -90,8 +91,12 @@ class ControlManager:
         print('Отправляю запрос в OpenAI.')
         self._create_context_for_request_to_openai(prompt_for_convert=prompt)
 
-        # print('Разбираю ответ от OpenAI.')
-        #
+        print('Разбираю ответ от OpenAI.')
+        processing_response_openai_main(
+            file_path="prompt/history_prompt/Анализ_средств.json",
+            excel_file="00_base/00_Средства.xlsx",
+        )
+
         # print('Готовлю изображения со средствами.')
 
 
