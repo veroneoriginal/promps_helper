@@ -196,6 +196,8 @@ def get_measure(_product_card: dict) -> tuple:
     :return: tuple
     """
     attr = _product_card.get('attributes').get('units')
+    if not attr:
+        return None, None
     measure = attr.get('label')
     measure_units = attr.get('unit')
     return measure, measure_units
@@ -229,6 +231,36 @@ def get_price_by_units(_product_card, units: str) -> int | float | None:
     return None
 
 
+def _get_img_link_if_product_in_sale(data: list, units: str) -> str | None:
+    """
+    Для получения Ссылка на img если товар есть в продаже
+
+    :param data: список с информацией об URL изображений
+    :param units: значение units для поиска
+    :return
+    """
+
+    for item in data:
+        if item.get("attributesValue", {}).get("units", 0) == units:
+            link = item.get("imageUrls", {})[0].get("url", {})
+            return create_full_link_to_image(link)
+    return None
+
+
+def _get_img_link_if_product_not_in_sale(data: list) -> str | None:
+    """
+    Для получения Ссылка на img если товара нет в продаже
+
+    ::param data: список с информацией об URL изображений
+    :return
+    """
+
+    link = data[0].get("imageUrls", {})[0].get("url", {})
+    if link:
+        return create_full_link_to_image(link)
+    return None
+
+
 def get_img_link(_product_card, units: str) -> str | None:
     """
     Для получения Ссылка на img
@@ -238,8 +270,6 @@ def get_img_link(_product_card, units: str) -> str | None:
     :return: str
     """
     data = _product_card.get('variants')
-    for item in data:
-        if item.get("attributesValue", {}).get("units", 0) == units:
-            link = item.get("imageUrls", {})[0].get("url", {})
-            return create_full_link_to_image(link)
-    return None
+    if units:
+        return _get_img_link_if_product_in_sale(data, units)
+    return _get_img_link_if_product_not_in_sale(data)
