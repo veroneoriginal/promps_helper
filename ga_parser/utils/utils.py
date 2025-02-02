@@ -84,7 +84,7 @@ def calculate_price_ml(
         units: str,
         price: int | float,
         ml: int = 100
-) -> int | float:
+) -> int | float | None:
     """
     Функция рассчитывает стоимость за определённое количество мл.
 
@@ -94,6 +94,9 @@ def calculate_price_ml(
 
     :return: стоимость за ml
     """
+    if not units or not units.isdigit():
+        return None
+
     units = int(units)
 
     if units <= 0:

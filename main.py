@@ -88,7 +88,9 @@ class ControlManager:
         print('Собираю промпт.')
         prompt = self._bring_prompt(dict_with_info=data)
 
-        print('Отправляю запрос в OpenAI.')
+        print(prompt)
+
+        # print('Отправляю запрос в OpenAI.')
         self._create_context_for_request_to_openai(prompt_for_convert=prompt)
 
         print('Разбираю ответ от OpenAI.')
