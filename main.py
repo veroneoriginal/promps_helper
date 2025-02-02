@@ -82,15 +82,13 @@ class ControlManager:
         :return: None
         """
 
-        print('Забираю данные из таблицы')
+        print('Забираю данные из таблицы.')
         data = self._take_data_from_the_table(file_path=file_path)
 
         print('Собираю промпт.')
         prompt = self._bring_prompt(dict_with_info=data)
 
-        print(prompt)
-
-        # print('Отправляю запрос в OpenAI.')
+        print('Отправляю запрос в OpenAI.')
         self._create_context_for_request_to_openai(prompt_for_convert=prompt)
 
         print('Разбираю ответ от OpenAI.')

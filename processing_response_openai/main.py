@@ -21,7 +21,7 @@ def checking_file_with_response(
     with open(file_path, "r", encoding="utf-8") as file:
         try:
             data = json.load(file)
-            print("✅ JSON корректный! Файл открыт.")
+            # print("✅ JSON корректный! Файл открыт.")
             return data
 
         except json.JSONDecodeError as e:
@@ -87,7 +87,7 @@ def writing_data_from_json_to_excel(
     # Сохраняем изменения
     wb.save(excel_file)
 
-    print(f"Файл успешно обновлен: {excel_file}")
+    print(f"Лист 'Подборки' успешно обновлен: {excel_file}")
 
 
 def main(

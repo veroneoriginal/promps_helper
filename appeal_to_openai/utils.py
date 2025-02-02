@@ -96,28 +96,21 @@ def _save(
     cleaned_response = re.sub(r'```json|```', '', content).strip()
 
     try:
-        json.loads(cleaned_response)
-        print("✅ JSON корректный!")
+        data = json.loads(cleaned_response)
+        # print("✅ JSON корректный!")
     except json.JSONDecodeError as e:
         print(f"❌ Ошибка в JSON перед сохранением: {e}")
         return  # Не сохраняем файл, если JSON сломан
 
-    # сохраняю в папку history_prompt
-    # Получение текущей даты и времени
-    # current_date = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-    # current_date = datetime.now().strftime("%d-%m-%Y_%H-%M-%S")
-
-    # Убедиться, что папка существует, иначе создать её
+    # Убедиться, что папка prompt/history_prompt существует, иначе создать её
     os.makedirs(folder_name, exist_ok=True)
 
     # Формирование имени файла
-    # file_name = f"Новый запрос_{current_date}.md"
-    # file_name = f"Анализ средств от {current_date}.json"
     file_name = "Анализ_средств.json"
-
     file_path = os.path.join(folder_name, file_name)
+
     # Сохранение текста в файл
     with open(file_path, "w", encoding="utf-8") as file:
-        file.write(content)
+        json.dump(data, file, ensure_ascii=False, indent=4)
 
     print(f"Файл успешно сохранен: {file_path}")
