@@ -6,7 +6,9 @@ import os
 from dotenv import load_dotenv
 
 from appeal_to_openai.main import main as appeal_to_openai_main
-from load_data.main import main as load_data_main
+from appeal_to_openai.utils import checking_file_with_response
+from excel_process_data.main import main as load_data_main
+from excel_process_data.process_data import ExcelManager
 from prompt_constructor.constructor import PromptConstructor
 from prompt_constructor.settings_constructor.settings_response import SETTINGS_RESPONSE
 from prompt_constructor.settings_constructor.system_prompt import SYSTEM_PROMPT
@@ -70,33 +72,59 @@ class ControlManager:
             api_key=openai_api_key,
         )
 
+    def _reviewing_response_from_openai(
+            self,
+            file_path: str,
+            json_file_path: str,
+    ) -> None:
+        """
+        В этой функции разбираю ответ от OpenAI.
+
+        :param file_path: путь до документа .xlsx
+        :param json_file_path: путь до json-файла
+
+        :return: None
+        """
+
+        data = checking_file_with_response(json_file_path=json_file_path)
+
+        instance_excel = ExcelManager(file_path=file_path)
+
+        instance_excel.writing_data_from_json_to_excel(data=data)
+
     def create_collection(
             self,
             file_path: str,
+            json_file_path: str,
     ) -> None:
         """
         Главный метод класса, в котором собрана вся логика программы
 
         :param file_path: путь до документа .xlsx
+        :param json_file_path: путь до json-файла
         :return: None
         """
 
-        print('Забираю данные из таблицы')
+        print('Забираю данные из таблицы.')
         data = self._take_data_from_the_table(file_path=file_path)
 
         print('Собираю промпт.')
         prompt = self._bring_prompt(dict_with_info=data)
 
-        print(prompt)
-
-        # print('Отправляю запрос в OpenAI.')
+        print('Отправляю запрос в OpenAI.')
         self._create_context_for_request_to_openai(prompt_for_convert=prompt)
 
-        # print('Разбираю ответ от OpenAI.')
-        #
+        print('Разбираю ответ от OpenAI.')
+        self._reviewing_response_from_openai(file_path=file_path, json_file_path=json_file_path)
+
+        print('Следующим шагом будет создание картинок.')
+
         # print('Готовлю изображения со средствами.')
 
 
 if __name__ == '__main__':
     instance = ControlManager()
-    instance.create_collection(file_path='00_base/00_Средства.xlsx')
+    instance.create_collection(
+        file_path='00_base/00_Средства.xlsx',
+        json_file_path="prompt/history_prompt/Анализ_средств.json",
+    )

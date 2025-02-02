@@ -2,9 +2,9 @@
 
 # from pprint import pprint
 
-from load_data.load_data_from_table import ExcelManager
+from excel_process_data.process_data import ExcelManager
 
-from load_data.formation_single_dict import (
+from excel_process_data.formation_single_dict import (
     load_data_table,
     create_final_dict,
 )

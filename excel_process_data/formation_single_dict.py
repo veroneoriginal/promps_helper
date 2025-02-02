@@ -1,7 +1,7 @@
 """В этом модуле происходит формирование словарей из листов excel"""
 
-from load_data.load_data_from_table import ExcelManager
-from load_data.utils.utils import extract_text
+from excel_process_data.process_data import ExcelManager
+from excel_process_data.utils.utils import extract_text
 
 
 def load_data_table(
