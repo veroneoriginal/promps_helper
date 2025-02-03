@@ -333,8 +333,9 @@ class ExcelManager:
     ) -> dict:
         """
         В этой функции осуществляется формирование словаря из листа 'Подборки'
+
         :param ws_title: имя листа, с которого берем информацию
-        :return: dict
+        :return: словарь со средствами из подборки и итоговой рекомендацией
         """
 
         ws = self.wb[ws_title]
@@ -345,16 +346,12 @@ class ExcelManager:
         # Поиск индексов нужных столбцов
         headers = {cell.value: idx + 1 for idx, cell in enumerate(ws[1])}
 
-        # Поиск строки, где значение в столбце "Дата" совпадает с сегодняшней датой
+        # Поиск строки с сегодняшней датой
         target_row = None
         for row in range(2, ws.max_row + 1):
-            cell = ws.cell(row=row, column=headers["Дата"])
-            cell_value = cell.value
-            # Если в ячейке дата, преобразуем её в нужный формат
-            if isinstance(cell_value, datetime):
-                cell_str = cell_value.strftime("%d.%m.%Y")
-            else:
-                cell_str = str(cell_value)
+            cell_value = ws.cell(row=row, column=headers["Дата"]).value
+            cell_str = cell_value.strftime("%d.%m.%Y") \
+                if isinstance(cell_value, datetime) else str(cell_value)
             if cell_str == today_data:
                 target_row = row
                 break
@@ -401,20 +398,16 @@ class ExcelManager:
         # столбец с названием средства называется "Название"
         product_name_col_name = "Название"
 
-        # Собираем дополнительную информацию для каждого средства из листа "Средства"
-        # Ключ — название средства, значение — словарь с данными (цена, бренд, и т.д.)
+        # # Собираем дополнительную информацию для каждого средства из листа "Средства"
+        # # Ключ — название средства, значение — словарь с данными (цена, бренд, и т.д.)
         additional_info = {}
         for row in range(2, ws.max_row + 1):
             prod_name = ws.cell(row=row, column=headers[product_name_col_name]).value
             if not prod_name:
-                continue  # пропускаем пустые строки
-            row_info = {}
-            # Для каждого столбца, кроме того, где находится название средства,
-            # считываем данные и записываем их в row_info
-            for header, col in headers.items():
-                if header == product_name_col_name:
-                    continue
-                row_info[header] = ws.cell(row=row, column=col).value
+                continue
+            # Собираем данные для всех столбцов, кроме колонки с названием продукта
+            row_info = {header: ws.cell(row=row, column=col).value
+                        for header, col in headers.items() if header != product_name_col_name}
             additional_info[prod_name] = row_info
 
         # Обновляем основной словарь, дополняя данные для каждого средства из листа "Средства"
@@ -424,10 +417,5 @@ class ExcelManager:
                 continue
             if prod_name in additional_info:
                 data[prod_name].update(additional_info[prod_name])
-            else:
-                print(f"Дополнительная информация для '{prod_name}'"
-                      f" не найдена на листе 'Средства'.")
-
-        print("\nИтоговый словарь после дополнения данными с листа 'Средства':")
 
         return data
