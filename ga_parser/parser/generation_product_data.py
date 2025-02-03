@@ -82,6 +82,7 @@ def get_product_data_dict(
         'Ссылка на изображение в базе': img_link_in_base,
         'Заполнено': 'да',
     }
+
     return clean_value_str_in_dict(data)
 
 
@@ -116,6 +117,26 @@ def _get_product_description(_product_card: dict) -> dict:
     return _product_card.get('productDescription')
 
 
+def _get_data_dict_by_key_text(
+        _product_card: dict,
+        data_name: str,
+) -> dict | None:
+    """
+    Для получения нужного словаря с данными из "productDescription"
+
+     :param _product_card: карточка средства в виде словаря
+    :param data_name: словорь с какими данными нужен из "productDescription"
+
+    :return: словарь с нужными данными или None
+    """
+
+    description_list = _get_product_description(_product_card)
+    for item in description_list:
+        if item['text'].strip().lower() == data_name.strip().lower():
+            return item
+    return None
+
+
 def get_item_title_description(_product_card: dict) -> tuple:
     """
     Для получения:  Артикул, Название, Описание
@@ -123,13 +144,18 @@ def get_item_title_description(_product_card: dict) -> tuple:
     :param _product_card: карточка средства в виде словаря
     :return: tuple
     """
-    description_dict = _get_product_description(_product_card)[0]
-
     item_in_shop = _product_card.get('id')
-    product_title = description_dict.get('title')
-    product_description = description_dict.get('content')
 
-    return item_in_shop, product_title, product_description
+    data_dict = _get_data_dict_by_key_text(
+        _product_card=_product_card,
+        data_name='описание',
+    )
+
+    if data_dict:
+        product_title = data_dict.get('title')
+        product_description = data_dict.get('content')
+        return item_in_shop, product_title, product_description
+    return None, None
 
 
 def get_attributes(_product_card: dict) -> tuple:
@@ -161,7 +187,7 @@ def get_attributes(_product_card: dict) -> tuple:
 
 
 @handle_index_error()
-def get_application_instruction(_product_card: dict) -> str:
+def get_application_instruction(_product_card: dict) -> str | None:
     """
     Для получения:  Применение
 
@@ -169,11 +195,18 @@ def get_application_instruction(_product_card: dict) -> str:
     :return: str
     """
 
-    return _get_product_description(_product_card)[1].get('content')
+    data_dict = _get_data_dict_by_key_text(
+        _product_card=_product_card,
+        data_name='применение',
+    )
+
+    if data_dict:
+        return data_dict.get('content')
+    return None
 
 
 @handle_index_error()
-def get_compound(_product_card: dict) -> str:
+def get_compound(_product_card: dict) -> str | None:
     """
     Для получения:  Cостав
 
@@ -181,7 +214,14 @@ def get_compound(_product_card: dict) -> str:
     :return: str
     """
 
-    return _get_product_description(_product_card)[2].get('content')
+    data_dict = _get_data_dict_by_key_text(
+        _product_card=_product_card,
+        data_name='состав',
+    )
+
+    if data_dict:
+        return data_dict.get('content')
+    return None
 
 
 @handle_index_error()
@@ -193,16 +233,21 @@ def get_brand(_product_card: dict) -> tuple:
     :return: tuple
     """
 
-    info = _get_product_description(_product_card)[3]
-    brand_name = info.get('title')
-    brand_country = info.get('subtitle')
-    brand_description = info.get('content')
+    data_dict = _get_data_dict_by_key_text(
+        _product_card=_product_card,
+        data_name='о бренде',
+    )
 
-    return brand_name, brand_country, brand_description
+    if data_dict:
+        brand_name = data_dict.get('title')
+        brand_country = data_dict.get('subtitle')
+        brand_description = data_dict.get('content')
+        return brand_name, brand_country, brand_description
+    return None, None, None
 
 
 @handle_index_error()
-def get_additional_info(_product_card: dict) -> str:
+def get_additional_info(_product_card: dict) -> str | None:
     """
     Для получения:  Дополнительная информация
 
@@ -210,7 +255,14 @@ def get_additional_info(_product_card: dict) -> str:
     :return: str
     """
 
-    return _get_product_description(_product_card)[4].get('content')
+    data_dict = _get_data_dict_by_key_text(
+        _product_card=_product_card,
+        data_name='Дополнительная информация',
+    )
+
+    if data_dict:
+        return data_dict.get('content')
+    return None
 
 
 def get_measure(_product_card: dict) -> tuple:
