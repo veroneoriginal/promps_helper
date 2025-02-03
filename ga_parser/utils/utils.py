@@ -104,27 +104,41 @@ def calculate_price_ml(
     return int((price / units) * ml)
 
 
+def clean_product_name(
+        product_title: str,
+) -> str:
+    """
+    Удаляем все символы, кроме букв и цифр, заменяем их на "_"
+
+    :param product_title: "Грязное" название средства
+    :return: отчищенное имя
+    """
+
+    return re.sub(
+        pattern=r"[^a-zA-Z0-9]+",
+        repl="_",
+        string=product_title.strip().lower()
+    )
+
+
 def download_image(
         url: str,
         product_title: str,
         image_dir_path: Path,
-):
+) -> None:
     """
     Сохраняет изображение средства в папку
 
     :param url: ссылка на изображение средства
     :param product_title: название средства
     :param image_dir_path: базовый путь к папке, в которую сохранять изображения
-    :return:
+    :return: None
     """
 
     response = get_image(url)
     # Удаляем все символы, кроме букв и цифр, заменяем их на "_"
-    sanitized_title = re.sub(
-        pattern=r"[^a-zA-Z0-9]+",
-        repl="_",
-        string=product_title.strip().lower()
-    )
+    sanitized_title = clean_product_name(product_title)
+
     save_path = image_dir_path / f"{sanitized_title}.jpg"
 
     # Открываем файл в бинарном режиме для записи
