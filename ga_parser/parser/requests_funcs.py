@@ -43,7 +43,7 @@ def get_image(url: str) -> Response | None:
     """
 
     try:
-        response = requests.get(url, stream=True, headers=HEADERS, timeout=5)
+        response = requests.get(url, stream=True, headers=HEADERS, timeout=15)
         response.raise_for_status()
         return response
     except requests.exceptions.RequestException as e:
