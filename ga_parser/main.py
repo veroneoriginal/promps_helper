@@ -1,6 +1,5 @@
 """ Модуль для запуска парсера """
 
-from pathlib import Path
 from time import sleep
 
 from ga_parser.parser.parse import parse_product
@@ -15,7 +14,7 @@ from ga_parser.utils.utils import (
 def _process_product(
         products_for_parse: dict[str, tuple],
         excel_process: ExcelProcess,
-        image_dir_path: Path,
+        image_dir_path: str,
         base_delay: int,
 ):
     """
@@ -74,16 +73,7 @@ def start_parser(
     _process_product(
         products_for_parse=products_for_parse,
         excel_process=excel_process,
-        image_dir_path=path_to_universal(image_dir_path),
+        image_dir_path=image_dir_path,
         base_delay=base_delay,
     )
     excel_process.wb_close()
-
-
-if __name__ == '__main__':
-    start_parser(
-        table_path='../00_base/00_Средства.xlsx',
-        ws_title='Средства',
-        image_dir_path='../00_base/01_products/00_img/',
-        base_delay=10,
-    )

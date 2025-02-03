@@ -3,20 +3,25 @@
 """
 Логика для обработки данных из словаря с карточной средства
 """
+from pathlib import Path
 
 from ga_parser.utils.utils import (
     clean_value_str_in_dict,
     list_to_dict,
     create_full_link_to_image,
-    calculate_price_ml, handle_index_error,
+    calculate_price_ml, handle_index_error, clean_product_name,
 )
 
 
-def get_product_data_dict(product_card: dict) -> dict:
+def get_product_data_dict(
+        product_card: dict,
+        image_dir_path: str,
+) -> dict:
     """
     Формирования финального словаря со всеми данными по средству
 
     :param product_card: карточка средства в виде словаря
+    :param image_dir_path: путь до изображения
     :return: dict
     """
 
@@ -49,6 +54,7 @@ def get_product_data_dict(product_card: dict) -> dict:
     measure_quantity = get_measure_quantity(product_card)
     price = get_price_by_units(product_card, measure_quantity)
     img_link = get_img_link(product_card, measure_quantity)
+    img_link_in_base = get_img_link_in_base(product_title, image_dir_path)
     cost_for_comparison = calculate_price_ml(measure_quantity, price)
 
     data = {
@@ -73,10 +79,29 @@ def get_product_data_dict(product_card: dict) -> dict:
         'Страна бренда': brand_country,
         'Описание бренда': brand_description,
         'Дополнительная информация': additional_info,
+        'Ссылка на изображение в базе': img_link_in_base,
         'Заполнено': 'да',
     }
-
     return clean_value_str_in_dict(data)
+
+
+def get_img_link_in_base(
+        product_title: str,
+        image_dir_path: str,
+        img_format: str = 'jpg',
+) -> str:
+    """
+    Для получения Ссылка на изображение в базе
+
+    :param product_title: исходное имя продукта
+    :param image_dir_path: папка для сохранения изображения
+    :param img_format: форат изображения
+    :return: путь до изображения
+    """
+
+    cleaned_product_title = clean_product_name(product_title)
+    image_path = Path(image_dir_path) / f'{cleaned_product_title}.{img_format}'
+    return str(image_path)
 
 
 def _get_product_description(_product_card: dict) -> dict:
