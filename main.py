@@ -12,6 +12,7 @@ from excel_process_data.process_data import ExcelManager
 from prompt_constructor.constructor import PromptConstructor
 from prompt_constructor.settings_constructor.settings_response import SETTINGS_RESPONSE
 from prompt_constructor.settings_constructor.system_prompt import SYSTEM_PROMPT
+from prompt_constructor.json_scheme_example.json_scheme_six_products import JSON_SCHEME_SIX_PRODUCTS
 
 
 class ControlManager:
@@ -52,6 +53,7 @@ class ControlManager:
     def _create_context_for_request_to_openai(
             self,
             prompt_for_convert: str,
+            json_scheme: dict,
     ) -> None:
         """
         В этой функции осуществляется вызов ключевой функции по:
@@ -70,6 +72,7 @@ class ControlManager:
             prompt=prompt_for_convert,
             system_prompt=SYSTEM_PROMPT,
             api_key=openai_api_key,
+            json_scheme=json_scheme,
         )
 
     def _reviewing_response_from_openai(
@@ -96,12 +99,15 @@ class ControlManager:
             self,
             file_path: str,
             json_file_path: str,
+            json_scheme: dict,
     ) -> None:
         """
         Главный метод класса, в котором собрана вся логика программы
 
         :param file_path: путь до документа .xlsx
         :param json_file_path: путь до json-файла
+        :param json_scheme: json_scheme запроса (определяется в зависимости
+        от количества анализируемых средств)
         :return: None
         """
 
@@ -112,12 +118,11 @@ class ControlManager:
         prompt = self._bring_prompt(dict_with_info=data)
 
         print('Отправляю запрос в OpenAI.')
-        self._create_context_for_request_to_openai(prompt_for_convert=prompt)
+        self._create_context_for_request_to_openai(prompt_for_convert=prompt,
+                                                   json_scheme=json_scheme)
 
         print('Разбираю ответ от OpenAI.')
         self._reviewing_response_from_openai(file_path=file_path, json_file_path=json_file_path)
-
-        print('Следующим шагом будет создание картинок.')
 
         # print('Готовлю изображения со средствами.')
 
@@ -127,4 +132,5 @@ if __name__ == '__main__':
     instance.create_collection(
         file_path='00_base/00_Средства.xlsx',
         json_file_path="prompt/history_prompt/Анализ_средств.json",
+        json_scheme=JSON_SCHEME_SIX_PRODUCTS,
     )
