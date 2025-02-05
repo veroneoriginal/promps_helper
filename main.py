@@ -122,9 +122,10 @@ class ControlManager:
                                                    json_scheme=json_scheme)
 
         print('Разбираю ответ от OpenAI.')
-        self._reviewing_response_from_openai(file_path=file_path, json_file_path=json_file_path)
+        self._reviewing_response_from_openai(file_path=file_path,
+                                             json_file_path=json_file_path)
 
-        # print('Готовлю изображения со средствами.')
+        print('Готовлю изображения со средствами.')
 
 
 if __name__ == '__main__':

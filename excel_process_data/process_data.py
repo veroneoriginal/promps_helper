@@ -8,8 +8,10 @@ from typing import (
     Any,
 )
 
+import datetime
 from openpyxl import load_workbook
 from openpyxl.worksheet.worksheet import Worksheet
+from excel_process_data.utils.utils import find_empty_row_for_today
 
 
 class ExcelManager:
@@ -262,6 +264,53 @@ class ExcelManager:
             filter_column="Новое",
             filter_value="да")
 
+    def write_products(
+            self,
+            ws: Worksheet,
+            data: Optional[Any],
+            empty_row: int,
+            headers: dict,
+    ) -> None:
+
+        """
+        Функция осуществляет запись о средствах из Json-файла в лист Подборки
+
+        :param ws: активный лист из excel-документа
+        :param data: JSON - данные
+        :param empty_row: номер строки, в которую будет осуществляться запись
+        :param headers: словарь сназваниями столбцов и их номерами
+
+        :return: None
+        """
+
+        # Определяем названия столбцов по заголовкам, например "Средство 1", "Средство 2" и т.д.
+        rating_columns = []
+        i = 1
+        while f"Средство {i}" in headers:
+            rating_columns.append(headers[f"Средство {i}"])
+            i += 1
+
+        product_index = 1
+        rating_index = 0
+        while True:
+            product_key = f"product_{product_index}"
+            if product_key not in data:
+                break
+            product_data = data[product_key]
+            if rating_index < len(rating_columns):
+                col_name = rating_columns[rating_index]
+                col_pluses = col_name + 1  # предполагаем, что плюсы в следующем столбце
+                col_minuses = col_name + 2  # а минусы — через один после плюсов
+
+                ws.cell(row=empty_row, column=col_name, value=product_data["title"])
+                ws.cell(row=empty_row, column=col_pluses, value=product_data["plus"])
+                ws.cell(row=empty_row, column=col_minuses, value=product_data["minus"])
+            else:
+                print(f"Предупреждение: для {product_key} "
+                      f"не найдены соответствующие столбцы в Excel.")
+            product_index += 1
+            rating_index += 1
+
     def writing_data_from_json_to_excel(
             self,
             data: Optional[Any],
@@ -278,7 +327,6 @@ class ExcelManager:
             sys.exit()
 
         # Загружаем существующий Excel-файл
-
         ws = self.wb["Подборки"]
 
         # Считываем заголовки и определяем их позиции
@@ -287,38 +335,30 @@ class ExcelManager:
         # Определяем нужные столбцы
         col_best_product = headers["Лучшее средство"]
         col_recommendation = headers["Итоговая рекомендация"]
+        col_date = headers["Дата"]
 
-        # Определяем столбцы для рейтинга (ищем только "Средство 1", остальное идёт подряд)
-        rating_columns = [headers[f"Средство {i}"] for i in range(1, 7)]
+        # Определяем текущую дату в нужном формате (например, "ДД.ММ.ГГГГ")
+        today_str = datetime.date.today().strftime("%d.%m.%Y")
 
-        # Ищем первую пустую строку в колонке "Лучшее средство"
-        empty_row = ws.max_row + 1  # По умолчанию добавляем в конец
+        # Ищем строку с текущей датой и пустой ячейкой в столбце "Лучшее средство"
+        empty_row = find_empty_row_for_today(
+            ws=ws,
+            col_date=col_date,
+            col_best_product=col_best_product,
+            today_str=today_str,
+        )
+        if empty_row is None:
+            print(f"⛔ Ошибка: для даты {today_str} не найдена пустая строка для записи.")
+            sys.exit()
 
-        for row in range(2, ws.max_row + 2):
-            if ws.cell(row=row, column=col_best_product).value is None:
-                empty_row = row
-                break
+        # Запись лучшего средства в таблицу из json-файла
+        ws.cell(row=empty_row, column=col_best_product, value=data["best_product"])
 
-        # Заполняем "Лучшее средство"
-        ws.cell(row=empty_row, column=col_best_product, value=data["Лучшее средство"])
+        # Запись данных по продуктам
+        self.write_products(ws, data, empty_row, headers)
 
-        # Заполняем рейтинг
-        for i, item in enumerate(data["Рейтинг средств"]):
-            # Столбец для названия средства
-            col_name = rating_columns[i]
-
-            # Следующий столбец для плюсов
-            col_pluses = col_name + 1
-
-            # Через один столбец для минусов
-            col_minuses = col_name + 2
-
-            ws.cell(row=empty_row, column=col_name, value=item["название"])
-            ws.cell(row=empty_row, column=col_pluses, value="\n".join(item["плюсы"]))
-            ws.cell(row=empty_row, column=col_minuses, value="\n".join(item["минусы"]))
-
-        # Заполняем "Итоговую рекомендацию"
-        ws.cell(row=empty_row, column=col_recommendation, value=data["Итоговая рекомендация"])
+        # Блок 5: Запись итоговой рекомендации
+        ws.cell(row=empty_row, column=col_recommendation, value=data["result"])
 
         # Сохраняем изменения
         self._save_wb()
