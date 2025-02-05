@@ -10,9 +10,14 @@ from appeal_to_openai.utils import checking_file_with_response
 from excel_process_data.main import main as load_data_main
 from excel_process_data.process_data import ExcelManager
 from prompt_constructor.constructor import PromptConstructor
+from prompt_constructor.json_scheme_example.json_scheme_four_products import (
+    JSON_SCHEME_FOUR_PRODUCTS,
+)
+from prompt_constructor.json_scheme_example.json_scheme_six_products import (
+    JSON_SCHEME_SIX_PRODUCTS
+)
 from prompt_constructor.settings_constructor.settings_response import SETTINGS_RESPONSE
 from prompt_constructor.settings_constructor.system_prompt import SYSTEM_PROMPT
-from prompt_constructor.json_scheme_example.json_scheme_six_products import JSON_SCHEME_SIX_PRODUCTS
 
 
 class ControlManager:
@@ -95,21 +100,41 @@ class ControlManager:
 
         instance_excel.writing_data_from_json_to_excel(data=data)
 
+    def _determine_scheme_by_number_of_products(
+            self,
+            product_count: int = 6 | 4,
+    ) -> dict:
+
+        """
+        Функция для определения json-схемы для отправки запроса
+
+        :param product_count: количество средств, которые анализируюся
+        :return: json-scheme на заданное количество продуктов
+        """
+        if product_count == 4:
+            return JSON_SCHEME_FOUR_PRODUCTS
+        if product_count == 6:
+            return JSON_SCHEME_SIX_PRODUCTS
+
+        raise ValueError(f"Неподдерживаемое количество продуктов: {product_count}")
+
     def create_collection(
             self,
             file_path: str,
             json_file_path: str,
-            json_scheme: dict,
+            product_count: int = 6 | 4,
     ) -> None:
         """
         Главный метод класса, в котором собрана вся логика программы
 
         :param file_path: путь до документа .xlsx
         :param json_file_path: путь до json-файла
-        :param json_scheme: json_scheme запроса (определяется в зависимости
-        от количества анализируемых средств)
+        :param product_count: количество средств, которые анализируюся
         :return: None
         """
+
+        # Определяю json-схему
+        json_scheme = self._determine_scheme_by_number_of_products(product_count=product_count)
 
         print('Забираю данные из таблицы.')
         data = self._take_data_from_the_table(file_path=file_path)
@@ -133,5 +158,5 @@ if __name__ == '__main__':
     instance.create_collection(
         file_path='00_base/00_Средства.xlsx',
         json_file_path="prompt/history_prompt/Анализ_средств.json",
-        json_scheme=JSON_SCHEME_SIX_PRODUCTS,
+        product_count=6,
     )

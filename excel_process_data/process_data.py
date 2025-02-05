@@ -283,33 +283,33 @@ class ExcelManager:
         :return: None
         """
 
-        # Определяем названия столбцов по заголовкам, например "Средство 1", "Средство 2" и т.д.
-        rating_columns = []
-        i = 1
-        while f"Средство {i}" in headers:
-            rating_columns.append(headers[f"Средство {i}"])
-            i += 1
+        # Собираем ключи продуктов из JSON
+        product_keys = [
+            key for key in data.keys() if key.startswith("product_")
+        ]
 
-        product_index = 1
-        rating_index = 0
-        while True:
-            product_key = f"product_{product_index}"
-            if product_key not in data:
-                break
+        for product_key in product_keys:
+            product_index = int(product_key.split("_")[1])
             product_data = data[product_key]
-            if rating_index < len(rating_columns):
-                col_name = rating_columns[rating_index]
-                col_pluses = col_name + 1  # предполагаем, что плюсы в следующем столбце
-                col_minuses = col_name + 2  # а минусы — через один после плюсов
 
-                ws.cell(row=empty_row, column=col_name, value=product_data["title"])
-                ws.cell(row=empty_row, column=col_pluses, value=product_data["plus"])
-                ws.cell(row=empty_row, column=col_minuses, value=product_data["minus"])
-            else:
-                print(f"Предупреждение: для {product_key} "
-                      f"не найдены соответствующие столбцы в Excel.")
-            product_index += 1
-            rating_index += 1
+            # Промежуточный словарь для соответствия ключей JSON и заголовков Excel
+            mapping = {
+                "title": f"Средство {product_index} Название",
+                "plus": f"Средство {product_index} ПЛЮСЫ",
+                "minus": f"Средство {product_index} МИНУСЫ",
+            }
+
+            for json_key, header_name in mapping.items():
+                if header_name in headers:
+                    ws.cell(
+                        row=empty_row,
+                        column=headers[header_name],
+                        value=product_data[json_key]
+                    )
+                else:
+                    print(f"Предупреждение: не найден столбец '{header_name}'"
+                          f" для продукта {product_key}.")
+
 
     def writing_data_from_json_to_excel(
             self,
@@ -357,7 +357,7 @@ class ExcelManager:
         # Запись данных по продуктам
         self.write_products(ws, data, empty_row, headers)
 
-        # Блок 5: Запись итоговой рекомендации
+        # Запись итоговой рекомендации
         ws.cell(row=empty_row, column=col_recommendation, value=data["result"])
 
         # Сохраняем изменения
