@@ -1,6 +1,5 @@
 """ В этом модуле реализована логика вызовов функций для загрузки данных из таблиц """
 
-# from pprint import pprint
 
 from excel_process_data.process_data import ExcelManager
 
@@ -23,8 +22,6 @@ def main(
     instance_excel = ExcelManager(file_path=file_path)
 
     result = load_data_table(instance_excel=instance_excel)
-
-    # pprint(create_final_dict(data=result))
 
     return create_final_dict(data=result)
 

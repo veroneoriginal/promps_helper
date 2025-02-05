@@ -11,18 +11,10 @@ setup_prompt = {
     3: (
         'Данные человека будут даны.'
     ),
-
-    # 4: (
-    #     # 'Отвечай всегда в Markdown.'
-    #     # 'Отвечай в json.'
-    # ),
-
 }
 
 SYSTEM_PROMPT = f"""
 1. {setup_prompt[1]}
 2. {setup_prompt[2]}
 3. {setup_prompt[3]}
-
 """
-# 4. {setup_prompt[4]}
