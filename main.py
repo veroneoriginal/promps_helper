@@ -10,12 +10,7 @@ from appeal_to_openai.utils import checking_file_with_response
 from excel_process_data.main import main as load_data_main
 from excel_process_data.process_data import ExcelManager
 from prompt_constructor.constructor import PromptConstructor
-from prompt_constructor.json_scheme_example.json_scheme_four_products import (
-    JSON_SCHEME_FOUR_PRODUCTS,
-)
-from prompt_constructor.json_scheme_example.json_scheme_six_products import (
-    JSON_SCHEME_SIX_PRODUCTS
-)
+from prompt_constructor.json_schemes.json_schemes import determine_scheme_by_number_of_products
 from prompt_constructor.settings_constructor.settings_response import SETTINGS_RESPONSE
 from prompt_constructor.settings_constructor.system_prompt import SYSTEM_PROMPT
 
@@ -100,23 +95,18 @@ class ControlManager:
 
         instance_excel.writing_data_from_json_to_excel(data=data)
 
-    def _determine_scheme_by_number_of_products(
+    def _determine_scheme_for_response_format(
             self,
             product_count: int = 6 | 4,
     ) -> dict:
-
         """
-        Функция для определения json-схемы для отправки запроса
+        Функция для вызова полной функции по выбору json-scheme.
 
         :param product_count: количество средств, которые анализируюся
-        :return: json-scheme на заданное количество продуктов
+        :return: json-scheme в виде словаря
         """
-        if product_count == 4:
-            return JSON_SCHEME_FOUR_PRODUCTS
-        if product_count == 6:
-            return JSON_SCHEME_SIX_PRODUCTS
 
-        raise ValueError(f"Неподдерживаемое количество продуктов: {product_count}")
+        return determine_scheme_by_number_of_products(product_count=product_count)
 
     def create_collection(
             self,
@@ -133,8 +123,8 @@ class ControlManager:
         :return: None
         """
 
-        # Определяю json-схему
-        json_scheme = self._determine_scheme_by_number_of_products(product_count=product_count)
+        print('Определяю json-схему.')
+        json_scheme = self._determine_scheme_for_response_format(product_count=product_count)
 
         print('Забираю данные из таблицы.')
         data = self._take_data_from_the_table(file_path=file_path)
