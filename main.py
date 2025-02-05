@@ -3,8 +3,6 @@
 """
 
 import os
-from pprint import pprint
-
 from dotenv import load_dotenv
 
 from appeal_to_openai.main import main as appeal_to_openai_main
@@ -12,6 +10,7 @@ from appeal_to_openai.utils import checking_file_with_response
 from excel_process_data.main import main as load_data_main
 from excel_process_data.process_data import ExcelManager
 from prompt_constructor.constructor import PromptConstructor
+from prompt_constructor.json_schemes.json_schemes import determine_scheme_by_number_of_products
 from prompt_constructor.settings_constructor.settings_response import SETTINGS_RESPONSE
 from prompt_constructor.settings_constructor.system_prompt import SYSTEM_PROMPT
 
@@ -54,6 +53,7 @@ class ControlManager:
     def _create_context_for_request_to_openai(
             self,
             prompt_for_convert: str,
+            json_scheme: dict,
     ) -> None:
         """
         В этой функции осуществляется вызов ключевой функции по:
@@ -72,6 +72,7 @@ class ControlManager:
             prompt=prompt_for_convert,
             system_prompt=SYSTEM_PROMPT,
             api_key=openai_api_key,
+            json_scheme=json_scheme,
         )
 
     def _reviewing_response_from_openai(
@@ -93,6 +94,19 @@ class ControlManager:
         instance_excel = ExcelManager(file_path=file_path)
 
         instance_excel.writing_data_from_json_to_excel(data=data)
+
+    def _determine_scheme_for_response_format(
+            self,
+            product_count: int = 6 | 4,
+    ) -> dict:
+        """
+        Функция для вызова полной функции по выбору json-scheme.
+
+        :param product_count: количество средств, которые анализируюся
+        :return: json-scheme в виде словаря
+        """
+
+        return determine_scheme_by_number_of_products(product_count=product_count)
 
     def _generating_data_for_images(
             self,
@@ -122,14 +136,19 @@ class ControlManager:
             self,
             file_path: str,
             json_file_path: str,
+            product_count: int = 6 | 4,
     ) -> None:
         """
         Главный метод класса, в котором собрана вся логика программы
 
         :param file_path: путь до документа .xlsx
         :param json_file_path: путь до json-файла
+        :param product_count: количество средств, которые анализируюся
         :return: None
         """
+
+        print('Определяю json-схему.')
+        json_scheme = self._determine_scheme_for_response_format(product_count=product_count)
 
         print('Забираю данные из таблицы.')
         data = self._take_data_from_the_table(file_path=file_path)
@@ -138,17 +157,17 @@ class ControlManager:
         prompt = self._bring_prompt(dict_with_info=data)
 
         print('Отправляю запрос в OpenAI.')
-        self._create_context_for_request_to_openai(prompt_for_convert=prompt)
+        self._create_context_for_request_to_openai(prompt_for_convert=prompt,
+                                                   json_scheme=json_scheme)
 
         print('Разбираю ответ от OpenAI.')
-        self._reviewing_response_from_openai(file_path=file_path, json_file_path=json_file_path)
+        self._reviewing_response_from_openai(file_path=file_path,
+                                             json_file_path=json_file_path)
 
-        print()
         print('Формируем данные для картинок.')
         info_for_picture = self._generating_data_for_images(file_path=file_path)
-        pprint(info_for_picture)
+        print(info_for_picture)
 
-        print()
         print('Следующим шагом будет изображений со средствами.')
 
 
@@ -158,4 +177,5 @@ if __name__ == '__main__':
     instance.create_collection(
         file_path='00_base/00_Средства.xlsx',
         json_file_path="prompt/history_prompt/Анализ_средств.json",
+        product_count=6,
     )

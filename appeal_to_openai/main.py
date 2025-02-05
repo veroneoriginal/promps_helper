@@ -14,6 +14,7 @@ def main(
         prompt: str,
         system_prompt: str,
         api_key: str,
+        json_scheme: dict,
         folder_name: str = 'prompt/history_prompt',
 ) -> None:
     """
@@ -24,6 +25,8 @@ def main(
     :param folder_name: папка, в которую будет сохраняться ответ openai
     :param prompt: сформированный промпт для отправки запроса
     :param system_prompt: системный промпт для отправки запроса
+    :param json_scheme: json_scheme запроса (определяется в зависимости
+     от количества анализируемых средств)
     :return: None
     """
 
@@ -38,6 +41,7 @@ def main(
         api_key=api_key,
         context=context,
         model="gpt-4o",
+        json_scheme=json_scheme,
     )
 
     # print('Обрабатываю контент полученный от OpenAI')
