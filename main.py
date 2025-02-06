@@ -108,29 +108,29 @@ class ControlManager:
 
         return determine_scheme_by_number_of_products(product_count=product_count)
 
-    def _generating_data_for_images(
-            self,
-            file_path: str,
-    ) -> dict:
-        """
-        Функция для создания словаря со всей информацией по средствам из нужной подборки
-
-        :param file_path: путь до документа .xlsx
-        :return: словарь со всеми данными по средствам
-        """
-
-        instance_excel = ExcelManager(file_path=file_path)
-
-        # формирование словаря из листа "Подборки"
-        collection_dict = instance_excel.forming_dict_from_collection(ws_title='Подборки')
-
-        # дополнение словаря всей информацией из листа "Средства"
-        final_dict = instance_excel.add_data_from_the_tools_page(
-            ws_title="Средства",
-            data=collection_dict,
-        )
-
-        return final_dict
+    # def _generating_data_for_images(
+    #         self,
+    #         file_path: str,
+    # ) -> dict:
+    #     """
+    #     Функция для создания словаря со всей информацией по средствам из нужной подборки
+    #
+    #     :param file_path: путь до документа .xlsx
+    #     :return: словарь со всеми данными по средствам
+    #     """
+    #
+    #     instance_excel = ExcelManager(file_path=file_path)
+    #
+    #     # формирование словаря из листа "Подборки"
+    #     collection_dict = instance_excel.forming_dict_from_collection(ws_title='Подборки')
+    #
+    #     # дополнение словаря всей информацией из листа "Средства"
+    #     final_dict = instance_excel.add_data_from_the_tools_page(
+    #         ws_title="Средства",
+    #         data=collection_dict,
+    #     )
+    #
+    #     return final_dict
 
     def create_collection(
             self,
@@ -164,9 +164,9 @@ class ControlManager:
         self._reviewing_response_from_openai(file_path=file_path,
                                              json_file_path=json_file_path)
 
-        print('Формируем данные для картинок.')
-        info_for_picture = self._generating_data_for_images(file_path=file_path)
-        print(info_for_picture)
+        # print('Формируем данные для картинок.')
+        # info_for_picture = self._generating_data_for_images(file_path=file_path)
+        # print(info_for_picture)
 
         print('Следующим шагом будет изображений со средствами.')
 
