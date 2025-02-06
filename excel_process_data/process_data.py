@@ -11,7 +11,12 @@ from typing import (
 import datetime
 from openpyxl import load_workbook
 from openpyxl.worksheet.worksheet import Worksheet
-from excel_process_data.utils.utils import find_empty_row_for_today
+from excel_process_data.utils.utils import (
+    find_empty_row_for_today,
+    find_target_row_for_today_and_full_best_product,
+    find_amount_funds,
+    function_for_forming_dict_with_correlation,
+)
 
 
 class ExcelManager:
@@ -45,6 +50,24 @@ class ExcelManager:
             headers[cell.value] = index
 
         return headers
+
+    def _create_headers_numerate(
+            self,
+            sheet: Worksheet,
+    ) -> dict:
+        """
+        Создаёт словарь заголовков из первой строки указанного листа Excel.
+        Функция проходит по первой строке листа Excel и формирует словарь,
+        где ключами являются значения заголовков (названия столбцов),
+        а значениями — их порядковые номера (начиная с 1, как в openpyxl).
+
+        Это удобно для быстрого поиска нужного столбца по названию заголовка.
+
+        :param sheet: Объект Worksheet (лист из Excel-файла), откуда берутся заголовки.
+        :return: Словарь { "Название столбца": индекс_столбца }, где индекс начинается с 1.
+        """
+
+        return {cell.value: idx + 1 for idx, cell in enumerate(sheet[1])}
 
     def _load_data(
             self,
@@ -310,7 +333,6 @@ class ExcelManager:
                     print(f"Предупреждение: не найден столбец '{header_name}'"
                           f" для продукта {product_key}.")
 
-
     def writing_data_from_json_to_excel(
             self,
             data: Optional[Any],
@@ -364,3 +386,88 @@ class ExcelManager:
         self._save_wb()
 
         print(f"Лист 'Подборки' успешно обновлен: {self.file_path}")
+
+    def forming_dict_from_collection(
+            self,
+            ws_title: str,
+    ) -> dict:
+        """
+        В этой функции осуществляется формирование словаря из листа 'Подборки'
+
+        :param ws_title: имя листа, с которого берем информацию
+        :return: словарь со средствами из подборки и итоговой рекомендацией
+        """
+
+        ws = self.wb[ws_title]
+
+        # Определение сегодняшней даты
+        today_data = datetime.datetime.today().strftime('%d.%m.%Y')
+
+        # Поиск индексов нужных столбцов
+        headers = self._create_headers_numerate(sheet=ws)
+
+        # Поиск строки, с которой забираем средства
+        target_row = find_target_row_for_today_and_full_best_product(
+            sheet=ws,
+            today_data=today_data,
+            headers=headers,
+        )
+
+        # Осуществляю поиск количеств средств по заголовкам вида "Средство <номер> Название"
+        product_numbers = find_amount_funds(headers=headers)
+
+        best_mean = ws.cell(row=target_row, column=headers.get("Лучшее средство")).value
+
+        selection_dict = function_for_forming_dict_with_correlation(
+            sheet=ws,
+            product_numbers=product_numbers,
+            target_row=target_row,
+            headers=headers,
+            best_mean=best_mean,
+        )
+
+        # Добавляем итоговую рекомендацию
+        selection_dict["итоговая рекомендация"] = ws.cell(
+            row=target_row, column=headers.get("Итоговая рекомендация")
+        ).value
+
+        return selection_dict
+
+    def add_data_from_the_tools_page(
+            self,
+            ws_title: str,
+            data: dict,
+    ) -> dict:
+        """
+        Функция добавляет информацию к словарю со средствами из листа Подборки
+
+        :param ws_title: имя листа, с которого берем информацию
+        :param data: словарь со средствами, в который добавляем информацию
+        :return: дополненный словарь со средствами из подборки из базы средств
+        """
+
+        ws = self.wb[ws_title]
+
+        # Поиск индексов нужных столбцов
+        headers = self._create_headers_numerate(sheet=ws)
+
+        # Определяем индекс столбца с названиями средств
+        name_col = headers.get("Название")
+
+        # Ищем только те средства, которые есть в data
+        for product_name in data.keys():
+            if product_name == "Итоговая рекомендация":
+                # Пропускаем рекомендацию
+                continue
+
+            # Ищем строку, где в колонке "Название" есть product_name
+            for row in range(2, ws.max_row + 1):
+                if ws.cell(row=row, column=name_col).value == product_name:
+                    # Добавляем новые данные в data[prod_name]
+                    for key, col in headers.items():
+                        if key != "Название":
+                            data[product_name][key] = ws.cell(row=row, column=col).value
+                    # Нашли нужное средство → выходим из цикла
+                    break
+
+        return data
