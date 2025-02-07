@@ -130,7 +130,7 @@ class ControlManager:
 
         # дополнение словаря всей информацией из листа "Средства"
         full_dict = instance_excel.add_data_from_the_tools_page(
-            ws_title="Средства",
+            ws_title='Средства',
             data=collection_dict,
         )
 
