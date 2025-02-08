@@ -387,6 +387,26 @@ class ExcelManager:
 
         print(f"Лист 'Подборки' успешно обновлен: {self.file_path}")
 
+    def _search_value_in_specific_cell(
+            self,
+            ws: Worksheet,
+            target_row: int,
+            headers: dict,
+            column_name: str
+    ) -> str:
+        """
+        Функция для поиска значения в конкретной ячейке
+
+        :param ws: активный лист из excel-документа
+        :param headers: словарь с заголовками и нумерацией
+        :param target_row: номер строки, в которой будет осуществляться поиск
+        :param column_name: название столбца, в котором осуществляется поиск информации
+
+        :return: строка (содержимое ячейки)
+        """
+
+        return ws.cell(row=target_row, column=headers.get(column_name)).value
+
     def forming_dict_from_collection(
             self,
             ws_title: str,
@@ -416,7 +436,12 @@ class ExcelManager:
         # Осуществляю поиск количеств средств по заголовкам вида "Средство <номер> Название"
         product_numbers = find_amount_funds(headers=headers)
 
-        best_mean = ws.cell(row=target_row, column=headers.get("Лучшее средство")).value
+        best_mean = self._search_value_in_specific_cell(
+            ws=ws,
+            target_row=target_row,
+            headers=headers,
+            column_name="Лучшее средство",
+        )
 
         selection_dict = function_for_forming_dict_with_correlation(
             sheet=ws,
@@ -427,9 +452,12 @@ class ExcelManager:
         )
 
         # Добавляем итоговую рекомендацию
-        selection_dict["итоговая рекомендация"] = ws.cell(
-            row=target_row, column=headers.get("Итоговая рекомендация")
-        ).value
+        selection_dict["итоговая рекомендация"] = self._search_value_in_specific_cell(
+            ws=ws,
+            target_row=target_row,
+            headers=headers,
+            column_name="Итоговая рекомендация",
+        )
 
         return selection_dict
 

@@ -11,7 +11,6 @@ from appeal_to_openai.main import main as appeal_to_openai_main
 from appeal_to_openai.utils import checking_file_with_response
 from excel_process_data.main import main as load_data_main
 from excel_process_data.process_data import ExcelManager
-from excel_process_data.utils.utils import creating_dict_for_pdf
 from prompt_constructor.constructor import PromptConstructor
 from prompt_constructor.json_schemes.json_schemes import determine_scheme_by_number_of_products
 from prompt_constructor.settings_constructor.settings_response import SETTINGS_RESPONSE
@@ -116,27 +115,22 @@ class ControlManager:
             file_path: str,
     ) -> dict:
         """
-        Функция для создания словаря со всей информацией по средствам
-        из нужной подборки для вставки в картинку
+        Функция для создания словаря со всей информацией по средствам из нужной подборки
 
         :param file_path: путь до документа .xlsx
-        :return: словарь с данными по средствам для вставки в картинку
+        :return: словарь с всеми данными по средствам
         """
 
         instance_excel = ExcelManager(file_path=file_path)
 
-        # формирование словаря из листа "Подборки"
+        # формирование словаря из листа "Подборки" с нужными средствами
         collection_dict = instance_excel.forming_dict_from_collection(ws_title='Подборки')
 
-        # дополнение словаря всей информацией из листа "Средства"
-        full_dict = instance_excel.add_data_from_the_tools_page(
+        # дополненный всей информацией о средствах словарь из листа "Средства"
+        return instance_excel.add_data_from_the_tools_page(
             ws_title='Средства',
             data=collection_dict,
         )
-
-        # формирование словаря только с теми параметрами,
-        # которые нужны для вставки в картинку
-        return creating_dict_for_pdf(dict_full_info=full_dict)
 
     def create_collection(
             self,
