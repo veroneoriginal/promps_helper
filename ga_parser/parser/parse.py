@@ -2,11 +2,10 @@
 
 import json
 import re
-from pathlib import Path
 
 from ga_parser.parser.generation_product_data import get_product_data_dict
 from ga_parser.parser.requests_funcs import get_page
-from ga_parser.utils.utils import download_image
+from ga_parser.utils.utils import download_image, path_to_universal
 
 
 def get_product_card(html_text: str) -> dict | None:
@@ -51,7 +50,7 @@ def get_product_dict(url: str) -> dict | None:
 
 def parse_product(
         url: str,
-        image_dir_path: Path,
+        image_dir_path: str,
 ) -> dict | None:
     """
     Управляющая функция.
@@ -64,11 +63,11 @@ def parse_product(
     """
 
     product_card_dict = get_product_dict(url=url)
-    product_data_dict = get_product_data_dict(product_card_dict)
+    product_data_dict = get_product_data_dict(product_card_dict, image_dir_path)
     download_image(
         url=product_data_dict['Ссылка на изображение'],
         product_title=product_data_dict['Название'],
-        image_dir_path=image_dir_path
+        image_dir_path=path_to_universal(image_dir_path)
     )
 
     return product_data_dict

@@ -48,6 +48,7 @@ def _generate_text_content_openai(
         api_key: str,
         context: list,
         model: Literal["gpt-4o", "gpt-4o-mini", "gpt-3.5-turbo"],
+        json_scheme: dict,
 ) -> ChatCompletion:
     """
     Функция для отправки запроса на генерацию тестового контента в OpenAI.
@@ -55,6 +56,8 @@ def _generate_text_content_openai(
     :param api_key: ключ для подключения к OpenAI,
     :param context: сформированный контекст запроса,
     :param model: название используемой модели OpenAI
+    :param json_scheme: json_scheme запроса (определяется в зависимости
+     от количества анализируемых средств)
 
     :return: объект ChatCompletion
     """
@@ -72,7 +75,8 @@ def _generate_text_content_openai(
         frequency_penalty=0,
         presence_penalty=0,
         response_format={
-            "type": "text"
+            "type": "json_schema",
+            "json_schema": json_scheme,
         }
     )
 
@@ -137,6 +141,7 @@ def checking_file_with_response(
 
     with open(json_file_path, "r", encoding="utf-8") as file:
         try:
+            print("Функция checking_file_with_response - json OK.")
             return json.load(file)
 
         except json.JSONDecodeError as e:
