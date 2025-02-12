@@ -172,6 +172,7 @@ class ControlManager:
 
 
 
+
 if __name__ == '__main__':
     instance = ControlManager()
     instance.create_collection(
