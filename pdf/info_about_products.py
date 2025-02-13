@@ -1,3 +1,4 @@
+# pylint: skip-file
 data_with_products = {'ALTEREGO ITALY Curego Hydraday': {'Артикул в Золотом Яблоке': '19000222487',
                                     'Бренд': 'AlterEgo Italy',
                                     'Для кого': 'унисекс',
@@ -786,4 +787,3 @@ data_with_products = {'ALTEREGO ITALY Curego Hydraday': {'Артикул в Зо
                           'для тонких волос, для вашего типа волос оно '
                           'идеально подходит, так как обеспечивает необходимое '
                           'увлажнение и укрепление.'}
-
