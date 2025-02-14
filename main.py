@@ -3,14 +3,15 @@
 """
 
 import os
-from pprint import pprint
-
+from datetime import datetime
 from dotenv import load_dotenv
 
 from appeal_to_openai.main import main as appeal_to_openai_main
 from appeal_to_openai.utils import checking_file_with_response
 from excel_process_data.main import main as load_data_main
 from excel_process_data.process_data import ExcelManager
+from pdf.main_pdf import PDFCreator
+from pdf.utils import forming_indo_for_pdf
 from prompt_constructor.constructor import PromptConstructor
 from prompt_constructor.json_schemes.json_schemes import determine_scheme_by_number_of_products
 from prompt_constructor.settings_constructor.settings_response import SETTINGS_RESPONSE
@@ -132,6 +133,29 @@ class ControlManager:
             data=collection_dict,
         )
 
+    def _create_pdf_for_telegram_post(
+            self,
+            info_for_picture: dict,
+    ) -> None:
+        """
+        Метод для создания pdf-листов в телеграм (для постов со средствами)
+
+        :param data: словарь со всеми данными по средствам
+        :return: None
+        """
+        # из огромного словаря со всеми данными, берем инфу для картинки в пост
+        list_with_info = forming_indo_for_pdf(data=info_for_picture)
+
+        # Получаем текущее время в формате ДД_ММ_ЧЧ_ММ
+        timestamp = datetime.now().strftime("%d_%m_%H_%M")
+
+        instance_create_pdf = PDFCreator()
+        instance_create_pdf.create_pdf_for_telegram(
+            list_with_info=list_with_info,
+            # Формируем путь для output_folder
+            output_folder=f"pdf/pdf_outputs/{timestamp}",
+        )
+
     def create_collection(
             self,
             file_path: str,
@@ -166,11 +190,10 @@ class ControlManager:
 
         print('Формируем данные для картинок.')
         info_for_picture = self._generating_data_for_images(file_path=file_path)
-        pprint(info_for_picture)
 
-        print('Следующий шаг - создание изображений со средствами.')
-
-
+        print('Создаю изображения со средствами для Telegram-поста.')
+        self._create_pdf_for_telegram_post(info_for_picture=info_for_picture)
+        print('Изображения готовы!')
 
 
 if __name__ == '__main__':

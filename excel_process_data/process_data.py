@@ -385,7 +385,7 @@ class ExcelManager:
         # Сохраняем изменения
         self._save_wb()
 
-        print(f"Лист 'Подборки' успешно обновлен: {self.file_path}")
+        # print(f"Лист 'Подборки' успешно обновлен: {self.file_path}")
 
     def _search_value_in_specific_cell(
             self,

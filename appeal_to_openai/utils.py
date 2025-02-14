@@ -141,7 +141,6 @@ def checking_file_with_response(
 
     with open(json_file_path, "r", encoding="utf-8") as file:
         try:
-            print("Функция checking_file_with_response - json OK.")
             return json.load(file)
 
         except json.JSONDecodeError as e:

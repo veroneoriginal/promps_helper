@@ -1,143 +1,345 @@
 import os
+from typing import List
+from reportlab.pdfbase.ttfonts import TTFont
+from reportlab.pdfbase import pdfmetrics
 from reportlab.lib.enums import (
     TA_LEFT,
     TA_RIGHT,
     TA_CENTER,
 )
-from reportlab.lib.styles import (
-    getSampleStyleSheet,
-    ParagraphStyle,
-)
+from reportlab.lib.styles import ParagraphStyle
 from reportlab.platypus import (
-    SimpleDocTemplate,
+    BaseDocTemplate,
+    PageTemplate,
+    Frame,
     Paragraph,
     Spacer,
     Image,
-)
-from reportlab.pdfbase.ttfonts import TTFont
-from reportlab.pdfbase import pdfmetrics
-
-# Размер страницы в пикселях
-PAGE_WIDTH = 1024
-PAGE_HEIGHT = 1280
-
-# Регистрируем шрифты
-pdfmetrics.registerFont(TTFont("DejaVuSans", "DejaVuSans.ttf"))
-pdfmetrics.registerFont(TTFont("DejaVuSansBold", "DejaVuSans-Bold.ttf"))
-
-# Стили текста
-styles = getSampleStyleSheet()
-title_style = ParagraphStyle(
-    'Title',
-    fontName="DejaVuSansBold",
-    fontSize=40,
-    spaceBefore=50,
-    spaceAfter=50,
-    alignment=TA_CENTER,
-    leftIndent=60,
-    leading=45,
-)
-ratio_align_style = ParagraphStyle(
-    'RightAlign',
-    fontName="DejaVuSansBold",
-    fontSize=25,
-    alignment=TA_RIGHT,
-)
-
-bold_style = ParagraphStyle(
-    'Bold',
-    fontName="DejaVuSansBold",
-    fontSize=25,
-    spaceBefore=30,
-    spaceAfter=20,
-    alignment=TA_LEFT,
-    leftIndent=70,
-)
-normal_style = ParagraphStyle(
-    'Normal',
-    fontName="DejaVuSans",
-    fontSize=25,
-    spaceBefore=30,
-    spaceAfter=10,
-    leftIndent=70,
-    leading=25,
+    Flowable,
 )
 
 
-def add_brand_line(canvas, doc, brand_line_path):
-    """Рисует бренд-линию слева перед остальным контентом."""
-    canvas.drawImage(brand_line_path, 0, 0, width=80, height=PAGE_HEIGHT)
+class PDFCreator:
+    """Класс для создания pdf файлов"""
 
+    def __init__(self):
+        self._registration_fonts()
+        self.my_style = self._create_style()
+        self.width_page = 1024  # Ширина страницы в пикселях
+        self.heigth_page = 1280  # Высота страницы в пикселях
 
+    def _registration_fonts(self) -> None:
+        """
+        Метод для регистрации шрифтов для проекта
 
-def add_product_image(elements, img_path):
-    """Добавляет изображение продукта."""
-    try:
-        img = Image(img_path, width=PAGE_WIDTH, height=650)
-        # Убираем отступ сверху
-        elements.append(Spacer(1, -80))
-        elements.append(img)
-    except Exception as e:
-        print(f"Ошибка загрузки изображения {img_path}: {e}")
+        :return: None
+        """
 
+        pdfmetrics.registerFont(TTFont("DejaVuSans", "DejaVuSans.ttf"))
+        pdfmetrics.registerFont(TTFont("DejaVuSansBold", "DejaVuSans-Bold.ttf"))
 
+    def _create_style(self) -> dict:
+        """
+        Метод для задания параметров стиля
 
+        :return: словарь со стилями
+        """
 
+        return {
+            'title_style': ParagraphStyle(
+                'Title',
+                fontName="DejaVuSansBold",
+                fontSize=25,
+                spaceBefore=20,
+                spaceAfter=20,
+                alignment=TA_CENTER,
+                leftIndent=50,
+                leading=30,
+            ),
+            'ratio_align_style': ParagraphStyle(
+                'RightAlign',
+                fontName="DejaVuSansBold",
+                fontSize=18,
+                alignment=TA_RIGHT,
+            ),
+            'bold_style': ParagraphStyle(
+                'Bold',
+                fontName="DejaVuSansBold",
+                fontSize=21,
+                spaceBefore=10,
+                spaceAfter=10,
+                alignment=TA_LEFT,
+                leftIndent=50,
+            ),
+            'normal_style': ParagraphStyle(
+                'Normal',
+                fontName="DejaVuSans",
+                fontSize=16,
+                spaceBefore=15,
+                spaceAfter=10,
+                leftIndent=50,
+                leading=20,
+            ),
+        }
 
-def add_product_info(elements, product):
-    """Добавляет текстовую информацию о продукте."""
-    elements.append(Spacer(1, 20))
-    elements.append(Paragraph(product.get("Название", ""), title_style))
-    elements.append(Spacer(1, 10))
-    elements.append(Paragraph(f"{product.get('Соотношение', '')}", ratio_align_style))
-    elements.append(Spacer(1, 10))
-    elements.append(Paragraph("<b>Плюсы:</b>", bold_style))
-    elements.append(Paragraph(product.get("Плюсы", ""), normal_style))
-    elements.append(Spacer(1, 10))
-    elements.append(Paragraph("<b>Минусы:</b>", bold_style))
-    elements.append(Paragraph(product.get("Минусы", ""), normal_style))
+    def _pixels_to_points(
+            self,
+            pixels: int | float,
+    ) -> int | float:
+        """
+        Метод для конвертирования пикселей в поинты.
 
+        В типографике поинты (pt) используются как единицы измерения.
+        В reportlab и PDF стандартный DPI (dots per inch) = 72 dpi.
+        В экранах и изображениях стандартный DPI = 96 dpi.
+        Поэтому, чтобы перевести из 96 dpi → 72 dpi, используется коэффициент 72 / 96 = 0.75.
 
-def create_pdf(list_with_info, output_folder="pdf_outputs"):
-    """
-    Функция для создания PDF-файлов с наложенной бренд-лентой
-    :param list_with_info: список словарей с информацией о продуктах
-    :param brand_line_path: путь к изображению бренд-ленты
-    :param output_folder: папка для сохранения PDF
-    """
-    os.makedirs(output_folder, exist_ok=True)
+        :param pixels: значение изображения в пикселях
+        :return: значение изображения в поинтах
+        """
 
-    for product in list_with_info:
-        product_name = product.get("Название", )
-        safe_filename = product_name.replace(" ", "_").replace("/", "_") + ".pdf"
-        output_file = os.path.join(output_folder, safe_filename)
+        return pixels * 72 / 96
 
-        doc = SimpleDocTemplate(output_file, pagesize=(PAGE_WIDTH, PAGE_HEIGHT))
-        elements = []
+    # pylint: disable=W0718 (broad-exception-caught
+    def add_product_image(
+            self,
+            elements: list,
+            img_path: str,
+    ) -> None:
+        """
+        Метод для добавления изображения продукта с правильным масштабированием.
 
-        # Добавляем изображение
-        add_product_image(elements, product.get("Ссылка на изображение в базе", ""))
+        :param elements: список, в который добавляются элементы для отрисовки в PDF.
+        :param img_path: путь к изображению, которое нужно вставить
+        :return: None - (изменяет переданный список elements, добавляя в него изображение).
+        """
+        try:
+            img = Image(img_path,
+                        width=self._pixels_to_points(pixels=self.width_page),
+                        height=self._pixels_to_points(pixels=self.heigth_page),
+                        kind='proportional')
+            elements.append(Spacer(1, -80))
+            elements.append(img)
+        except Exception as exc:
+            print(f"Ошибка загрузки изображения {img_path}: {exc}")
 
-        # Добавляем текстовую информацию
-        add_product_info(elements, product)
+    def add_product_info(
+            self,
+            elements: list,
+            product: dict,
+    ) -> None:
+        """
+        Добавляет текстовую информацию о продукте на страницу
 
-        # разница в цветах ленты
-        best_product = product.get('Лучшее средство')
-        if best_product:
-                # Генерируем PDF с наложением бренд-ленты
-            doc.build(elements, onFirstPage=lambda c, d: add_brand_line(c, d, brand_line_path="imagine/border_green.jpg"),
-                      onLaterPages=lambda c, d: add_brand_line(c, d, brand_line_path="imagine/border_green.jpg"))
-        else:
-            # Генерируем PDF с наложением бренд-ленты
-            doc.build(elements,
-                      onFirstPage=lambda c, d: add_brand_line(c, d, brand_line_path="imagine/border_fiolet.jpg"),
-                      onLaterPages=lambda c, d: add_brand_line(c, d, brand_line_path="imagine/border_fiolet.jpg"))
-        print(f"PDF сохранен: {output_file}")
+        :param product: словарь, из которого берется информация по конкретному продукту.
+        :param elements: список, в который добавляются элементы для отрисовки в PDF.
+        :return: None (изменяет переданный список elements,
+        добавляя в него информацию по продукту).
+        """
+        elements.append(Spacer(1, 15))
+        elements.append(Paragraph(product.get("Название", ""),
+                                  self.my_style['title_style']))
 
+        elements.append(Spacer(1, 10))
+        elements.append(Paragraph(f"{product.get('Соотношение', '')}",
+                                  self.my_style['ratio_align_style']))
 
-if __name__ == "__main__":
-    from pdf.utils import forming_indo_for_pdf
-    from pdf.info_about_products import data_with_products
+        elements.append(Spacer(1, 10))
+        elements.append(Paragraph("<b>Плюсы:</b>", self.my_style['bold_style']))
+        elements.append(Paragraph(product.get("Плюсы", ""), self.my_style['normal_style']))
 
-    result = forming_indo_for_pdf(data_with_products)
-    create_pdf(list_with_info=result)
+        elements.append(Spacer(1, 10))
+        elements.append(Paragraph("<b>Минусы:</b>", self.my_style['bold_style']))
+        elements.append(Paragraph(product.get("Минусы", ""), self.my_style['normal_style']))
+
+    def add_base_doc_template(
+            self,
+            output_file: str,
+    ) -> BaseDocTemplate:
+        """
+        Метод для создания базового шаблона PDF-документа.
+
+        :param output_file: путь, куда будет сохранен PDF-файл.
+        :return: объект BaseDocTemplate, представляющий структуру документа
+        """
+
+        return BaseDocTemplate(
+            output_file,
+            pagesize=(
+                self._pixels_to_points(self.width_page),
+                self._pixels_to_points(self.heigth_page),
+            ),
+        )
+
+    def add_frame_for_elements(
+            self,
+            doc: BaseDocTemplate,
+    ) -> Frame:
+        """
+        Этот метод создает и возвращает объект Frame, который определяет область
+        на странице, в которой будут размещаться элементы (flowables) внутри BaseDocTemplate.
+
+        Фрейм (`Frame`) занимает всю доступную область документа,
+        используя его отступы, ширину и высоту.
+        В нем будут размещаться текстовые блоки, изображения и другие элементы PDF.
+
+        :param doc: объект BaseDocTemplate, который содержит параметры страницы.
+        :return: объект Frame, определяющий область для размещения элементов.
+        """
+        return Frame(
+            doc.leftMargin,  # Отступ слева
+            doc.bottomMargin,  # Отступ снизу
+            doc.width,  # Ширина фрейма (равна ширине страницы)
+            doc.height,  # Высота фрейма (равна высоте страницы)
+            id='normal',  # Идентификатор фрейма
+        )
+
+    def _choosing_brand_line(
+            self,
+            product: dict,
+    ) -> str:
+        """
+        Метод для выбора бренд‑линии
+
+        :param product: словарь с информацией о продукте
+        :return: строка с путем до выбранной брендированной линии
+        """
+
+        if product.get('Лучшее средство'):
+            return "00_base/imagine_border/border_green.jpg"
+
+        return "00_base/imagine_border/border_fiolet.jpg"
+
+    def on_page_end_wrapper(
+            self,
+            product: dict,
+    ) -> callable:
+        """
+        Метод — обертка (wrapper) для draw_brand_line(),
+        которая позволяет передавать product в обработчик события onPageEnd.
+
+        ReportLab ожидает, что onPageEnd принимает только (canvas, doc),
+        но метод draw_brand_line требует дополнительного параметра product.
+        Эта обертка решает проблему, создавая функцию wrapped,
+        которая передает product внутрь draw_brand_line.
+
+        :param product: словарь с информацией о продукте.
+        :return: вложенная функция wrapped, которая будет вызвана в onPageEnd.
+        """
+
+        def wrapped(canvas, doc):
+            self.draw_brand_line(canvas, doc, product)
+
+        return wrapped
+
+    # pylint: disable=W0613 unused-argument
+    def draw_brand_line(self,
+                        canvas: 'Canvas',
+                        doc: BaseDocTemplate,
+                        product: dict,
+                        ):
+        """
+        Функция для отрисовки бренд-линии
+
+        :param canvas: объект ReportLab canvas
+        :param product: словарь с информацией о продукте
+        :param doc: объект документа ReportLab
+        :return: объект брендированной линии на листе
+        """
+
+        return canvas.drawImage(
+            self._choosing_brand_line(product=product),
+            0,  # x (левый край)
+            0,  # y (нижний край)
+            width=self._pixels_to_points(pixels=80),  # фиксированная ширина линии
+            height=self._pixels_to_points(pixels=self.heigth_page),  # фиксированная высота линии
+            # параметр управляет сохранением пропорции изображения при его масштабировании.
+            preserveAspectRatio=False,
+            anchor='sw',  # Привязка к нижнему левому углу
+        )
+
+    def painting_brand_line(
+            self,
+            frame: Frame,
+            product: dict,
+    ) -> PageTemplate:
+        """
+        Метод для отрисовки бренд - линии, внутри которого
+        создается PageTemplate с использованием onPageEnd.
+
+        onPageEnd - специальный обработчик событий в ReportLab,
+        который вызывается в конце каждой страницы PDF.
+        Он позволяет выполнить кастомные действия перед тем,
+        как страница будет зафиксирована в PDF.
+
+        :param frame: объект Frame, определяющий область для размещения элементов.
+        :param product: словарь с информацией о продукте
+        :return: шаблон страницы, который будет использоваться в PDF
+        """
+
+        return PageTemplate(
+            id='normal',
+            frames=[frame],
+            onPageEnd=self.on_page_end_wrapper(product=product),
+        )
+
+    def create_flowables(
+            self,
+            product: dict,
+    ) -> List[Flowable]:
+
+        """
+        Метод для создания flowables - это список элементов
+        (изображений, текста, отступов), которые добавляются в PDF
+
+        :param product: словарь с информацией о продукте
+        :return: список flowables (изображений, текста и других элементов)
+        """
+
+        flowables = []
+        self.add_product_image(flowables, product.get("Ссылка на изображение в базе", ""))
+        self.add_product_info(flowables, product)
+
+        return flowables
+
+    def create_pdf_for_telegram(
+            self,
+            list_with_info: list,
+            output_folder: str,
+    ) -> None:
+        """
+        Создает PDF-файлы с наложенной бренд‑линей поверх основного контента.
+
+        :param list_with_info: список словарей с информацией о продуктах.
+        :param output_folder: папка для сохранения PDF.
+
+        :return: None
+        """
+
+        os.makedirs(output_folder, exist_ok=True)
+
+        for product in list_with_info:
+            product_name = product.get("Название")
+            safe_filename = product_name.replace(" ", "_").replace("/", "_") + ".pdf"
+            output_file = os.path.join(output_folder, safe_filename)
+
+            # Метод для создания BaseDocTemplate
+            doc = self.add_base_doc_template(output_file=output_file)
+
+            # Создаем фрейм для основных элементов (flowables)
+            frame = self.add_frame_for_elements(doc=doc)
+
+            # Функция для отрисовки бренд - линии
+            template = self.painting_brand_line(
+                frame=frame,
+                product=product,
+            )
+
+            # добавление страницы в документ
+            doc.addPageTemplates([template])
+
+            # наполняем список нужными элементами
+            flowables = self.create_flowables(product=product)
+
+            # собираем документ
+            doc.build(flowables)

@@ -1,4 +1,4 @@
-def forming_indo_for_pdf(data):
+def forming_indo_for_pdf(data:dict) -> list:
     """
     Функция для формирования списка словарей, которые нужны для наполнения картинки
 
