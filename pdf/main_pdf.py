@@ -1,6 +1,5 @@
 import os
 from pathlib import Path
-from typing import List
 from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.pdfbase import pdfmetrics
 from reportlab.lib.enums import (
@@ -16,7 +15,6 @@ from reportlab.platypus import (
     Paragraph,
     Spacer,
     Image,
-    Flowable,
 )
 from pdf2image import convert_from_path
 
@@ -27,8 +25,7 @@ class PDFCreator:
     def __init__(self):
         self._registration_fonts()
         self.my_style = self._create_style()
-        self.width_page = 1024  # Ширина страницы в пикселях
-        self.heigth_page = 1280  # Высота страницы в пикселях
+        self.sizes = (1024, 1280)   # Ширина и высота страницы в пикселях
         self.flowables = []
 
     def _registration_fonts(self) -> None:
@@ -111,56 +108,52 @@ class PDFCreator:
     # pylint: disable=W0718 (broad-exception-caught
     def _add_product_image(
             self,
-            elements: list,
             img_path: str,
     ) -> None:
         """
         Метод для добавления изображения продукта/средства с правильным масштабированием.
 
-        :param elements: список, в который добавляются элементы для отрисовки в PDF.
         :param img_path: путь к изображению, которое нужно вставить
-        :return: None - (изменяет переданный список elements, добавляя в него изображение).
+        :return: None - (изменяет переданный список self.flowables, добавляя в него изображение).
         """
         try:
             img = Image(img_path,
-                        width=self._pixels_to_points(pixels=self.width_page),
-                        height=self._pixels_to_points(pixels=self.heigth_page),
+                        width=self._pixels_to_points(pixels=self.sizes[0]),
+                        height=self._pixels_to_points(pixels=self.sizes[1]),
                         kind='proportional')
-            elements.append(Spacer(1, -80))
-            elements.append(img)
+            self.flowables.append(Spacer(1, -80))
+            self.flowables.append(img)
         except Exception as exc:
             print(f"Ошибка загрузки изображения {img_path}: {exc}")
 
     def _add_product_info(
             self,
-            elements: list,
             product: dict,
     ) -> None:
         """
         Добавляет текстовую информацию о продукте на страницу.
 
-        :param elements: список, в который добавляются элементы для отрисовки в PDF.
         :param product: словарь, из которого берется информация по конкретному продукту.
 
-        :return: None (изменяет переданный список elements,
+        :return: None (изменяет переданный список self.flowables,
         добавляя в него информацию по продукту).
         """
 
-        elements.append(Spacer(1, 15))
-        elements.append(Paragraph(product.get("Название", ""),
+        self.flowables.append(Spacer(1, 15))
+        self.flowables.append(Paragraph(product.get("Название", ""),
                                   self.my_style['title_style']))
 
-        elements.append(Spacer(1, 10))
-        elements.append(Paragraph(f"{product.get('Соотношение', '')}",
+        self.flowables.append(Spacer(1, 10))
+        self.flowables.append(Paragraph(f"{product.get('Соотношение', '')}",
                                   self.my_style['ratio_align_style']))
 
-        elements.append(Spacer(1, 10))
-        elements.append(Paragraph("<b>Плюсы:</b>", self.my_style['bold_style']))
-        elements.append(Paragraph(product.get("Плюсы", ""), self.my_style['normal_style']))
+        self.flowables.append(Spacer(1, 10))
+        self.flowables.append(Paragraph("<b>Плюсы:</b>", self.my_style['bold_style']))
+        self.flowables.append(Paragraph(product.get("Плюсы", ""), self.my_style['normal_style']))
 
-        elements.append(Spacer(1, 10))
-        elements.append(Paragraph("<b>Минусы:</b>", self.my_style['bold_style']))
-        elements.append(Paragraph(product.get("Минусы", ""), self.my_style['normal_style']))
+        self.flowables.append(Spacer(1, 10))
+        self.flowables.append(Paragraph("<b>Минусы:</b>", self.my_style['bold_style']))
+        self.flowables.append(Paragraph(product.get("Минусы", ""), self.my_style['normal_style']))
 
     def _add_base_doc_template(
             self,
@@ -176,8 +169,8 @@ class PDFCreator:
         return BaseDocTemplate(
             output_file,
             pagesize=(
-                self._pixels_to_points(self.width_page),
-                self._pixels_to_points(self.heigth_page),
+                self._pixels_to_points(self.sizes[0]),
+                self._pixels_to_points(self.sizes[1]),
             ),
         )
 
@@ -263,7 +256,7 @@ class PDFCreator:
             0,  # x (левый край)
             0,  # y (нижний край)
             width=self._pixels_to_points(pixels=80),  # фиксированная ширина линии
-            height=self._pixels_to_points(pixels=self.heigth_page),  # фиксированная высота линии
+            height=self._pixels_to_points(pixels=self.sizes[1]),  # фиксированная высота линии
             # параметр управляет сохранением пропорции изображения при его масштабировании.
             preserveAspectRatio=False,
             anchor='sw',  # Привязка к нижнему левому углу
@@ -297,18 +290,17 @@ class PDFCreator:
     def _fill_flowables_six_products(
             self,
             product: dict,
-    ) -> List[Flowable]:
+    ) -> None:
         """
         Метод для создания flowables - это список элементов
         (изображений, текста, отступов), которые добавляются в PDF
 
         :param product: словарь с информацией о продукте
-        :return: список flowables (изображений, текста и других элементов)
+        :return: обновляет список flowables (изображений, текста и других элементов)
         """
-        self._add_product_image(self.flowables, product.get("Ссылка на изображение в базе", ""))
-        self._add_product_info(self.flowables, product)
+        self._add_product_image(product.get("Ссылка на изображение в базе", ""))
+        self._add_product_info(product)
 
-        return self.flowables
 
     def _convert_pdf_to_jpg(
             self,
@@ -389,17 +381,15 @@ class PDFCreator:
     def _build_document(
             self,
             doc: BaseDocTemplate,
-            flowables: list,
     ) -> None:
         """
         Строит PDF-документ с переданными flowables.
 
         :param doc: объект BaseDocTemplate (шаблон PDF-документа).
-        :param flowables: список flowables (тексты, изображения, отступы и др.).
 
         :return: None
         """
-        doc.build(flowables)
+        doc.build(self.flowables)
 
 
     def gen_pages_for_six_product(
@@ -434,10 +424,10 @@ class PDFCreator:
             )
 
             # наполняем список нужными элементами
-            flowables_for_six_prod = self._fill_flowables_six_products(product=product)
+            self._fill_flowables_six_products(product=product)
 
             # собираем документ
-            self._build_document(doc=doc, flowables=flowables_for_six_prod)
+            self._build_document(doc=doc)
 
             # конвертируем pdf в jpg
             self._convert_pdf_to_jpg(
