@@ -140,7 +140,7 @@ class ControlManager:
         """
         Метод для создания pdf-листов в телеграм (для постов со средствами)
 
-        :param data: словарь со всеми данными по средствам
+        :param info_for_picture: словарь со всеми данными по средствам
         :return: None
         """
         # из огромного словаря со всеми данными, берем инфу для картинки в пост
@@ -153,7 +153,8 @@ class ControlManager:
         instance_create_pdf.create_pdf_for_telegram(
             list_with_info=list_with_info,
             # Формируем путь для output_folder
-            output_folder=f"pdf/pdf_outputs/{timestamp}",
+            output_folder_pdf=f"pdf/pdf_outputs/{timestamp}_pdf",
+            output_folder_jpg=f"pdf/pdf_outputs/{timestamp}_jpg",
         )
 
     def create_collection(

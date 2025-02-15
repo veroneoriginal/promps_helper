@@ -17,6 +17,7 @@ from reportlab.platypus import (
     Image,
     Flowable,
 )
+from pdf2image import convert_from_path
 
 
 class PDFCreator:
@@ -46,6 +47,7 @@ class PDFCreator:
         """
 
         return {
+            # стиль названия средства
             'title_style': ParagraphStyle(
                 'Title',
                 fontName="DejaVuSansBold",
@@ -56,12 +58,14 @@ class PDFCreator:
                 leftIndent=50,
                 leading=30,
             ),
+            # стиль соотношения мл/руб
             'ratio_align_style': ParagraphStyle(
                 'RightAlign',
                 fontName="DejaVuSansBold",
                 fontSize=18,
                 alignment=TA_RIGHT,
             ),
+            # стиль плюсы/минусы
             'bold_style': ParagraphStyle(
                 'Bold',
                 fontName="DejaVuSansBold",
@@ -71,6 +75,7 @@ class PDFCreator:
                 alignment=TA_LEFT,
                 leftIndent=50,
             ),
+            # стиль описания плюсов и минусов
             'normal_style': ParagraphStyle(
                 'Normal',
                 fontName="DejaVuSans",
@@ -92,7 +97,8 @@ class PDFCreator:
         В типографике поинты (pt) используются как единицы измерения.
         В reportlab и PDF стандартный DPI (dots per inch) = 72 dpi.
         В экранах и изображениях стандартный DPI = 96 dpi.
-        Поэтому, чтобы перевести из 96 dpi → 72 dpi, используется коэффициент 72 / 96 = 0.75.
+        Поэтому, чтобы перевести из 96 dpi → 72 dpi,
+        используется коэффициент 72 / 96 = 0.75.
 
         :param pixels: значение изображения в пикселях
         :return: значение изображения в поинтах
@@ -101,13 +107,13 @@ class PDFCreator:
         return pixels * 72 / 96
 
     # pylint: disable=W0718 (broad-exception-caught
-    def add_product_image(
+    def _add_product_image(
             self,
             elements: list,
             img_path: str,
     ) -> None:
         """
-        Метод для добавления изображения продукта с правильным масштабированием.
+        Метод для добавления изображения продукта/средства с правильным масштабированием.
 
         :param elements: список, в который добавляются элементы для отрисовки в PDF.
         :param img_path: путь к изображению, которое нужно вставить
@@ -123,19 +129,21 @@ class PDFCreator:
         except Exception as exc:
             print(f"Ошибка загрузки изображения {img_path}: {exc}")
 
-    def add_product_info(
+    def _add_product_info(
             self,
             elements: list,
             product: dict,
     ) -> None:
         """
-        Добавляет текстовую информацию о продукте на страницу
+        Добавляет текстовую информацию о продукте на страницу.
 
-        :param product: словарь, из которого берется информация по конкретному продукту.
         :param elements: список, в который добавляются элементы для отрисовки в PDF.
+        :param product: словарь, из которого берется информация по конкретному продукту.
+
         :return: None (изменяет переданный список elements,
         добавляя в него информацию по продукту).
         """
+
         elements.append(Spacer(1, 15))
         elements.append(Paragraph(product.get("Название", ""),
                                   self.my_style['title_style']))
@@ -152,7 +160,7 @@ class PDFCreator:
         elements.append(Paragraph("<b>Минусы:</b>", self.my_style['bold_style']))
         elements.append(Paragraph(product.get("Минусы", ""), self.my_style['normal_style']))
 
-    def add_base_doc_template(
+    def _add_base_doc_template(
             self,
             output_file: str,
     ) -> BaseDocTemplate:
@@ -160,6 +168,7 @@ class PDFCreator:
         Метод для создания базового шаблона PDF-документа.
 
         :param output_file: путь, куда будет сохранен PDF-файл.
+
         :return: объект BaseDocTemplate, представляющий структуру документа
         """
 
@@ -171,7 +180,7 @@ class PDFCreator:
             ),
         )
 
-    def add_frame_for_elements(
+    def _add_frame_for_elements(
             self,
             doc: BaseDocTemplate,
     ) -> Frame:
@@ -184,6 +193,7 @@ class PDFCreator:
         В нем будут размещаться текстовые блоки, изображения и другие элементы PDF.
 
         :param doc: объект BaseDocTemplate, который содержит параметры страницы.
+
         :return: объект Frame, определяющий область для размещения элементов.
         """
         return Frame(
@@ -210,12 +220,12 @@ class PDFCreator:
 
         return "00_base/imagine_border/border_fiolet.jpg"
 
-    def on_page_end_wrapper(
+    def _on_page_end_wrapper(
             self,
             product: dict,
     ) -> callable:
         """
-        Метод — обертка (wrapper) для draw_brand_line(),
+        Метод — обертка (wrapper) для _draw_brand_line(),
         которая позволяет передавать product в обработчик события onPageEnd.
 
         ReportLab ожидает, что onPageEnd принимает только (canvas, doc),
@@ -228,16 +238,16 @@ class PDFCreator:
         """
 
         def wrapped(canvas, doc):
-            self.draw_brand_line(canvas, doc, product)
+            self._draw_brand_line(canvas, doc, product)
 
         return wrapped
 
     # pylint: disable=W0613 unused-argument
-    def draw_brand_line(self,
-                        canvas: 'Canvas',
-                        doc: BaseDocTemplate,
-                        product: dict,
-                        ):
+    def _draw_brand_line(self,
+                         canvas: 'Canvas',
+                         doc: BaseDocTemplate,
+                         product: dict,
+                         ):
         """
         Функция для отрисовки бренд-линии
 
@@ -258,7 +268,7 @@ class PDFCreator:
             anchor='sw',  # Привязка к нижнему левому углу
         )
 
-    def painting_brand_line(
+    def _painting_brand_line(
             self,
             frame: Frame,
             product: dict,
@@ -280,10 +290,10 @@ class PDFCreator:
         return PageTemplate(
             id='normal',
             frames=[frame],
-            onPageEnd=self.on_page_end_wrapper(product=product),
+            onPageEnd=self._on_page_end_wrapper(product=product),
         )
 
-    def create_flowables(
+    def _create_flowables(
             self,
             product: dict,
     ) -> List[Flowable]:
@@ -297,40 +307,70 @@ class PDFCreator:
         """
 
         flowables = []
-        self.add_product_image(flowables, product.get("Ссылка на изображение в базе", ""))
-        self.add_product_info(flowables, product)
+        self._add_product_image(flowables, product.get("Ссылка на изображение в базе", ""))
+        self._add_product_info(flowables, product)
 
         return flowables
+
+    def _convert_pdf_to_jpg(
+            self,
+            output_folder_jpg: str,
+            output_file: str,
+    ) -> None:
+        """
+        Конвертирует PDF в JPG.
+
+        :param output_folder_jpg: папка, в которую сохранять JPG.
+        :param output_file: путь к PDF-файлу, который нужно конвертировать.
+        :return: None
+        """
+
+        os.makedirs(output_folder_jpg, exist_ok=True)
+
+        # Конвертация PDF в изображения
+        images = convert_from_path(output_file)
+        safe_filename = os.path.basename(output_file).replace(".pdf", "")
+
+        for _, img in enumerate(images):
+            jpg_filename = os.path.join(
+                output_folder_jpg,
+                f"{safe_filename}.jpg",
+            )
+            # Сохраняем как JPG
+            img.save(jpg_filename, "JPEG")
+
 
     def create_pdf_for_telegram(
             self,
             list_with_info: list,
-            output_folder: str,
+            output_folder_pdf: str,
+            output_folder_jpg: str,
     ) -> None:
         """
         Создает PDF-файлы с наложенной бренд‑линей поверх основного контента.
 
         :param list_with_info: список словарей с информацией о продуктах.
-        :param output_folder: папка для сохранения PDF.
+        :param output_folder_pdf: папка для сохранения PDF.
+        :param output_folder_jpg: папка для сохранения JPG.
 
         :return: None
         """
 
-        os.makedirs(output_folder, exist_ok=True)
+        os.makedirs(output_folder_pdf, exist_ok=True)
 
         for product in list_with_info:
             product_name = product.get("Название")
             safe_filename = product_name.replace(" ", "_").replace("/", "_") + ".pdf"
-            output_file = os.path.join(output_folder, safe_filename)
+            output_file = os.path.join(output_folder_pdf, safe_filename)
 
             # Метод для создания BaseDocTemplate
-            doc = self.add_base_doc_template(output_file=output_file)
+            doc = self._add_base_doc_template(output_file=output_file)
 
             # Создаем фрейм для основных элементов (flowables)
-            frame = self.add_frame_for_elements(doc=doc)
+            frame = self._add_frame_for_elements(doc=doc)
 
             # Функция для отрисовки бренд - линии
-            template = self.painting_brand_line(
+            template = self._painting_brand_line(
                 frame=frame,
                 product=product,
             )
@@ -339,7 +379,13 @@ class PDFCreator:
             doc.addPageTemplates([template])
 
             # наполняем список нужными элементами
-            flowables = self.create_flowables(product=product)
+            flowables = self._create_flowables(product=product)
 
             # собираем документ
             doc.build(flowables)
+
+            # конвертируем pdf в jpg
+            self._convert_pdf_to_jpg(
+                output_folder_jpg=output_folder_jpg,
+                output_file=output_file,
+            )
