@@ -1,4 +1,5 @@
 import os
+from pathlib import Path
 from typing import List
 from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.pdfbase import pdfmetrics
@@ -28,6 +29,7 @@ class PDFCreator:
         self.my_style = self._create_style()
         self.width_page = 1024  # Ширина страницы в пикселях
         self.heigth_page = 1280  # Высота страницы в пикселях
+        self.flowables = []
 
     def _registration_fonts(self) -> None:
         """
@@ -162,14 +164,13 @@ class PDFCreator:
 
     def _add_base_doc_template(
             self,
-            output_file: str,
+            output_file,
     ) -> BaseDocTemplate:
         """
         Метод для создания базового шаблона PDF-документа.
 
         :param output_file: путь, куда будет сохранен PDF-файл.
-
-        :return: объект BaseDocTemplate, представляющий структуру документа
+        :return: объект BaseDocTemplate, представляющий структуру документа.
         """
 
         return BaseDocTemplate(
@@ -293,11 +294,10 @@ class PDFCreator:
             onPageEnd=self._on_page_end_wrapper(product=product),
         )
 
-    def _create_flowables(
+    def _fill_flowables_six_products(
             self,
             product: dict,
     ) -> List[Flowable]:
-
         """
         Метод для создания flowables - это список элементов
         (изображений, текста, отступов), которые добавляются в PDF
@@ -305,17 +305,15 @@ class PDFCreator:
         :param product: словарь с информацией о продукте
         :return: список flowables (изображений, текста и других элементов)
         """
+        self._add_product_image(self.flowables, product.get("Ссылка на изображение в базе", ""))
+        self._add_product_info(self.flowables, product)
 
-        flowables = []
-        self._add_product_image(flowables, product.get("Ссылка на изображение в базе", ""))
-        self._add_product_info(flowables, product)
-
-        return flowables
+        return self.flowables
 
     def _convert_pdf_to_jpg(
             self,
-            output_folder_jpg: str,
-            output_file: str,
+            output_folder_jpg: Path,
+            output_file: Path,
     ) -> None:
         """
         Конвертирует PDF в JPG.
@@ -339,50 +337,107 @@ class PDFCreator:
             # Сохраняем как JPG
             img.save(jpg_filename, "JPEG")
 
+    def _format_product_filename(
+            self,
+            product: dict,
+            output_folder_pdf: Path,
+    ) -> Path:
+        """
+        Метод для форматирования имя файла продукта
 
-    def create_pdf_for_telegram(
+        :param output_folder_pdf: путь (Path) к папке для сохранения PDF.
+        :param product: словарь со средством и его параметрами
+
+        :return: полный путь к файлу PDF
+        """
+        product_name = product.get("Название")
+        safe_filename = product_name.replace(" ", "_").replace("/", "_") + ".pdf"
+
+        return output_folder_pdf / safe_filename
+
+    def _create_doctemplate(
+            self,
+            output_file: Path,
+            product: dict,
+    ) -> BaseDocTemplate:
+
+        """
+        Создает и настраивает PDF-документ (`BaseDocTemplate`), добавляя фрейм и бренд-линию.
+
+        :param output_file: путь, по которому будет сохранен PDF-файл.
+        :param product: словарь с инфо о продукте, который используется для отрисовки бренд-линии.
+        :return: готовый шаблон документа для дальнейшего заполнения.
+        """
+
+        # Метод для создания BaseDocTemplate
+        doc = self._add_base_doc_template(output_file=str(output_file))
+
+        # Создаем фрейм для основных элементов (flowables)
+        frame = self._add_frame_for_elements(doc=doc)
+
+        # Функция для отрисовки бренд - линии
+        template = self._painting_brand_line(
+            frame=frame,
+            product=product,
+        )
+
+        # добавление страницы в документ
+        doc.addPageTemplates([template])
+
+        return doc
+
+    def _build_document(
+            self,
+            doc: BaseDocTemplate,
+            flowables: list,
+    ) -> None:
+        """
+        Строит PDF-документ с переданными flowables.
+
+        :param doc: объект BaseDocTemplate (шаблон PDF-документа).
+        :param flowables: список flowables (тексты, изображения, отступы и др.).
+
+        :return: None
+        """
+        doc.build(flowables)
+
+
+    def gen_pages_for_six_product(
             self,
             list_with_info: list,
-            output_folder_pdf: str,
-            output_folder_jpg: str,
+            output_folder_pdf: Path,
+            output_folder_jpg: Path,
     ) -> None:
         """
         Создает PDF-файлы с наложенной бренд‑линей поверх основного контента.
 
         :param list_with_info: список словарей с информацией о продуктах.
-        :param output_folder_pdf: папка для сохранения PDF.
-        :param output_folder_jpg: папка для сохранения JPG.
+        :param output_folder_pdf: путь (Path) к папке для сохранения PDF.
+        :param output_folder_jpg: путь (Path) к папке для сохранения JPG.
 
         :return: None
         """
-
-        os.makedirs(output_folder_pdf, exist_ok=True)
+        output_folder_pdf.mkdir(parents=True, exist_ok=True)
 
         for product in list_with_info:
-            product_name = product.get("Название")
-            safe_filename = product_name.replace(" ", "_").replace("/", "_") + ".pdf"
-            output_file = os.path.join(output_folder_pdf, safe_filename)
 
-            # Метод для создания BaseDocTemplate
-            doc = self._add_base_doc_template(output_file=output_file)
+            # форматируем имя файла
+            output_file = self._format_product_filename(
+                product=product,
+                output_folder_pdf=output_folder_pdf,
+            )
 
-            # Создаем фрейм для основных элементов (flowables)
-            frame = self._add_frame_for_elements(doc=doc)
-
-            # Функция для отрисовки бренд - линии
-            template = self._painting_brand_line(
-                frame=frame,
+            # наполняем шаблон
+            doc = self._create_doctemplate(
+                output_file=output_file,
                 product=product,
             )
 
-            # добавление страницы в документ
-            doc.addPageTemplates([template])
-
             # наполняем список нужными элементами
-            flowables = self._create_flowables(product=product)
+            flowables_for_six_prod = self._fill_flowables_six_products(product=product)
 
             # собираем документ
-            doc.build(flowables)
+            self._build_document(doc=doc, flowables=flowables_for_six_prod)
 
             # конвертируем pdf в jpg
             self._convert_pdf_to_jpg(
