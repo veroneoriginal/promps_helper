@@ -1,5 +1,7 @@
 import os
 from pathlib import Path
+from typing import Tuple
+
 from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.pdfbase import pdfmetrics
 from reportlab.lib.enums import (
@@ -8,6 +10,7 @@ from reportlab.lib.enums import (
     TA_CENTER,
 )
 from reportlab.lib.styles import ParagraphStyle
+from reportlab.pdfgen.canvas import Canvas
 from reportlab.platypus import (
     BaseDocTemplate,
     PageTemplate,
@@ -25,7 +28,7 @@ class PDFCreator:
     def __init__(self):
         self._registration_fonts()
         self.my_style = self._create_style()
-        self.sizes = (1024, 1280)   # Ширина и высота страницы в пикселях
+        self.sizes = None  # Ширина и высота страницы в пикселях
         self.flowables = []
 
     def _registration_fonts(self) -> None:
@@ -141,11 +144,11 @@ class PDFCreator:
 
         self.flowables.append(Spacer(1, 15))
         self.flowables.append(Paragraph(product.get("Название", ""),
-                                  self.my_style['title_style']))
+                                        self.my_style['title_style']))
 
         self.flowables.append(Spacer(1, 10))
         self.flowables.append(Paragraph(f"{product.get('Соотношение', '')}",
-                                  self.my_style['ratio_align_style']))
+                                        self.my_style['ratio_align_style']))
 
         self.flowables.append(Spacer(1, 10))
         self.flowables.append(Paragraph("<b>Плюсы:</b>", self.my_style['bold_style']))
@@ -167,35 +170,40 @@ class PDFCreator:
         """
 
         return BaseDocTemplate(
-            output_file,
+            filename=output_file,
             pagesize=(
                 self._pixels_to_points(self.sizes[0]),
                 self._pixels_to_points(self.sizes[1]),
             ),
         )
 
-    def _add_frame_for_elements(
+    def _create_frame_for_elements(
             self,
-            doc: BaseDocTemplate,
+            x1_y1: Tuple[float, float],
+            width_height: Tuple[float, float],
+            frame_id: str = 'body_frame',
     ) -> Frame:
         """
         Этот метод создает и возвращает объект Frame, который определяет область
-        на странице, в которой будут размещаться элементы (flowables) внутри BaseDocTemplate.
+        на странице, в которой будут размещаться элементы (flowables)
+        внутри BaseDocTemplate.
 
-        Фрейм (`Frame`) занимает всю доступную область документа,
-        используя его отступы, ширину и высоту.
-        В нем будут размещаться текстовые блоки, изображения и другие элементы PDF.
+        x1 и y1 - координаты нижнего левого угла фрейма
+        width и height - ширина и высота фрейма
 
-        :param doc: объект BaseDocTemplate, который содержит параметры страницы.
+        :param x1_y1: кортеж с координатами нижнего угла для фрейма
+        :param width_height: кортеж с шириной и высотой фрейма
+        :param frame_id: идентификатор (имя) фрейма
 
         :return: объект Frame, определяющий область для размещения элементов.
         """
+
         return Frame(
-            doc.leftMargin,  # Отступ слева
-            doc.bottomMargin,  # Отступ снизу
-            doc.width,  # Ширина фрейма (равна ширине страницы)
-            doc.height,  # Высота фрейма (равна высоте страницы)
-            id='normal',  # Идентификатор фрейма
+            x1=x1_y1[0],
+            y1=x1_y1[1],
+            width=width_height[0],
+            height=width_height[1],
+            id=frame_id,
         )
 
     def _choosing_brand_line(
@@ -211,10 +219,9 @@ class PDFCreator:
 
         if product.get('Лучшее средство'):
             return "00_base/imagine_border/border_green.jpg"
-
         return "00_base/imagine_border/border_fiolet.jpg"
 
-    def _on_page_end_wrapper(
+    def _on_page_end_brand_line_wrapper(
             self,
             product: dict,
     ) -> callable:
@@ -226,6 +233,8 @@ class PDFCreator:
         но метод draw_brand_line требует дополнительного параметра product.
         Эта обертка решает проблему, создавая функцию wrapped,
         которая передает product внутрь draw_brand_line.
+        С помощью замыкания мы решаем проблему передачи дополнительного
+        аргумента.
 
         :param product: словарь с информацией о продукте.
         :return: вложенная функция wrapped, которая будет вызвана в onPageEnd.
@@ -237,11 +246,12 @@ class PDFCreator:
         return wrapped
 
     # pylint: disable=W0613 unused-argument
-    def _draw_brand_line(self,
-                         canvas: 'Canvas',
-                         doc: BaseDocTemplate,
-                         product: dict,
-                         ):
+    def _draw_brand_line(
+            self,
+            canvas: Canvas,
+            doc: BaseDocTemplate,
+            product: dict,
+    ):
         """
         Функция для отрисовки бренд-линии
 
@@ -252,39 +262,38 @@ class PDFCreator:
         """
 
         return canvas.drawImage(
-            self._choosing_brand_line(product=product),
-            0,  # x (левый край)
-            0,  # y (нижний край)
+            image=self._choosing_brand_line(product=product),
+            x=0,  # x (левый край)
+            y=0,  # y (нижний край)
             width=self._pixels_to_points(pixels=80),  # фиксированная ширина линии
             height=self._pixels_to_points(pixels=self.sizes[1]),  # фиксированная высота линии
-            # параметр управляет сохранением пропорции изображения при его масштабировании.
-            preserveAspectRatio=False,
-            anchor='sw',  # Привязка к нижнему левому углу
         )
 
-    def _painting_brand_line(
+    def _create_page_template(
             self,
             frame: Frame,
-            product: dict,
+            on_page_end: callable,
+            tempalate_id: str = 'base_page',
     ) -> PageTemplate:
         """
-        Метод для отрисовки бренд - линии, внутри которого
-        создается PageTemplate с использованием onPageEnd.
-
+        Метод для создания шаблона страницы.
         onPageEnd - специальный обработчик событий в ReportLab,
         который вызывается в конце каждой страницы PDF.
         Он позволяет выполнить кастомные действия перед тем,
         как страница будет зафиксирована в PDF.
+        Создается PageTemplate с использованием onPageEnd.
 
         :param frame: объект Frame, определяющий область для размещения элементов.
-        :param product: словарь с информацией о продукте
+        :param tempalate_id: идентификатор (имя) шаблона страницы
+        :param on_page_end: функция, которая будет вызвана в конце перед финальным
+        созданием страницы
         :return: шаблон страницы, который будет использоваться в PDF
         """
 
         return PageTemplate(
-            id='normal',
+            id=tempalate_id,
             frames=[frame],
-            onPageEnd=self._on_page_end_wrapper(product=product),
+            onPageEnd=on_page_end,
         )
 
     def _fill_flowables_six_products(
@@ -300,7 +309,6 @@ class PDFCreator:
         """
         self._add_product_image(product.get("Ссылка на изображение в базе", ""))
         self._add_product_info(product)
-
 
     def _convert_pdf_to_jpg(
             self,
@@ -318,7 +326,10 @@ class PDFCreator:
         os.makedirs(output_folder_jpg, exist_ok=True)
 
         # Конвертация PDF в изображения
-        images = convert_from_path(output_file)
+        images = convert_from_path(
+            pdf_path=output_file,
+            size=self.sizes
+        )
         safe_filename = os.path.basename(output_file).replace(".pdf", "")
 
         for _, img in enumerate(images):
@@ -347,14 +358,15 @@ class PDFCreator:
 
         return output_folder_pdf / safe_filename
 
-    def _create_doctemplate(
+    def _create_doctemplate_six_products(
             self,
             output_file: Path,
             product: dict,
     ) -> BaseDocTemplate:
 
         """
-        Создает и настраивает PDF-документ (`BaseDocTemplate`), добавляя фрейм и бренд-линию.
+        Создает и настраивает PDF-документ (`BaseDocTemplate`) c одним главным
+        фреймом. В обработчик шаблона станицы передаём функцию для отрисовки бренд-линии.
 
         :param output_file: путь, по которому будет сохранен PDF-файл.
         :param product: словарь с инфо о продукте, который используется для отрисовки бренд-линии.
@@ -365,15 +377,21 @@ class PDFCreator:
         doc = self._add_base_doc_template(output_file=str(output_file))
 
         # Создаем фрейм для основных элементов (flowables)
-        frame = self._add_frame_for_elements(doc=doc)
-
-        # Функция для отрисовки бренд - линии
-        template = self._painting_brand_line(
-            frame=frame,
-            product=product,
+        frame = self._create_frame_for_elements(
+            x1_y1=(doc.leftMargin, doc.bottomMargin),
+            width_height=(doc.width, doc.height),
+            frame_id='body_frame'
         )
 
-        # добавление страницы в документ
+        # Создаём шаблон страницы
+        # В on_page_end мы передаём функцию отрисовки линии бренда поверх других
+        # элементов с помощью канвы, а не flowebles.
+        template = self._create_page_template(
+            frame=frame,
+            on_page_end=self._on_page_end_brand_line_wrapper(product=product),
+        )
+
+        # добавление шаблона страницы в документ
         doc.addPageTemplates([template])
 
         return doc
@@ -391,7 +409,6 @@ class PDFCreator:
         """
         doc.build(self.flowables)
 
-
     def gen_pages_for_six_product(
             self,
             list_with_info: list,
@@ -408,9 +425,9 @@ class PDFCreator:
         :return: None
         """
         output_folder_pdf.mkdir(parents=True, exist_ok=True)
+        self.sizes = (1024, 1280)  # Ширина и высота страницы в пикселях
 
         for product in list_with_info:
-
             # форматируем имя файла
             output_file = self._format_product_filename(
                 product=product,
@@ -418,7 +435,7 @@ class PDFCreator:
             )
 
             # наполняем шаблон
-            doc = self._create_doctemplate(
+            doc = self._create_doctemplate_six_products(
                 output_file=output_file,
                 product=product,
             )
