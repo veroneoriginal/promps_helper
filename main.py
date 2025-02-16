@@ -14,6 +14,7 @@ from excel_process_data.main import main as load_data_main
 from excel_process_data.process_data import ExcelManager
 from pdf.main_pdf import PDFCreator
 from pdf.utils import forming_indo_for_pdf
+from post_constructor.post_constructor import create_prompt_for_text_post
 from prompt_constructor.constructor import PromptConstructor
 from prompt_constructor.json_schemes.json_schemes import determine_scheme_by_number_of_products
 from prompt_constructor.settings_constructor.settings_response import SETTINGS_RESPONSE
@@ -152,7 +153,7 @@ class ControlManager:
         timestamp = datetime.now().strftime("%d_%m_%H_%M_%S")
 
         # Определяем папки (универсальный путь для всех ОС)
-        base_output_folder = Path("pdf/pdf_outputs") / timestamp
+        base_output_folder = Path("00_base/00_picture_outputs") / timestamp
         output_folder_pdf = base_output_folder / "pdf"
         output_folder_jpg = base_output_folder / "jpg"
 
@@ -167,23 +168,30 @@ class ControlManager:
     def _forming_text_for_post(
             self,
             data: dict,
-            info_for_picture
+            info_for_picture: dict,
 
     ):
         """В эту функцию приходит промпт, и словарь, соединяю все воедино и возвращаю строку"""
 
-        instance_prompt = PromptConstructor()
-        full_info = instance_prompt.create_prompt_for_text_post(
+        full_info = create_prompt_for_text_post(
             data=data,
             info_for_picture=info_for_picture
         )
 
-        # 📌 Сохраняем full_info в файл
-        output_file = "output_text.txt"
+        # Получаем текущее время в формате ДД_ММ_ЧЧ_ММ_СС
+        timestamp = datetime.now().strftime("%d_%m_%H_%M_%S")
+
+        # Определяем папки (универсальный путь для всех ОС)
+        base_output_folder = Path("00_base/00_picture_outputs") / timestamp
+        output_folder_text = base_output_folder / "text"
+
+        output_folder_text.mkdir(parents=True, exist_ok=True)
+
+        output_file = output_folder_text / "text_for_post.md"
         with open(output_file, "w", encoding="utf-8") as file:
             file.write(full_info)
 
-        print(f"✅ Текст успешно сохранен в {output_file}")
+
 
     def create_collection(
             self,
@@ -220,13 +228,11 @@ class ControlManager:
         print('Формируем данные для картинок.')
         info_for_picture = self._generating_data_for_images(file_path=file_path)
 
-        print('Создаю изображения со средствами для Telegram-поста.')
-        self._create_pdf_for_telegram_post(info_for_picture=info_for_picture)
-        print('Изображения готовы!')
-        print()
-
         print('Готовим текстовое оформление поста.')
         self._forming_text_for_post(data=data, info_for_picture=info_for_picture)
+
+        print('Создаю изображения со средствами для Telegram-поста.')
+        self._create_pdf_for_telegram_post(info_for_picture=info_for_picture)
 
         print()
 
@@ -235,6 +241,6 @@ if __name__ == '__main__':
     instance = ControlManager()
     instance.create_collection(
         file_path='00_base/00_Средства.xlsx',
-        json_file_path="prompt/history_prompt/Анализ_средств.json",
-        product_count=6,
+        json_file_path="00_base/prompt/history_prompt/Анализ_средств.json",
+        product_count=4,
     )

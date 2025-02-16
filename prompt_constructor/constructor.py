@@ -1,6 +1,3 @@
-from pprint import pprint
-
-
 class PromptConstructor:
     """
     Класс для создания промптов для отправки в контекст
@@ -39,38 +36,6 @@ class PromptConstructor:
 
         # строка, которая объединяет инфо о всех сред-х в единый текст блок с переносами строк
         return "\n".join(list_cosmetic_products)
-
-    def create_prompt_for_text_post(
-            self,
-            data: dict,
-            info_for_picture: dict,
-    ) -> str:
-        """
-        Формирует текстовый промпт с информацией о пользователе
-        и его потребностях на основе данных словаря.
-
-        :param info_for_picture: словарь со средствами из подборки
-        :param data: словарь с данными о пользователе и косметических средствах имеет вид
-        :return: строка с данными о пользователе и его потребностях
-        """
-
-        # формируем информацию о пользователе
-        user_info = data["Пользователь"]
-
-        print('info_for_picture вызов из create_prompt_for_text_post')
-        pprint(info_for_picture)
-
-        return f"""
-    Сегодня у нас подборка средств для клиента со следующими данными:
-    Пол: {user_info["Пол"]}, возраст: {user_info["Возраст"]} лет.
-    Тип волос: {user_info["Тип волос"]}.
-    Тип кожи головы: {user_info["Тип кожи головы"]}.
-    Потребности: {user_info["Потребности"]}
-    Проблема: {user_info["Проблемы"]}
-    
-    Итоговая рекомендация по текущей подборке: {info_for_picture['итоговая рекомендация']}
-    
-    """
 
     def construct_prompt(
             self,

@@ -15,7 +15,7 @@ def main(
         system_prompt: str,
         api_key: str,
         json_scheme: dict,
-        folder_name: str = 'prompt/history_prompt',
+        folder_name: str = '00_base/prompt/history_prompt',
 ) -> None:
     """
     Уравляющая функция для реализации процесса отправки запроса в openai,

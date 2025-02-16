@@ -221,8 +221,8 @@ class PDFCreator:
         """
 
         if product.get('Лучшее средство'):
-            return "00_base/imagine_border/border_green.jpg"
-        return "00_base/imagine_border/border_fiolet.jpg"
+            return "00_base/course/imagine_border/border_green.jpg"
+        return "00_base/course/imagine_border/border_fiolet.jpg"
 
     def _on_page_end_brand_line_wrapper(
             self,
