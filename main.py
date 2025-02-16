@@ -5,6 +5,8 @@
 import os
 from datetime import datetime
 from pathlib import Path
+from pprint import pprint
+
 from dotenv import load_dotenv
 from appeal_to_openai.main import main as appeal_to_openai_main
 from appeal_to_openai.utils import checking_file_with_response
@@ -162,6 +164,27 @@ class ControlManager:
             output_folder_jpg=output_folder_jpg,
         )
 
+    def _forming_text_for_post(
+            self,
+            data: dict,
+            info_for_picture
+
+    ):
+        """В эту функцию приходит промпт, и словарь, соединяю все воедино и возвращаю строку"""
+
+        instance_prompt = PromptConstructor()
+        full_info = instance_prompt.create_prompt_for_text_post(
+            data=data,
+            info_for_picture=info_for_picture
+        )
+
+        # 📌 Сохраняем full_info в файл
+        output_file = "output_text.txt"
+        with open(output_file, "w", encoding="utf-8") as file:
+            file.write(full_info)
+
+        print(f"✅ Текст успешно сохранен в {output_file}")
+
     def create_collection(
             self,
             file_path: str,
@@ -200,10 +223,13 @@ class ControlManager:
         print('Создаю изображения со средствами для Telegram-поста.')
         self._create_pdf_for_telegram_post(info_for_picture=info_for_picture)
         print('Изображения готовы!')
+        print()
+
+        print('Готовим текстовое оформление поста.')
+        self._forming_text_for_post(data=data, info_for_picture=info_for_picture)
 
         print()
-        print('Готовим текстовое оформление поста.')
-        print()
+
 
 if __name__ == '__main__':
     instance = ControlManager()
