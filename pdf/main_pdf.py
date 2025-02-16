@@ -207,6 +207,7 @@ class PDFCreator:
             width=width_height[0],
             height=width_height[1],
             id=frame_id,
+            # showBoundary=True,
         )
 
     def _choosing_brand_line(
@@ -381,8 +382,8 @@ class PDFCreator:
 
         # Создаем фрейм для основных элементов (flowables)
         frame = self._create_frame_for_elements(
-            x1_y1=(doc.leftMargin, doc.bottomMargin),
-            width_height=(doc.width, doc.height),
+            x1_y1=(doc.leftMargin, 0),
+            width_height=(doc.width, doc.height + doc.bottomMargin),
             frame_id='body_frame'
         )
 

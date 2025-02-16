@@ -1,6 +1,3 @@
-from pprint import pprint
-
-
 def create_prompt_for_text_post(
         data: dict,
         info_for_picture: dict,

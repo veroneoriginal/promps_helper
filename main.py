@@ -5,7 +5,6 @@
 import os
 from datetime import datetime
 from pathlib import Path
-from pprint import pprint
 
 from dotenv import load_dotenv
 from appeal_to_openai.main import main as appeal_to_openai_main
@@ -179,7 +178,7 @@ class ControlManager:
         )
 
         # Получаем текущее время в формате ДД_ММ_ЧЧ_ММ_СС
-        timestamp = datetime.now().strftime("%d_%m_%H_%M_%S")
+        timestamp = datetime.now().strftime("%d_%m_%y_%H_%M_%S")
 
         # Определяем папки (универсальный путь для всех ОС)
         base_output_folder = Path("00_base/00_picture_outputs") / timestamp
