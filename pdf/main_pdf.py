@@ -1,6 +1,9 @@
 import os
 from pathlib import Path
-from typing import Tuple
+from typing import (
+    Tuple,
+    List,
+)
 
 from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.pdfbase import pdfmetrics
@@ -271,7 +274,7 @@ class PDFCreator:
 
     def _create_page_template(
             self,
-            frame: Frame,
+            frames: List[Frame],
             on_page_end: callable,
             tempalate_id: str = 'base_page',
     ) -> PageTemplate:
@@ -292,7 +295,7 @@ class PDFCreator:
 
         return PageTemplate(
             id=tempalate_id,
-            frames=[frame],
+            frames=frames,
             onPageEnd=on_page_end,
         )
 
@@ -387,7 +390,7 @@ class PDFCreator:
         # В on_page_end мы передаём функцию отрисовки линии бренда поверх других
         # элементов с помощью канвы, а не flowebles.
         template = self._create_page_template(
-            frame=frame,
+            frames=[frame,],
             on_page_end=self._on_page_end_brand_line_wrapper(product=product),
         )
 
