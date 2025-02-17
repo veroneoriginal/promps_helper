@@ -13,7 +13,7 @@ from excel_process_data.main import main as load_data_main
 from excel_process_data.process_data import ExcelManager
 from pdf.main_pdf import PDFCreator
 from pdf.utils import forming_indo_for_pdf
-from post_constructor.post_constructor import create_prompt_for_text_post
+from post_constructor.post_constructor import create_text_for_post
 from prompt_constructor.constructor import PromptConstructor
 from prompt_constructor.json_schemes.json_schemes import determine_scheme_by_number_of_products
 from prompt_constructor.settings_constructor.settings_response import SETTINGS_RESPONSE
@@ -135,9 +135,49 @@ class ControlManager:
             data=collection_dict,
         )
 
-    def _create_pdf_for_telegram_post(
+    def _get_output_folders(
+            self,
+            path_to_output_folder: str,
+    ) -> dict:
+        """
+        Создает папки для сохранения файлов и возвращает их пути.
+
+        :param path_to_output_folder: путь до основной папки, в которую идет сохранение.
+        """
+
+        # Получаем текущую дату в формате ДД_ММ_ГГ
+        timestamp = datetime.now().strftime("%d_%m_%y")
+
+        # проверить, есть ли в ней папки с номерами
+        # список папко, если он пустой. то создать папку 1,
+        # если не пустой. то получить последний номер и продолжить счет
+        # создает новую папку - 1/2/10
+        # создает папку - 00_source
+
+        # folders - хранить в self
+
+        # Определяем базовую папку
+        base_output_folder = Path(path_to_output_folder) / timestamp
+
+        # Определяем пути к папкам
+        folders = {
+            "base": base_output_folder,
+            "text": base_output_folder / "text",
+            "pdf": base_output_folder / "pdf",
+            "jpg": base_output_folder / "jpg",
+        }
+
+        # Создаем папки, если они не существуют
+        for folder in folders.values():
+            folder.mkdir(parents=True, exist_ok=True)
+
+        return folders
+
+    def _create_pdf_jpg_for_post(
             self,
             info_for_picture: dict,
+            path_to_output_folder: str,
+
     ) -> None:
         """
         Метод для создания pdf-листов в телеграм (для постов со средствами)
@@ -148,52 +188,41 @@ class ControlManager:
         # из огромного словаря со всеми данными, берем инфу для картинки в пост
         list_with_info = forming_indo_for_pdf(data=info_for_picture)
 
-        # Получаем текущее время в формате ДД_ММ_ЧЧ_ММ_СС
-        timestamp = datetime.now().strftime("%d_%m_%H_%M_%S")
-
-        # Определяем папки (универсальный путь для всех ОС)
-        base_output_folder = Path("00_base/00_picture_outputs") / timestamp
-        output_folder_pdf = base_output_folder / "pdf"
-        output_folder_jpg = base_output_folder / "jpg"
+        # Получаем пути для сохранения файлов
+        folders = self._get_output_folders(path_to_output_folder=path_to_output_folder)
 
         create_pdf = PDFCreator()
         create_pdf.gen_pages_for_six_product(
             list_with_info=list_with_info,
             # Формируем путь для output_folder
-            output_folder_pdf=output_folder_pdf,
-            output_folder_jpg=output_folder_jpg,
+            output_folder_pdf=folders["pdf"],
+            output_folder_jpg=folders["jpg"],
         )
 
     def _forming_text_for_post(
             self,
             data: dict,
             info_for_picture: dict,
+            path_to_output_folder: str,
 
     ):
         """В эту функцию приходит промпт, и словарь, соединяю все воедино и возвращаю строку"""
 
-        full_info = create_prompt_for_text_post(
+        full_info = create_text_for_post(
             data=data,
             info_for_picture=info_for_picture
         )
 
-        # Получаем текущее время в формате ДД_ММ_ЧЧ_ММ_СС
-        timestamp = datetime.now().strftime("%d_%m_%y_%H_%M_%S")
+        # Получаем пути для сохранения файлов
+        folders = self._get_output_folders(path_to_output_folder=path_to_output_folder)
+        output_file = folders["text"] / "text_for_post.md"
 
-        # Определяем папки (универсальный путь для всех ОС)
-        base_output_folder = Path("00_base/00_picture_outputs") / timestamp
-        output_folder_text = base_output_folder / "text"
-
-        output_folder_text.mkdir(parents=True, exist_ok=True)
-
-        output_file = output_folder_text / "text_for_post.md"
         with open(output_file, "w", encoding="utf-8") as file:
             file.write(full_info)
 
-
-
     def create_collection(
             self,
+            path_to_output_folder: str,
             file_path: str,
             json_file_path: str,
             product_count: int = 6 | 4,
@@ -204,6 +233,7 @@ class ControlManager:
         :param file_path: путь до документа .xlsx
         :param json_file_path: путь до json-файла
         :param product_count: количество средств, которые анализируюся
+        :param path_to_output_folder: путь до папки, в которую идет сохранение.
         :return: None
         """
 
@@ -227,11 +257,18 @@ class ControlManager:
         print('Формируем данные для картинок.')
         info_for_picture = self._generating_data_for_images(file_path=file_path)
 
+        print('Формируем пути сохранения данных.')
+        self._get_output_folders(path_to_output_folder=path_to_output_folder)
+
         print('Готовим текстовое оформление поста.')
-        self._forming_text_for_post(data=data, info_for_picture=info_for_picture)
+        self._forming_text_for_post(data=data, info_for_picture=info_for_picture,
+                                    path_to_output_folder=path_to_output_folder)
 
         print('Создаю изображения со средствами для Telegram-поста.')
-        self._create_pdf_for_telegram_post(info_for_picture=info_for_picture)
+        self._create_pdf_jpg_for_post(
+            info_for_picture=info_for_picture,
+            path_to_output_folder=path_to_output_folder,
+        )
 
         print()
 
@@ -240,6 +277,7 @@ if __name__ == '__main__':
     instance = ControlManager()
     instance.create_collection(
         file_path='00_base/00_Средства.xlsx',
-        json_file_path="00_base/prompt/history_prompt/Анализ_средств.json",
+        json_file_path='00_base/prompt/history_prompt/Анализ_средств.json',
         product_count=4,
+        path_to_output_folder='00_base/00_info_for_post/',
     )

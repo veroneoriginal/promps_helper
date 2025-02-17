@@ -1,4 +1,4 @@
-def create_prompt_for_text_post(
+def create_text_for_post(
         data: dict,
         info_for_picture: dict,
 ) -> str:
