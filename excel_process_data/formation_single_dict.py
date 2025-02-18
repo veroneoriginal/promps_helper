@@ -15,12 +15,12 @@ def load_data_table(
     """
 
     return {
+        "Пользователь": instance_excel.load_info_about_user(ws_title='Подборки'),
+        "Средства": instance_excel.load_info_about_products(ws_title='Средства'),
         "Типы волос": instance_excel.load_hair_type_data(ws_title='Типы волос'),
         "Типы кожи головы": instance_excel.load_head_skin_data(ws_title='Типы кожи головы'),
         "Проблемы": instance_excel.load_problems_data(ws_title='Проблемы'),
         "Потребности": instance_excel.load_wishes_data(ws_title='Потребности'),
-        "Средства": instance_excel.load_info_about_products(ws_title='Средства'),
-        "Пользователь": instance_excel.load_info_about_user(ws_title='Подборки'),
     }
 
 
@@ -42,7 +42,7 @@ def create_final_dict(
         },
 
         "Средства": {
-            1: {
+            1_Шампуни: {
                 "Название": "содержимое ячейки",
                 "Состав": "содержимое ячейки",
             },
@@ -72,5 +72,5 @@ def create_final_dict(
                 data["Потребности"][data['Пользователь']['Потребности']], 'Потребности', ),
         },
 
-        'Средства': data["Средства"],
+        'Средства': data['Средства'],
     }

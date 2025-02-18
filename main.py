@@ -5,6 +5,7 @@
 import os
 from datetime import datetime
 from pathlib import Path
+from pprint import pprint
 
 from dotenv import load_dotenv
 from appeal_to_openai.main import main as appeal_to_openai_main
@@ -24,6 +25,8 @@ class ControlManager:
     """
     Класс, управляющий логикой весго проекта
     """
+    def __init__(self):
+        self.output_paths = {}
 
     def _take_data_from_the_table(
             self,
@@ -62,8 +65,8 @@ class ControlManager:
     ) -> None:
         """
         В этой функции осуществляется вызов ключевой функции по:
-        1) созданию готового контекста, который передается в OpenAI,
-        2) отправке самого запроса в OpenAI,
+        1_Шампуни) созданию готового контекста, который передается в OpenAI,
+        2_Масла) отправке самого запроса в OpenAI,
         3) сохранение результата
 
         :param prompt_for_convert: промпт для преобразования его в контекст
@@ -138,40 +141,60 @@ class ControlManager:
     def _get_output_folders(
             self,
             path_to_output_folder: str,
+            category: str,
     ) -> dict:
         """
         Создает папки для сохранения файлов и возвращает их пути.
 
+        :param category: название категории для подпапки.
         :param path_to_output_folder: путь до основной папки, в которую идет сохранение.
         """
 
         # Получаем текущую дату в формате ДД_ММ_ГГ
         timestamp = datetime.now().strftime("%d_%m_%y")
 
-        # проверить, есть ли в ней папки с номерами
-        # список папко, если он пустой. то создать папку 1,
-        # если не пустой. то получить последний номер и продолжить счет
-        # создает новую папку - 1/2/10
-        # создает папку - 00_source
-
-        # folders - хранить в self
-
         # Определяем базовую папку
         base_output_folder = Path(path_to_output_folder) / timestamp
+        base_output_folder.mkdir(parents=True, exist_ok=True)
 
-        # Определяем пути к папкам
-        folders = {
-            "base": base_output_folder,
-            "text": base_output_folder / "text",
-            "pdf": base_output_folder / "pdf",
-            "jpg": base_output_folder / "jpg",
-        }
+        # Получаем список существующих папок в базовой директории
+        existing_folders = []
+        for d in base_output_folder.iterdir():
+            if d.is_dir():
+                existing_folders.append(d)
 
-        # Создаем папки, если они не существуют
-        for folder in folders.values():
-            folder.mkdir(parents=True, exist_ok=True)
+        # Определяем новый номер папки
+        new_folder_number = 1
+        if existing_folders:
+            last_number = 0
+            for folder in existing_folders:
+                parts = folder.name.split('_')
+                if parts[0].isdigit():
+                    last_number = max(last_number, int(parts[0]))
+            new_folder_number = last_number + 1
 
-        return folders
+        # Формируем имя новой папки
+        category_folder_name = f"{new_folder_number}_{category}"
+        category_folder = base_output_folder / category_folder_name
+        category_folder.mkdir(exist_ok=True)
+
+        # Создаем основные папки
+        subfolders = ["instagram", "telegram", "pinterest"]
+
+        for subfolder in subfolders:
+            subfolder_path = category_folder / subfolder
+            subfolder_path.mkdir(exist_ok=True)
+            self.output_paths[subfolder] = str(subfolder_path)
+
+            # Если это telegram, создаем вложенные папки
+            if subfolder == "telegram":
+                telegram_subfolders = ["text", "pdf", "jpg"]
+                for t_subfolder in telegram_subfolders:
+                    t_subfolder_path = subfolder_path / t_subfolder
+                    t_subfolder_path.mkdir(exist_ok=True)
+                    self.output_paths[f"telegram_{t_subfolder}"] = str(t_subfolder_path)
+
+        return self.output_paths
 
     def _create_pdf_jpg_for_post(
             self,
@@ -204,7 +227,6 @@ class ControlManager:
             data: dict,
             info_for_picture: dict,
             path_to_output_folder: str,
-
     ):
         """В эту функцию приходит промпт, и словарь, соединяю все воедино и возвращаю строку"""
 
@@ -213,71 +235,76 @@ class ControlManager:
             info_for_picture=info_for_picture
         )
 
+        path_to_file = self.output_paths["telegram_text"]
+
         # Получаем пути для сохранения файлов
-        folders = self._get_output_folders(path_to_output_folder=path_to_output_folder)
-        output_file = folders["text"] / "text_for_post.md"
+        output_file = path_to_file / "text_for_post.md"
 
         with open(output_file, "w", encoding="utf-8") as file:
             file.write(full_info)
 
     def create_collection(
             self,
+            category: str,
             path_to_output_folder: str,
-            file_path: str,
             json_file_path: str,
             product_count: int = 6 | 4,
     ) -> None:
         """
         Главный метод класса, в котором собрана вся логика программы
 
-        :param file_path: путь до документа .xlsx
+        :param category: категория, по которйо осуществляется по подборка
+
         :param json_file_path: путь до json-файла
         :param product_count: количество средств, которые анализируюся
         :param path_to_output_folder: путь до папки, в которую идет сохранение.
         :return: None
         """
 
-        print('Определяю json-схему.')
-        json_scheme = self._determine_scheme_for_response_format(product_count=product_count)
+        # Исходя из категории, формируем путь до документа .xlsx
+        file_path = f'00_base/{category}.xlsx'
 
-        print('Забираю данные из таблицы.')
-        data = self._take_data_from_the_table(file_path=file_path)
-
-        print('Собираю промпт.')
-        prompt = self._bring_prompt(dict_with_info=data)
-
-        print('Отправляю запрос в OpenAI.')
-        self._create_context_for_request_to_openai(prompt_for_convert=prompt,
-                                                   json_scheme=json_scheme)
-
-        print('Разбираю ответ от OpenAI.')
-        self._reviewing_response_from_openai(file_path=file_path,
-                                             json_file_path=json_file_path)
-
-        print('Формируем данные для картинок.')
-        info_for_picture = self._generating_data_for_images(file_path=file_path)
+        # print('Определяю json-схему.')
+        # json_scheme = self._determine_scheme_for_response_format(product_count=product_count)
+        #
+        # print('Забираю данные из таблицы.')
+        # data = self._take_data_from_the_table(file_path=file_path)
+        #
+        # print('Собираю промпт.')
+        # prompt = self._bring_prompt(dict_with_info=data)
+        #
+        # print('Отправляю запрос в OpenAI.')
+        # self._create_context_for_request_to_openai(prompt_for_convert=prompt,
+        #                                            json_scheme=json_scheme)
+        #
+        # print('Разбираю ответ от OpenAI.')
+        # self._reviewing_response_from_openai(file_path=file_path,
+        #                                      json_file_path=json_file_path)
+        #
+        # print('Формируем данные для картинок.')
+        # info_for_picture = self._generating_data_for_images(file_path=file_path)
 
         print('Формируем пути сохранения данных.')
-        self._get_output_folders(path_to_output_folder=path_to_output_folder)
+        self._get_output_folders(path_to_output_folder=path_to_output_folder,
+                                 category=category)
 
-        print('Готовим текстовое оформление поста.')
-        self._forming_text_for_post(data=data, info_for_picture=info_for_picture,
-                                    path_to_output_folder=path_to_output_folder)
+        # print('Готовим текстовое оформление поста.')
+        # self._forming_text_for_post(data=data, info_for_picture=info_for_picture,
+        #                             path_to_output_folder=path_to_output_folder)
 
-        print('Создаю изображения со средствами для Telegram-поста.')
-        self._create_pdf_jpg_for_post(
-            info_for_picture=info_for_picture,
-            path_to_output_folder=path_to_output_folder,
-        )
+        # print('Создаю изображения со средствами для Telegram-поста.')
+        # self._create_pdf_jpg_for_post(
+        #     info_for_picture=info_for_picture,
+        #     path_to_output_folder=path_to_output_folder,
+        # )
 
-        print()
 
 
 if __name__ == '__main__':
     instance = ControlManager()
     instance.create_collection(
-        file_path='00_base/00_Средства.xlsx',
+        category="Маски",
         json_file_path='00_base/prompt/history_prompt/Анализ_средств.json',
-        product_count=4,
+        product_count=6,
         path_to_output_folder='00_base/00_info_for_post/',
     )

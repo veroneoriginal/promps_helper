@@ -24,7 +24,3 @@ def main(
     result = load_data_table(instance_excel=instance_excel)
 
     return create_final_dict(data=result)
-
-
-if __name__ == '__main__':
-    main(file_path='../00_base/00_Средства.xlsx')
