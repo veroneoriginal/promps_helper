@@ -357,6 +357,10 @@ class PDFCreator:
 
         :return: полный путь к файлу PDF
         """
+
+        # Убедимся, что output_folder_pdf - это Path
+        output_folder_pdf = Path(output_folder_pdf)
+
         product_name = product.get("Название")
         safe_filename = product_name.replace(" ", "_").replace("/", "_") + ".pdf"
 
@@ -428,7 +432,7 @@ class PDFCreator:
 
         :return: None
         """
-        output_folder_pdf.mkdir(parents=True, exist_ok=True)
+
         self.sizes = (1024, 1280)  # Ширина и высота страницы в пикселях
 
         for product in list_with_info:

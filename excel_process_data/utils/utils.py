@@ -78,7 +78,8 @@ def find_target_row_for_today_and_full_best_product(
     :return: номер строки, в которую будет осуществляться запись
     """
 
-    for row in range(2, sheet.max_row + 1):
+    # Перебираем строки с конца
+    for row in range(sheet.max_row, 1, -1):
         date_cell = sheet.cell(row=row, column=headers["Дата"]).value
         best_product = sheet.cell(row=row, column=headers["Лучшее средство"]).value
 
