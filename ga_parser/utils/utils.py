@@ -29,7 +29,7 @@ def clean_text(raw_text: str) -> str:
     # Раскодируем HTML-символы
     clean = unescape(no_newlines)
     # Заменяем множественные пробелы на один
-    return re.sub(r'\s{2_Масла,}', ' ', clean)
+    return re.sub(r'\s{2,}', ' ', clean)
 
 
 def clean_value_str_in_dict(source_dict: dict) -> dict:

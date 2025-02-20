@@ -17,7 +17,8 @@ from prompt_constructor.constructor import PromptConstructor
 from prompt_constructor.json_schemes.json_schemes import determine_scheme_by_number_of_products
 from prompt_constructor.settings_constructor.settings_response import SETTINGS_RESPONSE
 from prompt_constructor.settings_constructor.system_prompt import SYSTEM_PROMPT
-from source.structure_folders.structure_folders import saving_folders
+from source.structure_folders.structure_folders import folders_for_save
+
 
 
 class ControlManager:
@@ -25,8 +26,9 @@ class ControlManager:
     Класс, управляющий логикой весго проекта
     """
 
-    def __init__(self):
+    def __init__(self, saving_folders):
         self.paths_to_folders = {}
+        self.saving_folders = saving_folders
 
     def _take_data_from_the_table(
             self,
@@ -62,26 +64,30 @@ class ControlManager:
             self,
             prompt_for_convert: str,
             json_scheme: dict,
-    ) -> None:
+            folder_name: str,
+    ) -> str:
         """
         В этой функции осуществляется вызов ключевой функции по:
-        1_Шампуни) созданию готового контекста, который передается в OpenAI,
-        2_Масла) отправке самого запроса в OpenAI,
+        1) созданию готового контекста, который передается в OpenAI,
+        2) отправке самого запроса в OpenAI,
         3) сохранение результата
 
         :param prompt_for_convert: промпт для преобразования его в контекст
-        :return: None
+        :return: путь до json файла с анализом средств
         """
 
         load_dotenv()
         openai_api_key = os.getenv('OPENAI_API_KEY')
 
-        appeal_to_openai_main(
+        file_path_to_saving_json = appeal_to_openai_main(
             prompt=prompt_for_convert,
             system_prompt=SYSTEM_PROMPT,
             api_key=openai_api_key,
             json_scheme=json_scheme,
+            folder_name=folder_name,
         )
+
+        return file_path_to_saving_json
 
     def _reviewing_response_from_openai(
             self,
@@ -231,11 +237,17 @@ class ControlManager:
         :return: None (изменяет self.paths_to_folders)
         """
 
-        for service, folders in saving_folders.items():
+        for service, folders in self.saving_folders.items():
+            service_path = category_folder / service
+
+            # Если список подпапок пустой или отсутствует, добавляем только базовый путь сервиса
+            if not folders or not isinstance(folders, list):
+                self.paths_to_folders[service] = str(service_path)
+
             for folder in folders:
                 key = f"{service}_{folder}"
                 # Получаем полный путь и преобразуем в строку
-                full_path = str(category_folder / service / folder)
+                full_path = str(service_path / folder)
                 # записываем в словарь
                 self.paths_to_folders[key] = full_path
 
@@ -253,7 +265,6 @@ class ControlManager:
             # Создаём папку (parents=True — создаёт все родительские папки,
             # exist_ok=True — не выдаёт ошибку, если папка уже есть)
             path.mkdir(parents=True, exist_ok=True)
-
 
     def _get_output_folders(
             self,
@@ -335,11 +346,8 @@ class ControlManager:
             info_for_picture=info_for_picture
         )
 
-        # получаем путь до папки, куда сохранять файл
-        path_to_file = Path(self.paths_to_folders["telegram_text"])
-
         # Добавляем имя файла к пути
-        output_file = path_to_file / "text_for_post.md"
+        output_file = Path(self.paths_to_folders["telegram_text"]) / "text_for_post.md"
 
         with open(output_file, "w", encoding="utf-8") as file:
             file.write(full_info)
@@ -348,15 +356,12 @@ class ControlManager:
             self,
             category: str,
             path_to_output_folder: str,
-            json_file_path: str,
             product_count: int = 6 | 4,
     ) -> None:
         """
         Главный метод класса, в котором собрана вся логика программы
 
-        :param category: категория, по которйо осуществляется по подборка
-
-        :param json_file_path: путь до json-файла
+        :param category: категория, по которой осуществляется по подборка
         :param product_count: количество средств, которые анализируюся
         :param path_to_output_folder: путь до папки, в которую идет сохранение.
         :return: None
@@ -364,6 +369,12 @@ class ControlManager:
 
         # Исходя из категории, формируем путь до документа .xlsx
         file_path = f'00_base/{category}.xlsx'
+
+        print('Формирую пути сохранения данных.')
+        self._get_output_folders(
+            path_to_output_folder=path_to_output_folder,
+            category=category,
+        )
 
         print('Определяю json-схему.')
         json_scheme = self._determine_scheme_for_response_format(product_count=product_count)
@@ -375,19 +386,18 @@ class ControlManager:
         prompt = self._bring_prompt(dict_with_info=data)
 
         print('Отправляю запрос в OpenAI.')
-        self._create_context_for_request_to_openai(prompt_for_convert=prompt,
-                                                   json_scheme=json_scheme)
+        file_path_to_saving_json = self._create_context_for_request_to_openai(
+            prompt_for_convert=prompt,
+            json_scheme=json_scheme,
+            folder_name=self.paths_to_folders["prompt"],
+        )
 
         print('Разбираю ответ от OpenAI.')
         self._reviewing_response_from_openai(file_path=file_path,
-                                             json_file_path=json_file_path)
+                                             json_file_path=file_path_to_saving_json)
 
         print('Формирую данные для картинок.')
         info_for_picture = self._generating_data_for_images(file_path=file_path)
-
-        print('Формирую пути сохранения данных.')
-        self._get_output_folders(path_to_output_folder=path_to_output_folder,
-                                 category=category)
 
         print('Готовлю текстовое оформление поста.')
         self._forming_text_for_post(data=data, info_for_picture=info_for_picture)
@@ -399,10 +409,9 @@ class ControlManager:
 
 
 if __name__ == '__main__':
-    instance = ControlManager()
+    instance = ControlManager(saving_folders=folders_for_save)
     instance.create_collection(
         category="Шампуни",
-        json_file_path='00_base/prompt/history_prompt/Анализ_средств.json',
         product_count=6,
         path_to_output_folder='00_base/00_info_for_post/',
     )
