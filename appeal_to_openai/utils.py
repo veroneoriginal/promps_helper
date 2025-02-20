@@ -106,27 +106,25 @@ def _processing_content_from_openai(
 def _save(
         data: Optional[Any],
         folder_name: str,
-) -> None:
+        json_filename: str = "Анализ_средств.json"
+) -> str:
     """
     Функция для сохранения ответа, полученного от OpenAI
 
     :param data: обработанный контент от OpenAI
     :param folder_name: путь, куда сохранять ответ от OpenAI
-    :return: None
+    :return: путь до файла json файла с анализом средств
     """
 
-    # Убедиться, что папка prompt/history_prompt существует, иначе создать её
-    os.makedirs(folder_name, exist_ok=True)
-
     # Формирование имени файла
-    file_name = "Анализ_средств.json"
-    file_path = os.path.join(folder_name, file_name)
+    file_path = os.path.join(folder_name, json_filename)
 
     # Сохранение текста в файл
     with open(file_path, "w", encoding="utf-8") as file:
         json.dump(data, file, ensure_ascii=False, indent=4)
 
-    print(f"Файл успешно сохранен: {file_path}")
+    # print(f"Файл успешно сохранен: {file_path}")
+    return file_path
 
 
 def checking_file_with_response(

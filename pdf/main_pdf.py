@@ -207,6 +207,7 @@ class PDFCreator:
             width=width_height[0],
             height=width_height[1],
             id=frame_id,
+            # showBoundary=True,
         )
 
     def _choosing_brand_line(
@@ -221,8 +222,8 @@ class PDFCreator:
         """
 
         if product.get('Лучшее средство'):
-            return "00_base/imagine_border/border_green.jpg"
-        return "00_base/imagine_border/border_fiolet.jpg"
+            return "00_base/source/imagine_border/border_green.jpg"
+        return "00_base/source/imagine_border/border_fiolet.jpg"
 
     def _on_page_end_brand_line_wrapper(
             self,
@@ -356,6 +357,10 @@ class PDFCreator:
 
         :return: полный путь к файлу PDF
         """
+
+        # Убедимся, что output_folder_pdf - это Path
+        output_folder_pdf = Path(output_folder_pdf)
+
         product_name = product.get("Название")
         safe_filename = product_name.replace(" ", "_").replace("/", "_") + ".pdf"
 
@@ -381,8 +386,8 @@ class PDFCreator:
 
         # Создаем фрейм для основных элементов (flowables)
         frame = self._create_frame_for_elements(
-            x1_y1=(doc.leftMargin, doc.bottomMargin),
-            width_height=(doc.width, doc.height),
+            x1_y1=(doc.leftMargin, 0),
+            width_height=(doc.width, doc.height + doc.bottomMargin),
             frame_id='body_frame'
         )
 
@@ -427,7 +432,7 @@ class PDFCreator:
 
         :return: None
         """
-        output_folder_pdf.mkdir(parents=True, exist_ok=True)
+
         self.sizes = (1024, 1280)  # Ширина и высота страницы в пикселях
 
         for product in list_with_info:

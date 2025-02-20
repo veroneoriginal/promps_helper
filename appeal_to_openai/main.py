@@ -6,7 +6,8 @@
 from appeal_to_openai.utils import (
     _formation_context,
     _generate_text_content_openai,
-    _save, _processing_content_from_openai,
+    _save,
+    _processing_content_from_openai,
 )
 
 
@@ -15,8 +16,8 @@ def main(
         system_prompt: str,
         api_key: str,
         json_scheme: dict,
-        folder_name: str = 'prompt/history_prompt',
-) -> None:
+        folder_name: str,
+) -> str:
     """
     Уравляющая функция для реализации процесса отправки запроса в openai,
     получение результата и сохранение итогового файла
@@ -27,7 +28,7 @@ def main(
     :param system_prompt: системный промпт для отправки запроса
     :param json_scheme: json_scheme запроса (определяется в зависимости
      от количества анализируемых средств)
-    :return: None
+    :return: путь до json файла с анализом средств
     """
 
     # print('Формирование контекста')
@@ -49,7 +50,9 @@ def main(
 
 
     print('Сохраняю ответ, полученный от OpenAI')
-    _save(
+    file_path_to_saving_json = _save(
         data=data,
         folder_name=folder_name,
     )
+
+    return file_path_to_saving_json
