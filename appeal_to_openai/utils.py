@@ -126,7 +126,7 @@ def _save(
     with open(file_path, "w", encoding="utf-8") as file:
         json.dump(data, file, ensure_ascii=False, indent=4)
 
-    print(f"Файл успешно сохранен: {file_path}")
+    # print(f"Файл успешно сохранен: {file_path}")
 
 
 def checking_file_with_response(
