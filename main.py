@@ -17,7 +17,7 @@ from prompt_constructor.constructor import PromptConstructor
 from prompt_constructor.json_schemes.json_schemes import determine_scheme_by_number_of_products
 from prompt_constructor.settings_constructor.settings_response import SETTINGS_RESPONSE
 from prompt_constructor.settings_constructor.system_prompt import SYSTEM_PROMPT
-from source.structure_folders.structure_folders import folders_for_save
+from source.structure_folders.structure_folders import scheme_for_folders_name
 
 
 
@@ -26,9 +26,9 @@ class ControlManager:
     Класс, управляющий логикой весго проекта
     """
 
-    def __init__(self, saving_folders):
+    def __init__(self, scheme_for_folders):
         self.paths_to_folders = {}
-        self.saving_folders = saving_folders
+        self.scheme_for_folders = scheme_for_folders
 
     def _take_data_from_the_table(
             self,
@@ -73,6 +73,8 @@ class ControlManager:
         3) сохранение результата
 
         :param prompt_for_convert: промпт для преобразования его в контекст
+        :param json_scheme: схема с названиями папок
+        :param folder_name: папка, в которую будет сохраняться ответ openai
         :return: путь до json файла с анализом средств
         """
 
@@ -237,7 +239,7 @@ class ControlManager:
         :return: None (изменяет self.paths_to_folders)
         """
 
-        for service, folders in self.saving_folders.items():
+        for service, folders in self.scheme_for_folders.items():
             service_path = category_folder / service
 
             # Если список подпапок пустой или отсутствует, добавляем только базовый путь сервиса
@@ -276,6 +278,8 @@ class ControlManager:
 
         :param category: название категории для подпапки.
         :param path_to_output_folder: путь до основной папки, в которую идет сохранение.
+
+        :return: None
         """
 
         # Определяем базовую папку
@@ -409,7 +413,7 @@ class ControlManager:
 
 
 if __name__ == '__main__':
-    instance = ControlManager(saving_folders=folders_for_save)
+    instance = ControlManager(scheme_for_folders=scheme_for_folders_name)
     instance.create_collection(
         category="Шампуни",
         product_count=6,
