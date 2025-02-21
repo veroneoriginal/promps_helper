@@ -130,7 +130,8 @@ def _save(
 def checking_file_with_response(
         json_file_path: str,
 ) -> Optional[Any] | None:
-    """ С помощью этой функции открываю файл с ответом OpenAI
+    """
+    С помощью этой функции открываю файл с ответом OpenAI
     и проверяю, что формат файла с ответом соответствует заданному
 
     :param json_file_path: путь до файла с ответом OpenAI

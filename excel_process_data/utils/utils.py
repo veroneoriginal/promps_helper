@@ -1,3 +1,4 @@
+import hashlib
 import re
 import datetime
 from typing import Optional
@@ -25,41 +26,6 @@ def extract_text(
         return f"{data.get(main_key, '')}. {data.get(description_key, '')}".strip()
 
     return str(data)
-
-
-def find_empty_row_for_today(
-        ws: Worksheet,
-        col_date: int,
-        col_best_product: int,
-        today_str: str,
-) -> Optional[int] | None:
-    """
-    Функция определяет строку для вставки средств по текущей дате
-    и свободной ячейке в столбце "Лучшее средство"
-
-    :param ws: активный лист из excel-документа
-    :param col_date: номер столбца "Дата"
-    :param col_best_product: номер столбца "Лучший продукт"
-    :param today_str: текущая дата
-
-    :return: номер строки, в которую будет осуществляться запись
-    """
-
-    for row in range(2, ws.max_row + 1):
-        cell_value = ws.cell(row=row, column=col_date).value
-        if isinstance(cell_value, datetime.date):
-            cell_date_str = cell_value.strftime("%d.%m.%Y")
-        elif cell_value is not None:
-            cell_date_str = str(cell_value)
-        else:
-            cell_date_str = ""
-
-        if cell_date_str == today_str:
-            # Нашли строку с нужной датой, теперь проверяем, пуста ли ячейка "Лучшее средство"
-            if ws.cell(row=row, column=col_best_product).value is None:
-                return row
-    # если пустой строки для текущей даты не найдено
-    return None
 
 
 def find_target_row_for_today_and_full_best_product(
@@ -153,3 +119,52 @@ def function_for_forming_dict_with_correlation(
         }
 
     return selection_dict
+
+
+def counting_hash(
+        data: dict,
+) -> str:
+    """
+    Функция для подсчета хеша текущей поборки
+
+    :param data: словарь, в котором содержится текущая подборка
+    :return: хеш текущей подборки
+    """
+
+    # привожу к нормальному виду Средства
+    # получаю строку
+    edit_products = data['Средства']
+
+    # очищаю строку от переносов
+    cleaned_products = edit_products.replace('\n', '')
+
+    # расспличиваю строку по амперсантам и получаю список
+    products_list = cleaned_products.split('&&&')
+    products_list = [product.strip() for product in products_list]
+    products_list.remove('')
+    data['Средства'] = tuple(sorted(products_list))
+
+    # привожу к нормальному виду Тип
+    edit_type = data['Тип']
+    types_list = edit_type.split(',')
+    data['Тип'] = tuple(sorted([type_elem.strip() for type_elem in types_list]))
+
+    data['Возраст'] = str(32)
+
+    list_for_hash = []
+    for key, value in data.items():
+        if key not in ("Содержимое", "Лучший вариант", "Итог", "Хеш"):
+            list_for_hash.append(value)
+
+    # Создаём новый список, "разворачивая" кортежи
+    new_list = []
+    for item in list_for_hash:
+        if isinstance(item, tuple):
+            new_list.extend(item)  # Добавляем элементы кортежа напрямую
+        else:
+            new_list.append(item)  # Добавляем остальные элементы как есть
+
+    final_tuple = tuple(sorted(new_list))
+    final_str = str(final_tuple).encode()
+
+    return hashlib.sha256(final_str).hexdigest()
