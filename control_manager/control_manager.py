@@ -6,16 +6,9 @@ import os
 import json
 from datetime import datetime
 from pathlib import Path
-# from pprint import pprint
-
 from dotenv import load_dotenv
 from appeal_to_openai.main import main as appeal_to_openai_main
 from appeal_to_openai.utils import checking_file_with_response
-from excel_process_data.formation_single_dict import (
-    load_data_tools_table,
-    load_count_collections,
-)
-
 from excel_process_data.process_data import ExcelManager
 from pdf.main_pdf import PDFCreator
 from pdf.utils import forming_info_for_pdf
@@ -52,7 +45,14 @@ class ControlManager:
         """
 
         instance_excel = ExcelManager(file_path=file_path_tools_table)
-        return load_data_tools_table(instance_excel=instance_excel)
+
+        return {
+            "Средства": instance_excel.load_info_about_products(ws_title='Средства'),
+            "Тип": instance_excel.load_type_data(ws_title='Тип'),
+            "Запрос": instance_excel.load_user_request(ws_title='Запрос'),
+            "Задача": instance_excel.load_tasks_data(ws_title='Задача'),
+            "Специалист": instance_excel.load_specialists_data(ws_title='Специалист'),
+        }
 
     def _get_count_collections(
             self,
@@ -66,14 +66,14 @@ class ControlManager:
         """
 
         instance_excel = ExcelManager(file_path=file_path_collection)
-        return load_count_collections(instance_excel=instance_excel)
+        return instance_excel.count_empty_result()
 
     def _take_data_from_collection(
             self,
             file_path_collection: str,
     ) -> dict:
         """
-        Функция для загрузки данных по текущей подборке из таблицы Подборки.
+        Метод для загрузки данных по текущей подборке из таблицы Подборки.
 
         :param file_path_collection: путь до документа Подборки.xlsx
         :return: словарь с информацией о текущей подборке вида
@@ -123,7 +123,7 @@ class ControlManager:
             folder_name: str,
     ) -> str:
         """
-        В этой функции осуществляется вызов ключевой функции по:
+        В этом методе осуществляется вызов ключевой функции по:
         1) созданию готового контекста, который передается в OpenAI,
         2) отправке самого запроса в OpenAI,
         3) сохранение результата
@@ -154,7 +154,7 @@ class ControlManager:
             dict_with_hash: dict,
     ) -> None:
         """
-        В этой функции разбираю ответ от OpenAI.
+        В этом методе разбираю ответ от OpenAI.
 
         :param file_path: путь до документа Подборки.xlsx
         :param json_file_path: путь до json-файла с анализом средств
@@ -173,19 +173,6 @@ class ControlManager:
             dict_with_hash=dict_with_hash,
             file_path=file_path,
         )
-
-    def _determine_scheme_for_response_format(
-            self,
-            product_count: int = 6 | 4,
-    ) -> dict:
-        """
-        Функция для вызова полной функции по выбору json-scheme.
-
-        :param product_count: количество средств, которые анализируюся
-        :return: json-scheme в виде словаря
-        """
-
-        return determine_scheme_by_number_of_products(product_count=product_count)
 
     def _create_timestamped_folder(
             self,
@@ -276,7 +263,7 @@ class ControlManager:
         """
         Создает словарь путей ко всем созданным папкам соцсетей и их подпапкам.
 
-        :param category_folder:  Путь к папке подборки
+        :param category_folder: Путь к папке подборки
         :return: None (изменяет self.paths_to_folders)
         """
 
@@ -317,8 +304,8 @@ class ControlManager:
         """
         Создает папки для сохранения файлов.
 
-        :param category: название категории для подпапки.
         :param path_to_output_folder: путь до основной папки, в которую идет сохранение.
+        :param category: название категории для подпапки.
         :return: None
         """
 
@@ -360,7 +347,7 @@ class ControlManager:
 
         :param json_file_path: путь до json-файла с анализом средств
         :param data_tools: словарь с информацией о средствах, типах и прочем
-        :return: словарь с средствами, их плюсами и минусами, и соотношенияем объема и цены
+        :return: словарь со средствами, их плюсами и минусами, и соотношенияем объема и цены
         """
 
         # обращаемся к json файлу
@@ -388,7 +375,6 @@ class ControlManager:
             transform_dict=transformed_dict,
             list_keys=required_keys,
         )
-
 
     def _create_pdf_jpg_for_post(
             self,
@@ -451,14 +437,15 @@ class ControlManager:
 
     def create_collection(
             self,
+            file_path_tools: str,
+            file_path_collection: str,
             path_to_output_folder: str,
-            file_path_tools: str = '00_base/Средства.xlsx',
-            file_path_collection: str = '00_base/Подборки.xlsx',
     ) -> None:
         """
         Главный метод класса, в котором собрана вся логика программы
 
-        :param path_to_output_folder: путь до папки, в которую идет сохранение.
+        :param path_to_output_folder: путь до папки, в которую идет сохранение ответа от OpenAI,
+        промпта, картинок и текста.
         :param file_path_tools: путь до таблицы со всей инфой о средствах, типах и прочем
         :param file_path_collection: путь до таблицы с подборками
 
@@ -474,7 +461,6 @@ class ControlManager:
         count_collection = self._get_count_collections(file_path_collection)
 
         for _ in range(count_collection):
-
             # формирую словарь с первой подборкой
             data_collection = self._take_data_from_collection(
                 file_path_collection=file_path_collection,
@@ -493,7 +479,7 @@ class ControlManager:
             )
 
             print('Определение json-схемы.')
-            json_scheme = self._determine_scheme_for_response_format(product_count=6)
+            json_scheme = determine_scheme_by_number_of_products(product_count=6)
 
             # cобираю промпт
             prompt = self._bring_prompt(data_collection=data_collection)

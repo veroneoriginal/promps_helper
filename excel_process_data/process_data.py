@@ -4,7 +4,6 @@
 """
 
 import sys
-# from pprint import pprint
 
 from typing import (
     Optional,
@@ -77,7 +76,8 @@ class ExcelManager:
     def _load_data(
             self,
             ws_title: str,
-            column_name: str):
+            column_name: str,
+    )-> dict:
         """
         Универсальный метод для загрузки данных из Excel.
 
@@ -126,7 +126,7 @@ class ExcelManager:
             ws_title: str,
     ) -> dict:
         """
-        Загрузка данных из таблицы Средства.xlsx -> лист "Средства",
+        Метод для загрузки данных из таблицы Средства.xlsx -> лист "Средства",
         Из этих данных формируется словарь вида
 
         {
@@ -148,7 +148,7 @@ class ExcelManager:
             file_path: str = None,
     ) -> None:
         """
-        Функция для сохранения информации по нужному пути
+        Метод для сохранения информации по нужному пути
 
         :param file_path: путь файла, в который нужно сохранять информацию
         :return: None
@@ -163,7 +163,7 @@ class ExcelManager:
             ws_title: str,
     ) -> dict:
         """
-        Загрузка данных из таблицы 00_Средства -> лист "Тип"
+        Метод для загрузки данных из таблицы 00_Средства -> лист "Тип"
         Из этих данных формируется словарь вида
         {
             Код: {
@@ -184,7 +184,7 @@ class ExcelManager:
             ws_title: str,
     ) -> dict:
         """
-        Загрузка данных из таблицы 00_Средства -> лист "Запрос"
+        Метод для загрузки данных из таблицы 00_Средства -> лист "Запрос"
         Из этих данных формируется словарь вида
         {
            ЗВ1: {
@@ -205,7 +205,7 @@ class ExcelManager:
             ws_title: str,
     ) -> dict:
         """
-        Загрузка данных из таблицы 00_Средства -> лист "Задача"
+        Метод для загрузки данных из таблицы 00_Средства -> лист "Задача"
         Из этих данных формируется словарь вида
         {
             Код: {
@@ -226,7 +226,7 @@ class ExcelManager:
             ws_title: str,
     ) -> dict:
         """
-        Загрузка данных из таблицы 00_Средства -> лист "Специалист"
+        Метод для загрузки данных из таблицы 00_Средства -> лист "Специалист"
         Из этих данных формируется словарь вида
         {
             Код: {
@@ -243,7 +243,8 @@ class ExcelManager:
 
     def count_empty_result(
             self,
-            ws_title: str = "Подборки") -> int:
+            ws_title: str = "Подборки",
+    ) -> int:
         """
         Подсчитывает количество строк в таблице 'Подборки' с незаполненным полем 'Итог'.
 
@@ -277,7 +278,7 @@ class ExcelManager:
             ws_title: str,
     ) -> dict:
         """
-        Функция, в которой:
+        Метод, в котором:
         1) получаем данные из таблицы и преобразовываем их в словарь
         2) считаем хеш текущей подборки
         3) проверяем уникальность этой подборки
@@ -299,25 +300,24 @@ class ExcelManager:
         # Индекс столбца "Хеш"
         hash_column_index = headers["Хеш"]
 
-        # 0) Находим строку, с которой работаем
+        # 1) Находим строку, с которой работаем
         current_row = self.find_first_empty_row(
             sheet=sheet,
             result_index=result_index,
         )
 
-        # 1) получаем данные из таблицы и преобразовываем их в словарь
+        # 2) получаем данные из таблицы и преобразовываем их в словарь
         dict_collection = self.load_info_about_collection(
             sheet=sheet,
             number_row=current_row,
             headers=headers,
         )
 
-        # 2) считаем хеш текущей подборки
+        # 3) считаем хеш текущей подборки
         hash_collection = str(counting_hash(data=dict_collection))
         dict_collection['Хеш'] = hash_collection
 
-
-        # 3) проверяем уникальность этой подборки
+        # 4) проверяем уникальность этой подборки
         self.checking_unique_current_collection(
             hash_value=hash_collection,
             hash_column_index=hash_column_index,
@@ -329,7 +329,6 @@ class ExcelManager:
 
         # Сохраняем изменения в файл
         self.wb.save(self.file_path)
-        # print('Хеш подборки записан в таблицу')
 
         return dict_collection
 
@@ -360,7 +359,7 @@ class ExcelManager:
             number_row: int,
     ) -> dict:
         """
-        В этом методе осуществляется загрузка данных из таблицы Подборки
+        Метод, в котором осуществляется загрузка данных из таблицы Подборки
         -> лист "Подборки" с конкретной строки и формирование из этих данных словаря вида
         {
         'Пол': 'женский',
@@ -395,7 +394,7 @@ class ExcelManager:
             sheet: Worksheet
     ) -> bool:
         """
-        Функция для проверки уникальности текущей подборки.
+        Метод для проверки уникальности текущей подборки.
 
         :param hash_value: хеш текущей подборки
         :param hash_column_index: индекс столбца, в котором брать другие хеши
@@ -416,54 +415,6 @@ class ExcelManager:
         return True  # то есть такой подборки еще нет
 
 
-#     def write_products(
-#             self,
-#             ws: Worksheet,
-#             data: Optional[Any],
-#             empty_row: int,
-#             headers: dict,
-#     ) -> None:
-#
-#         """
-#         Функция осуществляет запись о средствах из Json-файла в лист Подборки
-#
-#         :param ws: активный лист из excel-документа
-#         :param data: JSON - данные
-#         :param empty_row: номер строки, в которую будет осуществляться запись
-#         :param headers: словарь сназваниями столбцов и их номерами
-#
-#         :return: None
-#         """
-#
-#         # Собираем ключи продуктов из JSON
-#         product_keys = [
-#             key for key in data.keys() if key.startswith("product_")
-#         ]
-#
-#         for product_key in product_keys:
-#             product_index = int(product_key.split("_")[1])
-#             product_data = data[product_key]
-#
-#             # Промежуточный словарь для соответствия ключей JSON и заголовков Excel
-#             mapping = {
-#                 "title": f"Средство {product_index} Название",
-#                 "plus": f"Средство {product_index} ПЛЮСЫ",
-#                 "minus": f"Средство {product_index} МИНУСЫ",
-#             }
-#
-#             for json_key, header_name in mapping.items():
-#                 if header_name in headers:
-#                     ws.cell(
-#                         row=empty_row,
-#                         column=headers[header_name],
-#                         value=product_data[json_key]
-#                     )
-#                 else:
-#                     print(f"Предупреждение: не найден столбец '{header_name}'"
-#                           f" для продукта {product_key}.")
-#
-
-
     def update_excel_with_json(
             self,
             data: Optional[Any],
@@ -471,8 +422,7 @@ class ExcelManager:
             file_path: str,
     ) -> None:
         """
-        Функция для записи данных из json-файла с ответом OpenAI
-        в Excel в лист "Подборки".
+        Метод для записи данных из json-файла с ответом OpenAI в лист "Подборки".
 
         :param data: JSON-данные
         :param dict_with_hash: словарь с текущей подборкой (для получения хеша)
