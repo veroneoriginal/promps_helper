@@ -38,20 +38,20 @@ class ControlManager:
             file_path_tools_table: str,
     ) -> dict:
         """
-        Функция для загрузки всех данных из таблицы Средства.
+        Метод для загрузки всех данных из таблицы Средства.
 
         :param file_path_tools_table: путь до документа Средства.xlsx
         :return: словарь с информацией о средствах, типах, запросе, задаче, специалистах
         """
 
-        instance_excel = ExcelManager(file_path=file_path_tools_table)
+        excel_manager = ExcelManager(file_path=file_path_tools_table)
 
         return {
-            "Средства": instance_excel.load_info_about_products(ws_title='Средства'),
-            "Тип": instance_excel.load_type_data(ws_title='Тип'),
-            "Запрос": instance_excel.load_user_request(ws_title='Запрос'),
-            "Задача": instance_excel.load_tasks_data(ws_title='Задача'),
-            "Специалист": instance_excel.load_specialists_data(ws_title='Специалист'),
+            "Средства": excel_manager.load_info_about_products(ws_title='Средства'),
+            "Тип": excel_manager.load_type_data(ws_title='Тип'),
+            "Запрос": excel_manager.load_user_request(ws_title='Запрос'),
+            "Задача": excel_manager.load_tasks_data(ws_title='Задача'),
+            "Специалист": excel_manager.load_specialists_data(ws_title='Специалист'),
         }
 
     def _get_count_collections(
@@ -65,8 +65,8 @@ class ControlManager:
         :return: количество незаполненных подборок
         """
 
-        instance_excel = ExcelManager(file_path=file_path_collection)
-        return instance_excel.count_empty_result()
+        excel_manager = ExcelManager(file_path=file_path_collection)
+        return excel_manager.count_empty_result()
 
     def _take_data_from_collection(
             self,
@@ -95,8 +95,9 @@ class ControlManager:
              'Тип': ('В1', 'В10'),
              'Хеш': -4256620288625128615}
         """
-        instance_excel = ExcelManager(file_path=file_path_collection)
-        return instance_excel.get_data_from_table_in_form_of_dict(ws_title="Подборки")
+
+        excel_manager = ExcelManager(file_path=file_path_collection)
+        return excel_manager.get_data_from_table_in_form_of_dict(ws_title="Подборки")
 
     def _bring_prompt(
             self,
@@ -109,9 +110,9 @@ class ControlManager:
         :return: промпт в виде словаря
         """
 
-        instance_create_prompt = PromptConstructor()
+        prompt_constructor = PromptConstructor()
 
-        return instance_create_prompt.construct_prompt(
+        return prompt_constructor.construct_prompt(
             data_collection=data_collection,
         )
 
@@ -165,8 +166,8 @@ class ControlManager:
         data = checking_file_with_response(json_file_path=json_file_path)
 
         # записываю в таблицу результат по анализу подборки
-        instance_excel = ExcelManager(file_path=file_path)
-        instance_excel.update_excel_with_json(
+        excel_manager = ExcelManager(file_path=file_path)
+        excel_manager.update_excel_with_json(
             data=data,
             dict_with_hash=dict_with_hash,
             file_path=file_path,
