@@ -63,7 +63,6 @@ def _generate_text_content_openai(
     """
 
     # Устанавливаем ключ API
-
     client = OpenAI(api_key=api_key)
 
     return client.chat.completions.create(
@@ -84,7 +83,8 @@ def _generate_text_content_openai(
 def _processing_content_from_openai(
         result: ChatCompletion,
 ) -> Optional[Any] | None:
-    """ Функция для обработки контента из ответа от OpenAI
+    """
+    Функция для обработки контента из ответа от OpenAI
 
     :param result: ответ от OpenAI
     :return: контент в json или None
@@ -131,8 +131,8 @@ def checking_file_with_response(
         json_file_path: str,
 ) -> Optional[Any] | None:
     """
-    С помощью этой функции открываю файл с ответом OpenAI
-    и проверяю, что формат файла с ответом соответствует заданному
+    Функция для открытия файла с ответом OpenAI и проверки,
+    что формат файла с ответом соответствует заданному.
 
     :param json_file_path: путь до файла с ответом OpenAI
     :return: JSON-данные или None

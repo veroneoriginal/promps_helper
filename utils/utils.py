@@ -276,7 +276,6 @@ def add_keys_from_another_dict_to_one_dict(
     :param base_dict: базовый словарь, из которого берем значения по ключам
     :param transform_dict: словарь, который дополняем
     :param list_keys: список ключей, которыми нужно дополнить transform_dict
-
     :return: дополненный словарь
     """
 

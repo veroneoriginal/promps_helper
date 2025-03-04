@@ -59,7 +59,7 @@ class ControlManager:
             file_path_collection: str,
     ) -> int:
         """
-        Функция для подсчета незаполненных подборок.
+        Метод для вызова метода для подсчета незаполненных подборок.
 
         :param file_path_collection: путь до документа Подборки.xlsx
         :return: количество незаполненных подборок
@@ -103,10 +103,9 @@ class ControlManager:
             data_collection: dict,
     ) -> dict:
         """
-        В этой функции осуществляется вызов функции для создания промпта
+        Метод для вызова функции для создания промпта
 
         :param data_collection: словарь с текущей подборкой
-
         :return: промпт в виде словаря
         """
 
@@ -154,12 +153,11 @@ class ControlManager:
             dict_with_hash: dict,
     ) -> None:
         """
-        В этом методе разбираю ответ от OpenAI.
+        Метод для разбора ответа от OpenAI.
 
         :param file_path: путь до документа Подборки.xlsx
         :param json_file_path: путь до json-файла с анализом средств
         :param dict_with_hash: словарь с текущей подборкой (для получения хеша)
-
         :return: None
         """
 
@@ -302,10 +300,10 @@ class ControlManager:
             category: str,
     ) -> None:
         """
-        Создает папки для сохранения файлов.
+        Метод для создания папки для сохранения файлов.
 
         :param path_to_output_folder: путь до основной папки, в которую идет сохранение.
-        :param category: название категории для подпапки.
+        :param category: название категории для подпапки (для текущей подборки).
         :return: None
         """
 
@@ -358,7 +356,7 @@ class ControlManager:
         del data['best_product']
         del data['result']
 
-        # трансформирую словарь из json-a в словарь, где ключи - названяи средств
+        # трансформирую словарь из json-a в словарь, где ключи - названия средств
         transformed_dict = transforming_dict_from_json_file(data=data)
 
         # Список ключей, которые нужно добавить
@@ -444,10 +442,10 @@ class ControlManager:
         """
         Главный метод класса, в котором собрана вся логика программы
 
-        :param path_to_output_folder: путь до папки, в которую идет сохранение ответа от OpenAI,
-        промпта, картинок и текста.
         :param file_path_tools: путь до таблицы со всей инфой о средствах, типах и прочем
         :param file_path_collection: путь до таблицы с подборками
+        :param path_to_output_folder: путь до папки, в которую идет сохранение ответа от OpenAI,
+        промпта, картинок и текста.
 
         :return: None
         """
