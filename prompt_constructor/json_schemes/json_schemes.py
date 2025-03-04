@@ -144,12 +144,18 @@ JSON_SCHEME_SIX_PRODUCTS = {
                     "minus": {
                         "type": "string",
                         "description": "Описание минусов первого средства (без названия средства)"
+                    },
+                    "best_product": {
+                        "type": "boolean",
+                        "description": "Если это средство стало лучшим, поставь здесь True, "
+                                       "если нет, то False"
                     }
                 },
                 "required": [
                     "title",
                     "plus",
-                    "minus"
+                    "minus",
+                    "best_product",
                 ],
                 "additionalProperties": False
             },
@@ -167,12 +173,18 @@ JSON_SCHEME_SIX_PRODUCTS = {
                     "minus": {
                         "type": "string",
                         "description": "Описание минусов второго средства (без названия средства)"
+                    },
+                    "best_product": {
+                        "type": "boolean",
+                        "description": "Если это средство стало лучшим, поставь здесь True,"
+                                       " если нет, то False"
                     }
                 },
                 "required": [
                     "title",
                     "plus",
-                    "minus"
+                    "minus",
+                    "best_product",
                 ],
                 "additionalProperties": False
             },
@@ -190,12 +202,18 @@ JSON_SCHEME_SIX_PRODUCTS = {
                     "minus": {
                         "type": "string",
                         "description": "Описание минусов третьего средства (без названия средства)"
+                    },
+                    "best_product": {
+                        "type": "boolean",
+                        "description": "Если это средство стало лучшим, "
+                                       "поставь здесь True, если нет, то False"
                     }
                 },
                 "required": [
                     "title",
                     "plus",
-                    "minus"
+                    "minus",
+                    "best_product",
                 ],
                 "additionalProperties": False
             },
@@ -215,12 +233,18 @@ JSON_SCHEME_SIX_PRODUCTS = {
                         "type": "string",
                         "description": "Описание минусов четвертого средства "
                                        "(без названия средства)"
+                    },
+                    "best_product": {
+                        "type": "boolean",
+                        "description": "Если это средство стало лучшим, поставь здесь True,"
+                                       " если нет, то False"
                     }
                 },
                 "required": [
                     "title",
                     "plus",
-                    "minus"
+                    "minus",
+                    "best_product",
                 ],
                 "additionalProperties": False
             },
@@ -240,12 +264,18 @@ JSON_SCHEME_SIX_PRODUCTS = {
                         "type": "string",
                         "description": "Описание минусов пятого средства "
                                        "(без названия средства)"
+                    },
+                    "best_product": {
+                        "type": "boolean",
+                        "description": "Если это средство стало лучшим, поставь здесь True,"
+                                       " если нет, то False"
                     }
                 },
                 "required": [
                     "title",
                     "plus",
-                    "minus"
+                    "minus",
+                    "best_product",
                 ],
                 "additionalProperties": False
             },
@@ -263,12 +293,18 @@ JSON_SCHEME_SIX_PRODUCTS = {
                     "minus": {
                         "type": "string",
                         "description": "Описание минусов шестого средства (без названия средства)"
+                    },
+                    "best_product": {
+                        "type": "boolean",
+                        "description": "Если это средство стало лучшим, поставь здесь True,"
+                                       " если нет, то False"
                     }
                 },
                 "required": [
                     "title",
                     "plus",
-                    "minus"
+                    "minus",
+                    "best_product",
                 ],
                 "additionalProperties": False
             },
@@ -290,7 +326,6 @@ JSON_SCHEME_SIX_PRODUCTS = {
         "additionalProperties": False
     }
 }
-
 
 def determine_scheme_by_number_of_products(
         product_count: int = 6 | 4,

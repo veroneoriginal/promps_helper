@@ -22,22 +22,23 @@ def main(
     Уравляющая функция для реализации процесса отправки запроса в openai,
     получение результата и сохранение итогового файла
 
-    :param api_key: ключ для отправки запроса
-    :param folder_name: папка, в которую будет сохраняться ответ openai
     :param prompt: сформированный промпт для отправки запроса
     :param system_prompt: системный промпт для отправки запроса
+    :param api_key: ключ для отправки запроса
     :param json_scheme: json_scheme запроса (определяется в зависимости
      от количества анализируемых средств)
+    :param folder_name: папка, в которую будет сохраняться ответ openai
+
     :return: путь до json файла с анализом средств
     """
 
-    # print('Формирование контекста')
+    # Формирование контекста
     context = _formation_context(
         prompt=prompt,
         system_prompt=system_prompt,
     )
 
-    # print('Передаю контекст в OpenAI.')
+    # Передаю контекст в OpenAI
     result = _generate_text_content_openai(
         api_key=api_key,
         context=context,
@@ -45,7 +46,7 @@ def main(
         json_scheme=json_scheme,
     )
 
-    # print('Обрабатываю контент полученный от OpenAI')
+    # Обрабатываю контент полученный от OpenAI
     data = _processing_content_from_openai(result=result)
 
 

@@ -3,4 +3,5 @@ scheme_for_folders_name = {
     "telegram": ["text", "pdf", "jpg"],
     "pinterest": ["jpg"],
     "prompt": "",
+    "answer_gpt":"",
 }

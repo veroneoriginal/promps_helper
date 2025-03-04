@@ -1,8 +1,10 @@
-def forming_indo_for_pdf(data:dict) -> list:
+def forming_info_for_pdf(
+        data:dict,
+) -> list:
     """
     Функция для формирования списка словарей, которые нужны для наполнения картинки
 
-    :param data: словарь со всей информацией по средствам для подборки
+    :param data: словарь со всей информацией по средствам для текущей подборки
     :return: список словарей с информацией для вставки в изображение
      [
     {'Название': 'YVES ROCHER Volume Plumping Shampoo Sulfate Free',
@@ -14,18 +16,13 @@ def forming_indo_for_pdf(data:dict) -> list:
     'Ссылка на изображение в базе': '00_base/products/00_img/yves_free.jpg',
     'Лучшее средство': False,
     ]
-
     """
-
-    # создаем рабочий словарь и из него удаляем неитерабельный объект
-    dict_for_work = data
-    del dict_for_work["итоговая рекомендация"]
 
     # создаем список
     list_for_pdf = []
 
     # формируем список из словарей по средствам, которые надо преобразовать в картинку
-    for name_product, info in dict_for_work.items():
+    for name_product, info in data.items():
 
         ratio = (f'{info.get("Количество меры (число)")} '
                   f'{info.get("Юниты меры (мл/шт)")} / {info.get("Стоимость руб")} рублей')
@@ -33,11 +30,11 @@ def forming_indo_for_pdf(data:dict) -> list:
         list_for_pdf.append(
             {
                 "Название": name_product,
-                "Плюсы": info["Плюсы"],
-                "Минусы": info["Минусы"],
+                "Плюсы": info["plus"],
+                "Минусы": info["minus"],
                 "Соотношение": ratio,
                 "Ссылка на изображение в базе": info.get("Ссылка на изображение в базе"),
-                "Лучшее средство": info["Лучшее средство"],
+                "Лучшее средство": info["best_product"],
             }
         )
 

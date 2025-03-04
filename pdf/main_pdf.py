@@ -1,5 +1,6 @@
 import os
 from pathlib import Path
+# from pprint import pprint
 from typing import (
     Tuple,
     List,
@@ -424,16 +425,16 @@ class PDFCreator:
             output_folder_jpg: Path,
     ) -> None:
         """
-        Создает PDF-файлы с наложенной бренд‑линей поверх основного контента.
+        Метод для создания PDF-файлов с наложенной бренд‑линей поверх основного контента.
 
         :param list_with_info: список словарей с информацией о продуктах.
         :param output_folder_pdf: путь (Path) к папке для сохранения PDF.
         :param output_folder_jpg: путь (Path) к папке для сохранения JPG.
-
         :return: None
         """
 
-        self.sizes = (1024, 1280)  # Ширина и высота страницы в пикселях
+        # Ширина и высота страницы в пикселях
+        self.sizes = (1024, 1280)
 
         for product in list_with_info:
             # форматируем имя файла
