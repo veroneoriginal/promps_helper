@@ -470,13 +470,16 @@ class ControlManager:
             data_collection = self._take_data_from_collection(
                 file_path_collection=file_path_collection,
             )
-            pprint(data_collection)
+            # pprint(data_collection)
 
-            # определяем задачу для выбора в json-схемы
-            code_task = data_collection['Задача']
-
-            # считаем сколько средств подаем для анализа
-            len_collection = len(data_collection['Средства'])
+            # формирую словарь с информацией для json-схемы
+            data_for_json = {
+                # определяем задачу для выбора в json-схемы
+                "Задача": data_collection['Задача'],
+                # считаем сколько средств подаем для анализа
+                "Количество элементов": len(data_collection['Средства']),
+                "Категория": data_collection['Содержимое']
+            }
 
             # обновляю словарь с текущей подборкой расшифрованными данными
             data_collection = decrypting_data_from_current_collection(
@@ -491,11 +494,7 @@ class ControlManager:
             )
 
             print('Определение json-схемы.')
-            json_scheme = determine_scheme_by_number_of_products(
-                code_task=code_task,
-                category=data_collection['Содержимое'],
-                product_count=len_collection,
-            )
+            json_scheme = determine_scheme_by_number_of_products(data=data_for_json)
 
             # pprint(json_scheme)
 
@@ -520,14 +519,14 @@ class ControlManager:
                 dict_with_hash=data_collection,
             )
 
-            print('Формирование данных для картинок.')
-            data_for_images = self._forming_data_for_images(
-                json_file_path=file_path_to_saving_json,
-                data_tools=data_tools['Средства'],
-            )
+            # print('Формирование данных для картинок.')
+            # data_for_images = self._forming_data_for_images(
+            #     json_file_path=file_path_to_saving_json,
+            #     data_tools=data_tools['Средства'],
+            # )
 
-            print('Создание картинок со средствами для постов в соц.сети.')
-            self._create_pdf_jpg_for_post(data=data_for_images)
-
-            # print('Готовлю текстовое оформление поста.')
-            # self._forming_text_for_post(data=data, info_for_picture=info_for_picture)
+            # print('Создание картинок со средствами для постов в соц.сети.')
+            # self._create_pdf_jpg_for_post(data=data_for_images)
+            #
+            # # print('Готовлю текстовое оформление поста.')
+            # # self._forming_text_for_post(data=data, info_for_picture=info_for_picture)

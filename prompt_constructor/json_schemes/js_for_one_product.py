@@ -1,9 +1,8 @@
 def create_base_json_scheme_for_one_product() -> dict:
     """
-    Функция для создания унивесральной json-схемы для анализа одного средства,
-    которая используется во всех категориях
+    Функция, внутри которой создается базовая конструкция универсальной
+    json-схемы для анализа одного средства, которая используется во всех категориях
     """
-
     schema = {
         "name": "cosmetic_product_analysis",
         "strict": True,
@@ -86,6 +85,7 @@ def create_base_json_scheme_for_one_product() -> dict:
     return schema
 
 
+# словарь для дополнения основной схемы
 CATEGORY_EXTENSIONS = {
 
     "уход за телом":
@@ -218,14 +218,22 @@ CATEGORY_EXTENSIONS = {
 
 
 def create_json_scheme_for_one_product(
-        category: str,
+        data: dict,
 ) -> dict:
+    """
+    Функция для формирования json-схемы для кода задачи 'Разбор состава одного средства'
+
+    :param data: словарь с информацией для выбора json-схемы из которого для этой функции берется
+    значение по ключу 'Категория'
+    :return: json-схема для заданного количества средств
+    """
+
     # Получаем базовую схему
     schema = create_base_json_scheme_for_one_product()
 
     # Проверяем, есть ли для категории расширения
-    if category in CATEGORY_EXTENSIONS:
-        extension = CATEGORY_EXTENSIONS[category]
+    if data["Категория"] in CATEGORY_EXTENSIONS:
+        extension = CATEGORY_EXTENSIONS[data["Категория"]]
         # Добавляем новые свойства
         schema["schema"]["properties"]["product"]["properties"].update(extension["properties"])
         # Добавляем новые обязательные поля

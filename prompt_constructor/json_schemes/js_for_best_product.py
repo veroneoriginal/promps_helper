@@ -1,10 +1,11 @@
 def create_json_scheme_for_best_product(
-        product_count: int,
+        data: dict,
 ) -> dict:
     """
     Функция для динамического формирования json-схемы для кода задачи 'Лучшее средство'
 
-    :param product_count: количество средств, которые анализируются
+    :param data: словарь с информацией для выбора json-схемы из которого для этой функции берется
+    значение по ключу 'Количество элементов', которые анализируются
     :return: json-схема для заданного количества средств
     """
     schema = {
@@ -29,7 +30,7 @@ def create_json_scheme_for_best_product(
 
     # Добавляем продукты динамически
     products = {}
-    for i in range(1, product_count + 1):
+    for i in range(1, data["Количество элементов"] + 1):
         product_key = f"product_{i}"
         products[product_key] = {
             "type": "object",
