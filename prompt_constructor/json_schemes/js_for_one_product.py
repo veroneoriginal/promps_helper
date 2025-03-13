@@ -18,7 +18,7 @@ def create_base_json_scheme_for_one_product() -> dict:
                         },
                         "main_components": {
                             "type": "string",
-                            "description": "Подробно поясни суть основныых компонентов"
+                            "description": "Подробно поясни суть основных компонентов"
                         },
                         "active_ingredients": {
                             "type": "string",
