@@ -6,6 +6,8 @@ import os
 import json
 from datetime import datetime
 from pathlib import Path
+from pprint import pprint
+
 from dotenv import load_dotenv
 from appeal_to_openai.main import main as appeal_to_openai_main
 from appeal_to_openai.utils import checking_file_with_response
@@ -14,7 +16,7 @@ from pdf.main_pdf import PDFCreator
 from pdf.utils import forming_info_for_pdf
 from post_constructor.post_constructor import create_text_for_post
 from prompt_constructor.constructor import PromptConstructor
-from prompt_constructor.json_schemes.json_schemes import determine_scheme_by_number_of_products
+from prompt_constructor.json_schemes.main_json_schemes import determine_scheme_by_number_of_products
 
 from utils.utils import (
     decrypting_data_from_current_collection,
@@ -354,8 +356,12 @@ class ControlManager:
             data = json.load(file)
 
         # удаляю ненужные ключи из словаря
-        del data['best_product']
-        del data['result']
+        if 'best_product' in data.keys() and 'result' in data.keys():
+            del data['best_product']
+            del data['result']
+
+        print('Нахожусь перед transformed_dict')
+        pprint(data)
 
         # трансформирую словарь из json-a в словарь, где ключи - названия средств
         transformed_dict = transforming_dict_from_json_file(data=data)
@@ -464,6 +470,16 @@ class ControlManager:
             data_collection = self._take_data_from_collection(
                 file_path_collection=file_path_collection,
             )
+            # pprint(data_collection)
+
+            # формирую словарь с информацией для json-схемы
+            data_for_json = {
+                # определяем задачу для выбора в json-схемы
+                "Задача": data_collection['Задача'],
+                # считаем сколько средств подаем для анализа
+                "Количество элементов": len(data_collection['Средства']),
+                "Категория": data_collection['Содержимое']
+            }
 
             # обновляю словарь с текущей подборкой расшифрованными данными
             data_collection = decrypting_data_from_current_collection(
@@ -471,14 +487,16 @@ class ControlManager:
                 data_collection=data_collection,
             )
 
-            # фрмирую путь для сохранения данных
+            # формирую путь для сохранения данных
             self._get_output_folders(
                 path_to_output_folder=path_to_output_folder,
                 category=data_collection['Содержимое'],
             )
 
             print('Определение json-схемы.')
-            json_scheme = determine_scheme_by_number_of_products(product_count=6)
+            json_scheme = determine_scheme_by_number_of_products(data=data_for_json)
+
+            # pprint(json_scheme)
 
             # cобираю промпт
             prompt = self._bring_prompt(data_collection=data_collection)
@@ -501,14 +519,14 @@ class ControlManager:
                 dict_with_hash=data_collection,
             )
 
-            print('Формирование данных для картинок.')
-            data_for_images = self._forming_data_for_images(
-                json_file_path=file_path_to_saving_json,
-                data_tools=data_tools['Средства'],
-            )
+            # print('Формирование данных для картинок.')
+            # data_for_images = self._forming_data_for_images(
+            #     json_file_path=file_path_to_saving_json,
+            #     data_tools=data_tools['Средства'],
+            # )
 
-            print('Создание картинок со средствами для постов в соц.сети.')
-            self._create_pdf_jpg_for_post(data=data_for_images)
-
-            # print('Готовлю текстовое оформление поста.')
-            # self._forming_text_for_post(data=data, info_for_picture=info_for_picture)
+            # print('Создание картинок со средствами для постов в соц.сети.')
+            # self._create_pdf_jpg_for_post(data=data_for_images)
+            #
+            # # print('Готовлю текстовое оформление поста.')
+            # # self._forming_text_for_post(data=data, info_for_picture=info_for_picture)
