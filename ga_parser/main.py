@@ -2,12 +2,12 @@
 
 from time import sleep
 
-from ga_parser.parser.parse import parse_product
+from ga_parser.parser_v2.parser.parse import parse_product
 from ga_parser.processing_data.excel.process_data import ExcelProcess
 from ga_parser.utils.utils import (
     check_or_create_dir,
     path_to_universal,
-    random_between,
+    random_between, is_vpn_enabled,
 )
 
 
@@ -39,6 +39,9 @@ def _process_product(
             product_data=product_data,
             row=row
         )
+        product = product_data.get('Название')
+        print(f'Продукт "{product}" успешно спарсили🤙')
+        excel_process.wb_save()
         if index + 1 < products_for_parse_len:
             final_delay = random_between(base_delay)
             print(f'Ждём {final_delay} секунд...')
@@ -63,12 +66,25 @@ def start_parser(
     :param image_dir_path: базовый путь к папке, в которую сохранять изображения
     :param base_delay: базовая задержка в парсинге между запросами (в секундах)
     """
+    if is_vpn_enabled():
+        print('❌ VPN включен, парсер не будет работать. Или золотое яблоко заблочил твой IP🤯 ')
+        return
+
     check_or_create_dir(image_dir_path)
 
     excel_process = ExcelProcess(
         excel_file_path=path_to_universal(table_path),
         ws_title=ws_title
     )
+    if excel_process.check_products_dublicates():
+        print(
+            (
+                'Удали дубликаты в таблице средств для парсера, '
+                'я выделил их красным ✋'
+            )
+        )
+        return
+
     products_for_parse = excel_process.get_products_for_parse()
     _process_product(
         products_for_parse=products_for_parse,

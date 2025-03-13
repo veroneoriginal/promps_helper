@@ -1,14 +1,43 @@
 """
 Вспомогательные функции
 """
-
 import re
 from functools import wraps
 from html import unescape
 from pathlib import Path
 import random
 
-from ga_parser.parser.requests_funcs import get_image
+import requests
+from requests.exceptions import (
+    RequestException,
+    ReadTimeout,
+)
+
+from PIL import Image, ImageDraw, ImageFont
+
+from ga_parser.utils.requests_funcs import get_image
+
+
+
+
+
+
+def clean_text_2(raw_text: str) -> str:
+    """
+    Очищает строку от HTML-тегов, символов переноса строки, декодирует HTML-символы.
+    убирает множественные пробелы.
+
+    :param raw_text: Строка с HTML-тегами
+    :return: Очищенная строка
+    """
+
+    if not isinstance(raw_text, str):
+        return raw_text  # Возвращаем значение как есть, если это не строка
+
+    # Убираем множественные пробелы, заменяя их на один
+    cleaned_text = re.sub(r'\s+', ' ', raw_text).strip()
+
+    return cleaned_text
 
 
 def clean_text(raw_text: str) -> str:
@@ -123,29 +152,75 @@ def clean_product_name(
 
 def download_image(
         url: str,
-        product_title: str,
-        image_dir_path: Path,
+        file_save_path: str,
 ) -> None:
     """
     Сохраняет изображение средства в папку
 
     :param url: ссылка на изображение средства
-    :param product_title: название средства
-    :param image_dir_path: базовый путь к папке, в которую сохранять изображения
+    :param file_save_path: путь для сохранения файла
     :return: None
     """
 
     response = get_image(url)
-    # Удаляем все символы, кроме букв и цифр, заменяем их на "_"
-    sanitized_title = clean_product_name(product_title)
-
-    save_path = image_dir_path / f"{sanitized_title}.jpg"
 
     # Открываем файл в бинарном режиме для записи
-    with open(save_path, 'wb') as file:
+    with open(file_save_path, 'wb') as file:
         for chunk in response.iter_content(1024):
             file.write(chunk)
-        print(f"Изображение успешно сохранено в {save_path}")
+
+
+def add_text_to_image(
+        open_full_path: str,
+        text: str,
+        save_full_path: str | None = None,
+        x_y_offset: tuple = (20, 40),
+) -> None:
+    """
+    Добавляет текст "Источник" на изображение
+
+    :param open_full_path: полное имя файла (путь) для открытия
+    :param save_full_path: полное имя файла (путь) для сохранения
+    :param text: текст для добавления
+    :param x_y_offset: отступы по осям
+    :return: None
+    """
+    FONT_NAME = "Roboto-Regular.ttf"
+    FONT_SIZE = 20
+    FONT_COLOR = (0, 0, 0, 100)
+
+    image = Image.open(fp=open_full_path).convert("RGBA")
+    font = load_font(font_name=FONT_NAME, font_size=FONT_SIZE)
+    text_layer = Image.new(mode="RGBA", size=image.size, color=(255, 255, 255, 0))
+    draw = ImageDraw.Draw(text_layer)
+    coordinate = (x_y_offset[0], image.size[1] - x_y_offset[1])
+    text_to_paste = f'Источник: {text}'
+    draw.text(xy=coordinate, text=text_to_paste, fill=FONT_COLOR, font=font)
+    combined = Image.alpha_composite(image, text_layer).convert("RGB")
+    save_path = save_full_path if save_full_path else open_full_path
+    combined.save(fp=save_path)
+
+
+def load_font(
+        font_name: str = "Roboto-Regular.ttf",
+        font_size: int = 40) -> ImageFont:
+    """
+    Загружает шрифт для PIL
+
+    :param font_name: имя шрифта
+    :param font_size: размер шрифта
+    :return: None
+    """
+
+    font_path = Path.cwd() / '00_base/source/fonts' / font_name
+    try:
+        return ImageFont.truetype(font_path, font_size)
+    except IOError:
+        print(
+            ('Для нанесения источника на изображение '
+             'не удалось загрузить шрифт, использую стандартный шрифт')
+        )
+        return ImageFont.load_default()
 
 
 def path_to_universal(path: str) -> Path:
@@ -203,3 +278,25 @@ def handle_index_error():
         return wrapper
 
     return decorator
+
+
+def is_vpn_enabled() -> bool:
+    """
+    Проверяет, включен ли VPN
+    """
+
+    try:
+        response = requests.get("https://goldapple.ru/19000324846-keratin-works", timeout=10)
+        status = response.status_code
+
+        # Проверяем, не является ли IP локальным
+        if status == 403:
+            return True
+        return False
+
+    except (
+            RequestException,
+            ReadTimeout
+    ):
+        print("🚫 Нет соединения, возможно VPN включен!")
+        return False

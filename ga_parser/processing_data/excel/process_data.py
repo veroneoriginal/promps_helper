@@ -2,8 +2,10 @@
 
 from pathlib import Path
 
+import pandas as pd
 from openpyxl import load_workbook
 from openpyxl.cell.cell import Cell
+from openpyxl.styles import PatternFill
 
 
 class ExcelProcess:
@@ -21,9 +23,45 @@ class ExcelProcess:
         :param ws_title: имя рабочего листа с средствами в книге Excel
         """
 
-        self.excel_file_path = excel_file_path
+        self.excel_file_path: Path = excel_file_path
         self.wb = load_workbook(filename=excel_file_path)
         self.ws = self.wb[ws_title]
+
+    def check_products_dublicates(self):
+        """
+        Проверяем дубликаты п ссылке или названии,
+        если есть - закрашиваем красным строки
+        """
+
+        # Загружаем данные первых двух колонок в DataFrame
+        df = pd.read_excel(
+            io=self.excel_file_path,
+            sheet_name=self.ws.title,
+            usecols=[0, 1]
+        )
+        # Получаем названия колонок
+        column_1, column_2 = df.columns
+
+        # Находим дубликаты с удалением пробелов по краям
+        df[column_1] = df[column_1].astype(str).str.strip()
+        df[column_2] = df[column_2].astype(str).str.strip()
+        duplicates_1 = df[column_1].duplicated(keep=False)
+        duplicates_2 = df[column_2].duplicated(keep=False)
+
+        # Проходим по строкам и выделяем дубликаты
+        # Начинаем с 2 (1 - заголовок)
+        for row in range(2, len(df) + 2):
+            # Если есть дубликат в любой колонке
+            if duplicates_1.iloc[row - 2] or duplicates_2.iloc[row - 2]:
+                self.set_row_color(
+                    row=self.ws[row],
+                    color="FF0000"
+                )
+
+        if duplicates_1.any() or duplicates_2.any():
+            self.wb_save()
+            return True
+        return False
 
     def get_products_for_parse(self) -> dict[str, tuple]:
         """
@@ -80,6 +118,9 @@ class ExcelProcess:
         """
         title_row = self.ws[1]  # первая строка с заголовками столбцов
         for cell in title_row:
+            value = cell.value
+            if not value:
+                continue
             if cell.value.lower().strip() == title.lower().strip():
                 return row[cell.column - 1]
         return None
@@ -122,6 +163,32 @@ class ExcelProcess:
         cell = self._get_cell_in_row_by_title(title, row)
         if cell:
             cell.value = value
+            if not value:
+                self.set_cell_color(cell=cell)
+
+    def set_cell_color(
+            self,
+            cell: Cell,
+            color: str = 'FF0000'
+    ) -> None:
+        """
+        Красит ячейку в указанный цвет
+
+        :param cell: ячейка
+        :param color: цвет
+        """
+
+        cell.fill = PatternFill(start_color=color, end_color=color, fill_type="solid")
+
+    def set_row_color(self, row: tuple, color: str = 'FFFF00') -> None:
+        """
+        Красит все ячейки строки в указанный цвет
+
+        :param row: строка с ячейками
+        :param color: цвет
+        """
+        for cell in row:
+            self.set_cell_color(cell=cell, color=color)
 
     def set_cells_values_in_row_by_title_from_dict(
             self,
@@ -137,6 +204,9 @@ class ExcelProcess:
         :return: None
         """
 
+        if None in product_data.values():
+            self.set_row_color(row=row)
+
         for k, v in product_data.items():
             self._set_cell_value_in_row_by_title(
                 title=k,
@@ -151,3 +221,10 @@ class ExcelProcess:
 
         self.wb.save(self.excel_file_path)
         self.wb.close()
+
+    def wb_save(self) -> None:
+        """
+         Сохраняет книгу Excel
+        """
+
+        self.wb.save(self.excel_file_path)
