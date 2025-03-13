@@ -103,18 +103,21 @@ class ControlManager:
 
     def _bring_prompt(
             self,
+            data: dict,
             data_collection: dict,
     ) -> dict:
         """
         Метод для вызова функции для создания промпта
 
+        :param data: словарь с информацией для выбора промпта
         :param data_collection: словарь с текущей подборкой
         :return: промпт в виде словаря
         """
 
         prompt_constructor = PromptConstructor()
 
-        return prompt_constructor.construct_prompt(
+        return prompt_constructor.main_constructor_prompt(
+            data=data,
             data_collection=data_collection,
         )
 
@@ -470,10 +473,9 @@ class ControlManager:
             data_collection = self._take_data_from_collection(
                 file_path_collection=file_path_collection,
             )
-            # pprint(data_collection)
 
             # формирую словарь с информацией для json-схемы
-            data_for_json = {
+            data_for_dif_tasks= {
                 # определяем задачу для выбора в json-схемы
                 "Задача": data_collection['Задача'],
                 # считаем сколько средств подаем для анализа
@@ -494,12 +496,13 @@ class ControlManager:
             )
 
             print('Определение json-схемы.')
-            json_scheme = determine_scheme_by_number_of_products(data=data_for_json)
-
-            # pprint(json_scheme)
+            json_scheme = determine_scheme_by_number_of_products(data=data_for_dif_tasks)
 
             # cобираю промпт
-            prompt = self._bring_prompt(data_collection=data_collection)
+            prompt = self._bring_prompt(
+                data=data_for_dif_tasks,
+                data_collection=data_collection,
+            )
 
             print('Отправка запроса в OpenAI.')
             # self.paths_to_folders["answer_gpt"] будет содержать в себе
