@@ -13,6 +13,7 @@ def determine_scheme_by_number_of_products(
     """
     scheme = {
         'Лучшее средство': create_json_scheme_for_best_product,
+        'Лучшее средство без канцерогенов': create_json_scheme_for_best_product,
         'Разбор состава одного средства': create_json_scheme_for_one_product,
     }
 

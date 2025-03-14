@@ -6,14 +6,14 @@ import os
 import json
 from datetime import datetime
 from pathlib import Path
-from pprint import pprint
+# from pprint import pprint
 
 from dotenv import load_dotenv
 from appeal_to_openai.main import main as appeal_to_openai_main
 from appeal_to_openai.utils import checking_file_with_response
 from excel_process_data.process_data import ExcelManager
 from pdf.main_pdf import PDFCreator
-from pdf.utils import forming_info_for_pdf
+from pdf.utils import main_forming_info_for_pdf
 from post_constructor.post_constructor import create_text_for_post
 from prompt_constructor.constructor import PromptConstructor
 from prompt_constructor.json_schemes.main_json_schemes import determine_scheme_by_number_of_products
@@ -363,9 +363,6 @@ class ControlManager:
             del data['best_product']
             del data['result']
 
-        print('Нахожусь перед transformed_dict')
-        pprint(data)
-
         # трансформирую словарь из json-a в словарь, где ключи - названия средств
         transformed_dict = transforming_dict_from_json_file(data=data)
 
@@ -375,6 +372,7 @@ class ControlManager:
             "Юниты меры (мл/шт)",
             "Стоимость руб",
             "Ссылка на изображение в базе",
+            "Тип продукта",
         ]
 
         # дополняю transformed_dict ключами из data_tools
@@ -387,34 +385,69 @@ class ControlManager:
     def _create_pdf_jpg_for_post(
             self,
             data: dict,
+            data_task: dict,
     ) -> None:
         """
         Метод для создания pdf-листов и jpg-файлов (для постов со средствами)
 
         :param data: словарь со средствами, их плюсами, минусами и прочим
+        :param data_task: словарь с кодом задачи, количеством средств, категорией продукта
         :return: None
         """
 
-        # из словаря со всеми данными, формируем инфу для картинки в пост
-        list_with_info = forming_info_for_pdf(data=data)
+        task_name = data_task["Задача"]
 
         create_pdf = PDFCreator()
-        create_pdf.gen_pages_for_six_product(
-            list_with_info=list_with_info,
+
+        generation_pictures = {
+
+            'Лучшее средство': create_pdf.gen_pages_for_six_product,
+            'Лучшее средство без канцерогенов': create_pdf.gen_pages_for_six_product,
+            'Разбор состава одного средства': create_pdf.gen_pages_for_one_product,
+
+        }
+
+        # Получаем пути для сохранения файлов
+        paths_by_task = {
+            'Лучшее средство': {
+                'pdf': self.paths_to_folders['telegram_pdf'],
+                'jpg': self.paths_to_folders['telegram_jpg'],
+            },
+            'Лучшее средство без канцерогенов': {
+                'pdf': self.paths_to_folders['telegram_pdf'],
+                'jpg': self.paths_to_folders['telegram_jpg'],
+            },
+            'Разбор состава одного средства': {
+                'pdf': self.paths_to_folders['telegram_pdf'],
+                'jpg': self.paths_to_folders['telegram_jpg'],
+            },
+        }
+
+        # формируем инфу для картинки в пост
+        list_with_info = main_forming_info_for_pdf(
+            data=data,
+            data_task=data_task,
+        )
+
+        # Вызываем нужную функцию генерации
+        generation_func = generation_pictures.get(task_name)
+
+        generation_func(
+            info=list_with_info,
             # Формируем путь для сохранения
-            output_folder_pdf=self.paths_to_folders['telegram_pdf'],
-            output_folder_jpg=self.paths_to_folders['telegram_jpg'],
+            output_folder_pdf=paths_by_task[task_name]['pdf'],
+            output_folder_jpg=paths_by_task[task_name]['jpg'],
         )
 
         # копируем файлы из папки telegram jpg в instagram jpg
         copy_jpg_files(
-            where_copy_from=self.paths_to_folders['telegram_jpg'],
+            where_copy_from=paths_by_task[task_name]['jpg'],
             where_copy_to=self.paths_to_folders['instagram_jpg'],
         )
 
         # копируем файлы из папки telegram jpg в pinterest jpg
         copy_jpg_files(
-            where_copy_from=self.paths_to_folders['telegram_jpg'],
+            where_copy_from=paths_by_task[task_name]['jpg'],
             where_copy_to=self.paths_to_folders['pinterest_jpg'],
         )
 
@@ -474,7 +507,8 @@ class ControlManager:
                 file_path_collection=file_path_collection,
             )
 
-            # формирую словарь с информацией для json-схемы
+            # формирую словарь с информацией для json-схемы,
+            # для промпта и для картинок
             data_for_dif_tasks = {
                 # определяем задачу для выбора в json-схемы
                 "Задача": data_collection['Задача'],
@@ -521,16 +555,20 @@ class ControlManager:
                 json_file_path=file_path_to_saving_json,
                 dict_with_hash=data_collection,
             )
+
+            # Формирование данных для картинок
+            data_for_images = self._forming_data_for_images(
+                json_file_path=file_path_to_saving_json,
+                data_tools=data_tools['Средства'],
+            )
+
+            print('Создание картинок со средствами для постов в соц.сети.')
+            self._create_pdf_jpg_for_post(
+                data=data_for_images,
+                data_task=data_for_dif_tasks,
+            )
+
             print()
 
-            # print('Формирование данных для картинок.')
-            # data_for_images = self._forming_data_for_images(
-            #     json_file_path=file_path_to_saving_json,
-            #     data_tools=data_tools['Средства'],
-            # )
-
-            # print('Создание картинок со средствами для постов в соц.сети.')
-            # self._create_pdf_jpg_for_post(data=data_for_images)
-            #
             # # print('Готовлю текстовое оформление поста.')
             # # self._forming_text_for_post(data=data, info_for_picture=info_for_picture)

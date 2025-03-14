@@ -140,6 +140,7 @@ CATEGORY_EXTENSIONS = {
                 "spf_level",
                 "application_time",
                 "ph_level",
+                "exfoliation_intensity",
                 "eye_area_effect",
             ]
     },
@@ -169,6 +170,9 @@ CATEGORY_EXTENSIONS = {
                 "durability",
                 "finish",
                 "pigmentation",
+                "coverage",
+                "water_resistance",
+                "spf_level",
             ]
     },
     "стайлинг волос": {

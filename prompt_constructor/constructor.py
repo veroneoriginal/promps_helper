@@ -60,7 +60,6 @@ class PromptConstructor:
 Ответ ты должен дать в следующем виде: {data_collection['Задача']}"""
         }
 
-
     def main_constructor_prompt(
             self,
             data: dict,
@@ -76,6 +75,7 @@ class PromptConstructor:
 
         prompts = {
             'Лучшее средство': self.construct_prompt_for_best_product,
+            'Лучшее средство без канцерогенов': self.construct_prompt_for_best_product,
             'Разбор состава одного средства': self.construct_prompt_for_one_product,
         }
 

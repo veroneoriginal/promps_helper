@@ -455,7 +455,7 @@ class ExcelManager:
             cell_hash = row[col_hash - 1]  # -1, так как индексация с 0 в списке `row`
 
             if cell_hash.value == hash_value:
-                print('строка по хешу найдена')
+                # print('строка по хешу найдена')
                 # Записываем "Лучший вариант" и "Итог" из JSON
                 row[col_best_product - 1].value = data.get("best_product", "")
                 row[col_recommendation - 1].value = data.get("result", "")
