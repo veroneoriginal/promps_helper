@@ -521,6 +521,7 @@ class ControlManager:
                 json_file_path=file_path_to_saving_json,
                 dict_with_hash=data_collection,
             )
+            print()
 
             # print('Формирование данных для картинок.')
             # data_for_images = self._forming_data_for_images(
