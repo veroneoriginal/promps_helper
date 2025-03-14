@@ -475,7 +475,7 @@ class ControlManager:
             )
 
             # формирую словарь с информацией для json-схемы
-            data_for_dif_tasks= {
+            data_for_dif_tasks = {
                 # определяем задачу для выбора в json-схемы
                 "Задача": data_collection['Задача'],
                 # считаем сколько средств подаем для анализа
