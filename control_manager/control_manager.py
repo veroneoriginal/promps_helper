@@ -28,12 +28,13 @@ from utils.utils import (
 
 class ControlManager:
     """
-    Класс, управляющий логикой весго проекта
+    Класс, управляющий логикой всего проекта
     """
 
-    def __init__(self, scheme_for_folders):
+    def __init__(self, scheme_for_folders, param_dif_products_categories):
         self.paths_to_folders = {}
         self.scheme_for_folders = scheme_for_folders
+        self.param_dif_products_categories = param_dif_products_categories
 
     def _take_data_from_table_tool(
             self,
@@ -427,6 +428,7 @@ class ControlManager:
         list_with_info = main_forming_info_for_pdf(
             data=data,
             data_task=data_task,
+            product_categories=self.param_dif_products_categories,
         )
 
         # Вызываем нужную функцию генерации
@@ -530,7 +532,10 @@ class ControlManager:
             )
 
             print('Определение json-схемы.')
-            json_scheme = determine_scheme_by_number_of_products(data=data_for_dif_tasks)
+            json_scheme = determine_scheme_by_number_of_products(
+                data=data_for_dif_tasks,
+                product_categories=self.param_dif_products_categories,
+            )
 
             # cобираю промпт
             prompt = self._bring_prompt(
@@ -556,7 +561,7 @@ class ControlManager:
                 dict_with_hash=data_collection,
             )
 
-            # Формирование данных для картинок
+            print('Формирование данных для картинок')
             data_for_images = self._forming_data_for_images(
                 json_file_path=file_path_to_saving_json,
                 data_tools=data_tools['Средства'],

@@ -1,8 +1,9 @@
 """В этом модуле тестируем выбор json-схемы"""
-# from pprint import pprint
+
 import unittest
 
 from prompt_constructor.json_schemes.main_json_schemes import determine_scheme_by_number_of_products
+from source.structure_for_products import PARAMETERS_DIF_PRODUCT_CATEGORIES
 
 
 class TestDetermineSchemeByNumberOfProducts(unittest.TestCase):
@@ -21,10 +22,9 @@ class TestDetermineSchemeByNumberOfProducts(unittest.TestCase):
         }
 
         result = determine_scheme_by_number_of_products(
-            data=data_for_json
+            data=data_for_json,
+            product_categories=PARAMETERS_DIF_PRODUCT_CATEGORIES,
         )
-
-        # pprint(result)
 
         # Проверяем, что результат не None и он словарь
         self.assertIsNotNone(result)
@@ -44,10 +44,9 @@ class TestDetermineSchemeByNumberOfProducts(unittest.TestCase):
         }
 
         expected_result = determine_scheme_by_number_of_products(
-            data=data_for_json
+            data=data_for_json,
+            product_categories=PARAMETERS_DIF_PRODUCT_CATEGORIES,
         )
-
-        # pprint(expected_result)
 
         self.assertIsNotNone(expected_result)
         self.assertIsInstance(expected_result, dict)
@@ -67,7 +66,10 @@ class TestDetermineSchemeByNumberOfProducts(unittest.TestCase):
 
         # Проверяем, что функция выбросит ValueError
         with self.assertRaises(ValueError) as context:
-            determine_scheme_by_number_of_products(data=data_for_json)
+            determine_scheme_by_number_of_products(
+                data=data_for_json,
+                product_categories=PARAMETERS_DIF_PRODUCT_CATEGORIES,
+            )
 
         # Дополнительно можно проверить сообщение об ошибке
         self.assertEqual(

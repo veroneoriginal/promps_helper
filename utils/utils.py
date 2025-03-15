@@ -1,6 +1,5 @@
 import os
 import shutil
-import re
 from pathlib import Path
 
 
@@ -266,10 +265,6 @@ def transforming_dict_from_json_file(
     return transformed_dict
 
 
-def normalize_title(title: str) -> str:
-    return re.sub(r'\s+', ' ', title.strip().lower())
-
-
 def add_keys_from_another_dict_to_one_dict(
         base_dict: dict,
         transform_dict: dict,
@@ -284,31 +279,10 @@ def add_keys_from_another_dict_to_one_dict(
     :return: дополненный словарь
     """
 
-    base_dict_normalized = {normalize_title(k): v for k, v in base_dict.items()}
-
     for product_title, product_data in transform_dict.items():
-        normalized_title = normalize_title(product_title)
-
-        if normalized_title not in base_dict_normalized:
-            print(f"❌ Нет такого нормализованного продукта: [{product_title}]")
-            continue
-
-        base_product = base_dict_normalized[normalized_title]
-
+        # Перебираем только нужные ключи
         for key in list_keys:
-            if key in base_product:
-                product_data[key] = base_product[key]
-            else:
-                print(f"⚠️ Нет ключа [{key}] в продукте [{product_title}]")
+            # Добавляем только нужные данные
+            product_data[key] = base_dict[product_title][key]
 
     return transform_dict
-
-
-    # for product_title, product_data in transform_dict.items():
-    #     print(product_title)
-    #     # Перебираем только нужные ключи
-    #     for key in list_keys:
-    #         # Добавляем только нужные данные
-    #         product_data[key] = base_dict[product_title][key]
-    #
-    # return transform_dict
