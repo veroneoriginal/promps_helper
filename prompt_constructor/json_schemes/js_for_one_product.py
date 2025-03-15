@@ -2,6 +2,7 @@
 В этом модуле собраны функции для формирования json-схемы для кода 'Разбор состава одного средства'
 """
 
+
 def format_properties(
         properties_dict: dict,
 ) -> dict:
@@ -44,15 +45,8 @@ def create_base_json_scheme_for_one_product(
         "strict": True,
         "schema": {
             "type": "object",
-            "properties": {
-                "product": {
-                    "type": "object",
-                    "properties": product_schema["properties"],
-                    "required": product_schema["required"],
-                    "additionalProperties": False
-                }
-            },
-            "required": ["product"],
+            "properties": product_schema["properties"],
+            "required": product_schema["required"],
             "additionalProperties": False
         }
     }

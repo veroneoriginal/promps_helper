@@ -6,6 +6,8 @@ import os
 import json
 from datetime import datetime
 from pathlib import Path
+from pprint import pprint
+
 # from pprint import pprint
 
 from dotenv import load_dotenv
@@ -178,6 +180,7 @@ class ControlManager:
             dict_with_hash=dict_with_hash,
             file_path=file_path,
         )
+        print('Данные по анализу подборки записаны в excel')
 
     def _create_timestamped_folder(
             self,
@@ -430,7 +433,7 @@ class ControlManager:
             data_task=data_task,
             product_categories=self.param_dif_products_categories,
         )
-
+        print(f'{list_with_info=}')
         # Вызываем нужную функцию генерации
         generation_func = generation_pictures.get(task_name)
 
@@ -495,7 +498,7 @@ class ControlManager:
         :return: None
         """
 
-        # забираю все данные из таблицы "Средства"
+        # забираю все данные из таблицы "Средства", "Тип", "Запрос" и т.д.
         data_tools = self._take_data_from_table_tool(
             file_path_tools_table=file_path_tools,
         )
@@ -509,11 +512,16 @@ class ControlManager:
                 file_path_collection=file_path_collection,
             )
 
+
+
+
+
+
             # формирую словарь с информацией для json-схемы,
             # для промпта и для картинок
             data_for_dif_tasks = {
                 # определяем задачу для выбора в json-схемы
-                "Задача": data_collection['Задача'],
+                "Задача": data_collection['Задача'], #здесь лучше заменить на "Код задачи"
                 # считаем сколько средств подаем для анализа
                 "Количество элементов": len(data_collection['Средства']),
                 "Категория": data_collection['Содержимое']
@@ -524,6 +532,16 @@ class ControlManager:
                 data_tools=data_tools,
                 data_collection=data_collection,
             )
+
+
+
+
+
+
+
+
+
+
 
             # формирую путь для сохранения данных
             self._get_output_folders(
@@ -561,12 +579,19 @@ class ControlManager:
                 dict_with_hash=data_collection,
             )
 
+
+
+
+
+
+
             print('Формирование данных для картинок')
             data_for_images = self._forming_data_for_images(
                 json_file_path=file_path_to_saving_json,
                 data_tools=data_tools['Средства'],
             )
 
+            pprint(f'{data_for_images=}')
             print('Создание картинок со средствами для постов в соц.сети.')
             self._create_pdf_jpg_for_post(
                 data=data_for_images,

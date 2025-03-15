@@ -431,6 +431,8 @@ class ExcelManager:
         :param file_path: путь до документа Подборки.xlsx
         :return: None
         """
+        print('зашли в update_excel_with_json')
+        print(f'{data=}')
 
         if data is None:
             print("⛔ Ошибка: JSON-файл пустой или некорректный. Останавливаю выполнение.")

@@ -1,4 +1,5 @@
 import hashlib
+import json
 import re
 import datetime
 from typing import Optional
@@ -133,16 +134,9 @@ def counting_hash(
 
     # привожу к нормальному виду Средства
     # получаю строку
-    edit_products = data['Средства']
-
-    # очищаю строку от переносов
-    cleaned_products = edit_products.replace('\n', '')
-
-    # расспличиваю строку по амперсантам и получаю список
-    products_list = cleaned_products.split('&&&')
-    products_list = [product.strip() for product in products_list]
-    products_list.remove('')
-    data['Средства'] = tuple(sorted(products_list))
+    edit_products = data['Средства'].replace("«", '"').replace("»", '"').replace('\n', '')
+    edit_products = list(json.loads(edit_products).values())
+    data['Средства'] = tuple(sorted(edit_products))
 
     # привожу к нормальному виду Тип
     edit_type = data['Тип']

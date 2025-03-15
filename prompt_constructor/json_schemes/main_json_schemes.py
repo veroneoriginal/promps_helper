@@ -21,7 +21,4 @@ def determine_scheme_by_number_of_products(
 
     task = data["Задача"]
 
-    if task == 'Разбор состава одного средства':
-        return scheme[task](data=data, product_categories=product_categories)
-
     return scheme[task](data)
