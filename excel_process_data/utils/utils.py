@@ -1,7 +1,9 @@
+import copy
 import hashlib
 import json
 import re
 import datetime
+
 from typing import Optional
 from openpyxl.worksheet.worksheet import Worksheet
 
@@ -132,21 +134,28 @@ def counting_hash(
     :return: хеш текущей подборки
     """
 
-    # привожу к нормальному виду Средства
-    # получаю строку
-    edit_products = data['Средства'].replace("«", '"').replace("»", '"').replace('\n', '')
-    edit_products = list(json.loads(edit_products).values())
-    data['Средства'] = tuple(sorted(edit_products))
+    # Создаем копию словаря с данными по текущей подборке, чтобы не изменять оригинал
+    data_copy = copy.deepcopy(data)
 
-    # привожу к нормальному виду Тип
+    # привожу к нормальному виду "Средства"
+    # получаю строку
+    edit_products = data_copy['Средства'].replace("«", '"').replace("»", '"').replace('\n', '')
+
+    # Преобразуем строку словаря в список значений
+    edit_products = list(json.loads(edit_products).values())
+
+    # Сортируем и приводим к кортежу
+    data_copy['Средства'] = tuple(sorted(edit_products))
+
+    # привожу к нормальному виду "Тип"
     edit_type = data['Тип']
     types_list = edit_type.split(',')
-    data['Тип'] = tuple(sorted([type_elem.strip() for type_elem in types_list]))
+    data_copy['Тип'] = tuple(sorted([type_elem.strip() for type_elem in types_list]))
 
-    data['Возраст'] = str(32)
+    data_copy['Возраст'] = str(data_copy['Возраст'])
 
     list_for_hash = []
-    for key, value in data.items():
+    for key, value in data_copy.items():
         if key not in ("Содержимое", "Лучший вариант", "Итог", "Хеш"):
             list_for_hash.append(value)
 

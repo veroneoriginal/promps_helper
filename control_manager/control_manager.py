@@ -6,10 +6,6 @@ import os
 import json
 from datetime import datetime
 from pathlib import Path
-from pprint import pprint
-
-# from pprint import pprint
-
 from dotenv import load_dotenv
 from appeal_to_openai.main import main as appeal_to_openai_main
 from appeal_to_openai.utils import checking_file_with_response
@@ -17,8 +13,8 @@ from excel_process_data.process_data import ExcelManager
 from pdf.main_pdf import PDFCreator
 from pdf.utils import main_forming_info_for_pdf
 from post_constructor.post_constructor import create_text_for_post
-from prompt_constructor.constructor import PromptConstructor
-from prompt_constructor.json_schemes.main_json_schemes import determine_scheme_by_number_of_products
+from prompt_constructor.prompt_constructor import PromptConstructor
+from json_constructor.json_manager import get_json_scheme
 
 from utils.utils import (
     decrypting_data_from_current_collection,
@@ -76,6 +72,7 @@ class ControlManager:
     def _take_data_from_collection(
             self,
             file_path_collection: str,
+            cheking_unique: bool,
     ) -> dict:
         """
         Метод для загрузки данных по текущей подборке из таблицы Подборки.
@@ -102,7 +99,10 @@ class ControlManager:
         """
 
         excel_manager = ExcelManager(file_path=file_path_collection)
-        return excel_manager.get_data_from_table_in_form_of_dict(ws_title="Подборки")
+        return excel_manager.get_data_from_table_in_form_of_dict(
+            ws_title="Подборки",
+            cheking_unique=cheking_unique,
+        )
 
     def _bring_prompt(
             self,
@@ -486,6 +486,7 @@ class ControlManager:
             file_path_tools: str,
             file_path_collection: str,
             path_to_output_folder: str,
+            cheking_unique: bool,
     ) -> None:
         """
         Главный метод класса, в котором собрана вся логика программы
@@ -510,38 +511,15 @@ class ControlManager:
             # формирую словарь с первой подборкой
             data_collection = self._take_data_from_collection(
                 file_path_collection=file_path_collection,
+                cheking_unique=cheking_unique,
             )
 
-
-
-
-
-
-            # формирую словарь с информацией для json-схемы,
-            # для промпта и для картинок
-            data_for_dif_tasks = {
-                # определяем задачу для выбора в json-схемы
-                "Задача": data_collection['Задача'], #здесь лучше заменить на "Код задачи"
-                # считаем сколько средств подаем для анализа
-                "Количество элементов": len(data_collection['Средства']),
-                "Категория": data_collection['Содержимое']
-            }
-
-            # обновляю словарь с текущей подборкой расшифрованными данными
-            data_collection = decrypting_data_from_current_collection(
-                data_tools=data_tools,
-                data_collection=data_collection,
-            )
-
-
-
-
-
-
-
-
-
-
+            # # обновляю словарь с текущей подборкой расшифрованными данными,
+            # # за исключением пункта "Средства"
+            # data_collection = decrypting_data_from_current_collection(
+            #     data_tools=data_tools,
+            #     data_collection=data_collection,
+            # )
 
             # формирую путь для сохранения данных
             self._get_output_folders(
@@ -550,55 +528,49 @@ class ControlManager:
             )
 
             print('Определение json-схемы.')
-            json_scheme = determine_scheme_by_number_of_products(
-                data=data_for_dif_tasks,
-                product_categories=self.param_dif_products_categories,
-            )
-
-            # cобираю промпт
-            prompt = self._bring_prompt(
-                data=data_for_dif_tasks,
+            json_scheme = get_json_scheme(
                 data_collection=data_collection,
             )
 
-            print('Отправка запроса в OpenAI.')
-            # self.paths_to_folders["answer_gpt"] будет содержать в себе
-            # 00_base/00_info_for_post/01_03_25/1_Шампуни/answer_gpt
-            file_path_to_saving_json = self._create_context_for_request_to_openai(
-                prompt_for_convert=prompt,
-                json_scheme=json_scheme,
-                folder_name=self.paths_to_folders["answer_gpt"],
-            )
-
-            # file_path_to_saving_json будет содержать в себе
-            # 00_base/00_info_for_post/01_03_25/1_Шампуни/answer_gpt/Анализ_средств.json
-            print('Разбор ответа от OpenAI.')
-            self._reviewing_response_from_openai(
-                file_path=file_path_collection,
-                json_file_path=file_path_to_saving_json,
-                dict_with_hash=data_collection,
-            )
-
-
-
-
-
-
-
-            print('Формирование данных для картинок')
-            data_for_images = self._forming_data_for_images(
-                json_file_path=file_path_to_saving_json,
-                data_tools=data_tools['Средства'],
-            )
-
-            pprint(f'{data_for_images=}')
-            print('Создание картинок со средствами для постов в соц.сети.')
-            self._create_pdf_jpg_for_post(
-                data=data_for_images,
-                data_task=data_for_dif_tasks,
-            )
-
-            print()
+            # # cобираю промпт
+            # prompt = self._bring_prompt(
+            #     data=data_for_dif_tasks,
+            #     data_collection=data_collection,
+            # )
+            #
+            # print('Отправка запроса в OpenAI.')
+            # # self.paths_to_folders["answer_gpt"] будет содержать в себе
+            # # 00_base/00_info_for_post/01_03_25/1_Шампуни/answer_gpt
+            # file_path_to_saving_json = self._create_context_for_request_to_openai(
+            #     prompt_for_convert=prompt,
+            #     json_scheme=json_scheme,
+            #     folder_name=self.paths_to_folders["answer_gpt"],
+            # )
+            #
+            # # file_path_to_saving_json будет содержать в себе
+            # # 00_base/00_info_for_post/01_03_25/1_Шампуни/answer_gpt/Анализ_средств.json
+            # print('Разбор ответа от OpenAI.')
+            # self._reviewing_response_from_openai(
+            #     file_path=file_path_collection,
+            #     json_file_path=file_path_to_saving_json,
+            #     dict_with_hash=data_collection,
+            # )
+            #
+            #
+            # print('Формирование данных для картинок')
+            # data_for_images = self._forming_data_for_images(
+            #     json_file_path=file_path_to_saving_json,
+            #     data_tools=data_tools['Средства'],
+            # )
+            #
+            # pprint(f'{data_for_images=}')
+            # print('Создание картинок со средствами для постов в соц.сети.')
+            # self._create_pdf_jpg_for_post(
+            #     data=data_for_images,
+            #     data_task=data_for_dif_tasks,
+            # )
+            #
+            # print()
 
             # # print('Готовлю текстовое оформление поста.')
             # # self._forming_text_for_post(data=data, info_for_picture=info_for_picture)

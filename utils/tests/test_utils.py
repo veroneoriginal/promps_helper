@@ -1,4 +1,5 @@
-"""В этом модуле тестируем выбор json-схемы"""
+# pylint: skip-file
+"""В этом модуле тестируем всю логику работы приложения"""
 
 import unittest
 from pprint import pprint
@@ -8,6 +9,7 @@ from control_manager.control_manager import ControlManager
 from source.structure_folders import scheme_for_folders_name
 # словарь со всеми параметрами для разных категорий продуктов
 from source.structure_for_products import PARAMETERS_DIF_PRODUCT_CATEGORIES
+from utils.utils import decrypting_data_from_current_collection
 
 file_path_tools = '00_base/Средства.xlsx'
 file_path_collection = '00_base/Подборки для тестов.xlsx'
@@ -15,11 +17,16 @@ path_to_output_folder = '00_base/00_info_for_post/'
 
 
 class TestUtils(unittest.TestCase):
+    """Класс для тестирования всей логики работы приложения"""
 
     def setUp(self):
         self.control_manager = ControlManager(
             scheme_for_folders=scheme_for_folders_name,
             param_dif_products_categories=PARAMETERS_DIF_PRODUCT_CATEGORIES
+        )
+
+        self.data_tools = self.control_manager._take_data_from_table_tool(
+            file_path_tools_table=file_path_tools,
         )
 
     # def test__take_data_from_table_tool(self):
@@ -39,103 +46,97 @@ class TestUtils(unittest.TestCase):
     #     result = self.control_manager._get_count_collections(file_path_collection)
     #     self.assertEqual(2, result)
 
-    # def test_take_data_from_collection(self):
-    #     """
-    #     Формирование словаря с подборкой
-    #     """
-    #
-    #     result = self.control_manager._take_data_from_collection(file_path_collection)
-    #
-    #     # Если код "Лучшее средство"
-    #     # result = {
-    #     #     'Содержимое': 'Шампуни',
-    #     #     'Пол': 'женский',
-    #     #     'Возраст': '32',
-    #     #     'Тип': ('В1', 'В10'),
-    #     #     'Запрос': 'ЗВ8, ЗВ12',
-    #     #     'Задача': 'Лучшее средство',
-    #     #     'Специалист': 'Т',
-    #     #     'Средства': (
-    #     #         'ALTEREGO ITALY Curego Hydraday',
-    #     #         'LADOR Keratin LPP',
-    #     #         'NATURA SIBERICA Oblepikha',
-    #     #         'OUSHEN Curl & shine shampoo',
-    #     #         'PAYOT Shampoing doux biome-friendly',
-    #     #         'WELEDA Millet Nourishing'),
-    #     #     'Лучший вариант': None,
-    #     #     'Итог': None,
-    #     #     'Хеш': '6157254f8a165e4f6baa6a45ee2ca32042b8de1d6a19680d11879ab43c7a5cd1',
-    #     # }
-    #
-    #     print(result)
+    def test_take_data_from_collection(self):
+        """
+        Формирование словаря с подборкой
+        """
 
-    def test_creating_a_dict_info_for_json_schema_prompts_images(self):
-        """
-        Формирование словаря с информацией для json-схемы, для промпта и для картинок
-        """
+        result = self.control_manager._take_data_from_collection(
+            file_path_collection=file_path_collection,
+            cheking_unique=False,
+        )
 
         # Если код "Лучшее средство"
-        data_collection = {
-            'Содержимое': 'Шампуни',
-            'Пол': 'женский',
-            'Возраст': '32',
-            'Тип': ('В1', 'В10'),
-            'Запрос': 'ЗВ8, ЗВ12',
-            'Задача': 'Лучшее средство',
-            'Специалист': 'Т',
-            'Средства': (
-                'ALTEREGO ITALY Curego Hydraday',
-                'LADOR Keratin LPP',
-                'NATURA SIBERICA Oblepikha',
-                'OUSHEN Curl & shine shampoo',
-                'PAYOT Shampoing doux biome-friendly',
-                'WELEDA Millet Nourishing'),
-            'Лучший вариант': None,
-            'Итог': None,
-            'Хеш': '6157254f8a165e4f6baa6a45ee2ca32042b8de1d6a19680d11879ab43c7a5cd1',
-        }
-
-        result = {
-            # определяем задачу для выбора в json-схемы
-            "Задача": data_collection['Задача'],
-            # считаем сколько средств подаем для анализа
-            "Количество элементов": len(data_collection['Средства']),
-            "Категория": data_collection['Содержимое']
-        }
-
-        print(result)
-
         # result = {
-        #     'Задача': 'Лучшее средство',
-        #     'Количество элементов': 6,
-        #     'Категория': 'Шампуни'
-        # }
+        #  'Возраст': 32,
+        #  'Задача': 'Лучшее средство',
+        #  'Запрос': 'ЗВ8, ЗВ12',
+        #  'Итог': None,
+        #  'Лучший вариант': None,
+        #  'Пол': 'женский',
+        #  'Содержимое': 'Шампуни',
+        #  'Специалист': 'Т',
+        #  'Средства': '{\n'
+        #              '«Средство_1» : «ALTEREGO ITALY Curego Hydraday»,\n'
+        #              '«Средство_2» : «OUSHEN Curl & shine shampoo»,\n'
+        #              '«Средство_3» : «NATURA SIBERICA Oblepikha»,\n'
+        #              '«Средство_4» : «WELEDA Millet Nourishing»,\n'
+        #              '«Средство_5» : «PAYOT Shampoing doux biome-friendly»,\n'
+        #              '«Средство_6» : «LADOR Keratin LPP»\n'
+        #              '}',
+        #  'Тип': 'В1, В10',
+        #  'Хеш': '6157254f8a165e4f6baa6a45ee2ca32042b8de1d6a19680d11879ab43c7a5cd1'
+        #  }
+
+        # Разбор состава одного средства
+        #   result = {
+        #   'Возраст': 32,
+        #  'Задача': 'Разбор состава одного средства',
+        #  'Запрос': 'ЗЛ2',
+        #  'Итог': None,
+        #  'Лучший вариант': None,
+        #  'Пол': 'женский',
+        #  'Содержимое': 'уход за кожей лица',
+        #  'Специалист': 'Т',
+        #  'Средства': '{\n«Средство_1» : «ALTEREGO ITALY Curego Hydraday»\n}',
+        #  'Тип': 'КЛ1',
+        #  'Хеш': '1cf5f44310b2ea42c5b498aef5a314dcea315cf69f4a6d97c96101ea8e517229'
+        #  }
+
+        pprint(result)
 
 
 
-    def test_decrypting_data_from_current_collection(self):
+    def test_get_output_folders(self):
         """
-        Обновление словаря с текущей подборкой расшифрованными данными
+        Формирование путей для сохранения данных
         """
 
-        # Если код "Лучшее средство"
         data_collection = {
-            'Содержимое': 'Шампуни',
-            'Пол': 'женский',
-            'Возраст': '32',
-            'Тип': ('В1', 'В10'),
-            'Запрос': 'ЗВ8, ЗВ12',
-            'Задача': 'Лучшее средство',
-            'Специалист': 'Т',
-            'Средства': (
-                'ALTEREGO ITALY Curego Hydraday',
-                'LADOR Keratin LPP',
-                'NATURA SIBERICA Oblepikha',
-                'OUSHEN Curl & shine shampoo',
-                'PAYOT Shampoing doux biome-friendly',
-                'WELEDA Millet Nourishing'),
-            'Лучший вариант': None,
-            'Итог': None,
-            'Хеш': '6157254f8a165e4f6baa6a45ee2ca32042b8de1d6a19680d11879ab43c7a5cd1',
-        }
+         'Возраст': 32,
+         'Задача': 'Лучшее средство',
+         'Запрос': 'ЗВ8, ЗВ12',
+         'Итог': None,
+         'Лучший вариант': None,
+         'Пол': 'женский',
+         'Содержимое': 'Шампуни',
+         'Специалист': 'Т',
+         'Средства': '{\n'
+                     '«Средство_1» : «ALTEREGO ITALY Curego Hydraday»,\n'
+                     '«Средство_2» : «OUSHEN Curl & shine shampoo»,\n'
+                     '«Средство_3» : «NATURA SIBERICA Oblepikha»,\n'
+                     '«Средство_4» : «WELEDA Millet Nourishing»,\n'
+                     '«Средство_5» : «PAYOT Shampoing doux biome-friendly»,\n'
+                     '«Средство_6» : «LADOR Keratin LPP»\n'
+                     '}',
+         'Тип': 'В1, В10',
+         'Хеш': '6157254f8a165e4f6baa6a45ee2ca32042b8de1d6a19680d11879ab43c7a5cd1'
+         }
+
+        self.control_manager._get_output_folders(
+            path_to_output_folder=path_to_output_folder,
+            category=data_collection['Содержимое'],
+        )
+        pprint(self.control_manager.paths_to_folders)
+        # получается
+        # {'answer_gpt': '00_base/00_info_for_post/16_03_25/1_Шампуни/answer_gpt',
+        #  'instagram_jpg': '00_base/00_info_for_post/16_03_25/1_Шампуни/instagram/jpg',
+        #  'instagram_text': '00_base/00_info_for_post/16_03_25/1_Шампуни/instagram/text',
+        #  'pinterest_jpg': '00_base/00_info_for_post/16_03_25/1_Шампуни/pinterest/jpg',
+        #  'prompt': '00_base/00_info_for_post/16_03_25/1_Шампуни/prompt',
+        #  'telegram_jpg': '00_base/00_info_for_post/16_03_25/1_Шампуни/telegram/jpg',
+        #  'telegram_pdf': '00_base/00_info_for_post/16_03_25/1_Шампуни/telegram/pdf',
+        #  'telegram_text': '00_base/00_info_for_post/16_03_25/1_Шампуни/telegram/text'}
+
+
 

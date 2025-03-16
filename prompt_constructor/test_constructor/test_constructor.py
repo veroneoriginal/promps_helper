@@ -1,7 +1,7 @@
 """В этом модуле тестируем выбор промпта"""
 
 import unittest
-from prompt_constructor.constructor import PromptConstructor
+from prompt_constructor.prompt_constructor import PromptConstructor
 
 
 class TestPromptConstructor(unittest.TestCase):

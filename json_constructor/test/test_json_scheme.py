@@ -2,7 +2,7 @@
 
 import unittest
 
-from prompt_constructor.json_schemes.main_json_schemes import determine_scheme_by_number_of_products
+from json_constructor.json_manager import determine_scheme_by_number_of_products
 from source.structure_for_products import PARAMETERS_DIF_PRODUCT_CATEGORIES
 
 

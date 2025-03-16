@@ -278,6 +278,7 @@ class ExcelManager:
     def get_data_from_table_in_form_of_dict(
             self,
             ws_title: str,
+            cheking_unique: bool,
     ) -> dict:
         """
         Метод, в котором:
@@ -325,12 +326,12 @@ class ExcelManager:
             hash_column_index=hash_column_index,
             sheet=sheet,
         )
+        if cheking_unique:
+            # запись значения хеша в xlsx в строку с текущей подборкой
+            sheet.cell(row=current_row, column=hash_column_index + 1, value=hash_collection)
 
-        # запись значения хеша в xlsx в строку с текущей подборкой
-        sheet.cell(row=current_row, column=hash_column_index + 1, value=hash_collection)
-
-        # Сохраняем изменения в файл
-        self.wb.save(self.file_path)
+            # Сохраняем изменения в файл
+            self.wb.save(self.file_path)
 
         return dict_collection
 
