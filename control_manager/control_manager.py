@@ -1,11 +1,8 @@
-# pylint: disable=W0612 unused-variable
 """
 В этом модуле - класс, управляющий логикой всего проекта
 """
 
 import os
-import json
-from datetime import datetime
 from pathlib import Path
 
 from pprint import pprint
@@ -13,9 +10,9 @@ from pprint import pprint
 from dotenv import load_dotenv
 from appeal_to_openai.main import main as appeal_to_openai_main
 from appeal_to_openai.utils import checking_file_with_response
+from dirs_structure_constructor.main import DirsConstructor
 from excel_process_data.process_data import ExcelManager
-from pdf.main_pdf import PDFCreator
-from pdf.utils import main_forming_info_for_pdf
+from pdf.main import create_pdf
 from post_constructor.post_constructor import create_text_for_post
 from json_constructor.main import get_json_scheme
 from prompt_constructor.main import get_prompt
@@ -32,9 +29,11 @@ class ControlManager:
     Класс, управляющий логикой всего проекта
     """
 
-    def __init__(self, scheme_for_folders, param_dif_products_categories):
+    def __init__(self, param_dif_products_categories):
+        """
+        :param param_dif_products_categories: особенности для подборок, учитываются в промптах
+        """
         self.paths_to_folders = {}
-        self.scheme_for_folders = scheme_for_folders
         self.param_dif_products_categories = param_dif_products_categories
 
     def _take_data_from_table_tool(
@@ -166,279 +165,46 @@ class ControlManager:
         )
         print('Данные по анализу подборки записаны в excel')
 
-    def _create_timestamped_folder(
+    # pylint: disable=R0913: too-many-arguments
+    # pylint: disable=R0917: too-many-positional-arguments
+    def _create_pdf_jpg(
             self,
-            path_to_output_folder: str,
-    ) -> Path:
-        """
-        Метод для определения базовой папки с текущей датой для сохранения файлов
-
-        :param path_to_output_folder: путь до основной папки, в которую идет сохранение.
-        :return: объект Path с путем к базовой папке
-        """
-
-        # Получаем текущую дату в формате ДД_ММ_ГГ
-        timestamp = datetime.now().strftime("%d_%m_%y")
-
-        # Определяем базовую папку
-        base_output_folder = Path(path_to_output_folder) / timestamp
-        base_output_folder.mkdir(parents=True, exist_ok=True)
-
-        return base_output_folder
-
-    def _get_existing_folders(
-            self,
-            base_output_folder: Path,
-    ) -> list:
-        """
-        Метод получает список существующих папок в указанной директории с текущей датой.
-
-        :param base_output_folder: Путь к базовой директории с текущей датой
-        :return: список объектов Path, представляющих папки
-        """
-        existing_folders = []
-        for folder in base_output_folder.iterdir():
-            if folder.is_dir():
-                existing_folders.append(folder)
-
-        return existing_folders
-
-    def _get_new_folder_number(
-            self,
-            existing_folders: list,
-    ) -> int:
-        """
-        Определяет новый номер для папки на основе существующих папок.
-
-        :param existing_folders: Список объектов Path, представляющих папки
-        :return: Новый номер папки
-        """
-
-        # если список пустой
-        if not existing_folders:
-            return 1
-
-        last_number = 0
-
-        for folder in existing_folders:
-            name_parts = folder.name.split('_')
-            if name_parts[0].isdigit():
-                number = int(name_parts[0])
-                last_number = max(last_number, number)
-
-        return last_number + 1
-
-    def _create_category_folder(
-            self,
-            base_output_folder: Path,
-            new_folder_number: int,
-            category: str,
-    ) -> Path:
-        """
-        Создаёт папку категории с именем, состоящим из номера и названия категории,
-        например, 1_Шампуни
-
-        :param base_output_folder: Базовая выходная папка, где будет создана новая папка
-        :param new_folder_number: Номер новой папки
-        :param category: Название категории
-        :return: Путь к созданной папке категории
-        """
-        category_folder_name = f"{new_folder_number}_{category}"
-        category_folder = base_output_folder / category_folder_name
-        category_folder.mkdir(exist_ok=True)
-        return category_folder
-
-    def _get_folder_paths(
-            self,
-            category_folder: Path,
+            collection_data: dict,
+            info_data: dict,
+            selection_result: dict,
+            path_to_output_folder_pdf_file: str,
+            path_to_output_folder_jpg_file: str,
     ) -> None:
         """
-        Создает словарь путей ко всем созданным папкам соцсетей и их подпапкам.
+        Готовит PDF и изображения
 
-        :param category_folder: Путь к папке подборки
-        :return: None (изменяет self.paths_to_folders)
-        """
-
-        for service, folders in self.scheme_for_folders.items():
-            service_path = category_folder / service
-
-            # Если список подпапок пустой или отсутствует, добавляем только базовый путь сервиса
-            if not folders or not isinstance(folders, list):
-                self.paths_to_folders[service] = str(service_path)
-
-            for folder in folders:
-                key = f"{service}_{folder}"
-                # Получаем полный путь и преобразуем в строку
-                full_path = str(service_path / folder)
-                # записываем в словарь
-                self.paths_to_folders[key] = full_path
-
-    def _create_subfolders(self) -> None:
-        """
-        Проходим по словарю self.paths_to_folders и создаем папки.
-
+        :param collection_data: данные подборки
+        :param info_data: данные с всеми средствами, врачами и т.д.
+        :param selection_result: данные с результатом нейронки по подборке
+        :param path_to_output_folder_pdf_file: путь к папке для сохранения PDF-файлов
+        :param path_to_output_folder_jpg_file: путь к папке для сохранения JPG-файлов
         :return: None
         """
 
-        for folder_path in self.paths_to_folders.values():
-            # Преобразуем путь в объект Path
-            path = Path(folder_path)
-
-            # Создаём папку (parents=True — создаёт все родительские папки,
-            # exist_ok=True — не выдаёт ошибку, если папка уже есть)
-            path.mkdir(parents=True, exist_ok=True)
-
-    def _get_output_folders(
-            self,
-            path_to_output_folder: str,
-            category: str,
-    ) -> None:
-        """
-        Метод для создания папки для сохранения файлов.
-
-        :param path_to_output_folder: путь до основной папки, в которую идет сохранение.
-        :param category: название категории для подпапки (для текущей подборки).
-        :return: None
-        """
-
-        # Определяем базовую папку
-        base_output_folder = self._create_timestamped_folder(
-            path_to_output_folder=path_to_output_folder
+        create_pdf(
+            collection_data=collection_data,
+            info_data=info_data,
+            selection_result=selection_result,
+            path_to_output_folder_pdf_file=path_to_output_folder_pdf_file,
+            path_to_output_folder_jpg_file=path_to_output_folder_jpg_file,
         )
 
-        # Получаем список существующих папок в базовой директории
-        existing_folders = self._get_existing_folders(
-            base_output_folder=base_output_folder,
-        )
-
-        # Определяем новый номер папки
-        new_folder_number = self._get_new_folder_number(
-            existing_folders=existing_folders,
-        )
-
-        # Формируем имя новой папки - номер и с чем подборка
-        category_folder = self._create_category_folder(
-            base_output_folder=base_output_folder,
-            new_folder_number=new_folder_number,
-            category=category,
-        )
-
-        # Наполняем self.paths_to_folders путями до каждой конкретной папки
-        self._get_folder_paths(category_folder=category_folder)
-
-        # Создаем папки для соц.сетей и их внутренние папки с категориями
-        self._create_subfolders()
-
-    def _forming_data_for_images(
-            self,
-            json_file_path: str,
-            data_tools: dict,
-    ) -> dict:
-        """
-        Метод для формирования общего словаря со средствами, их плюсами и минусами и т.д.
-
-        :param json_file_path: путь до json-файла с анализом средств
-        :param data_tools: словарь с информацией о средствах, типах и прочем
-        :return: словарь со средствами, их плюсами и минусами, и соотношенияем объема и цены
-        """
-
-        # обращаемся к json файлу
-        with open(json_file_path, "r", encoding="utf-8") as file:
-            data = json.load(file)
-
-        # удаляю ненужные ключи из словаря
-        if 'best_product' in data.keys() and 'result' in data.keys():
-            del data['best_product']
-            del data['result']
-
-        # трансформирую словарь из json-a в словарь, где ключи - названия средств
-        transformed_dict = transforming_dict_from_json_file(data=data)
-
-        # Список ключей, которые нужно добавить
-        required_keys = [
-            "Количество меры (число)",
-            "Юниты меры (мл/шт)",
-            "Стоимость руб",
-            "Ссылка на изображение в базе",
-            "Тип продукта",
-        ]
-
-        # дополняю transformed_dict ключами из data_tools
-        return add_keys_from_another_dict_to_one_dict(
-            base_dict=data_tools,
-            transform_dict=transformed_dict,
-            list_keys=required_keys,
-        )
-
-    def _create_pdf_jpg_for_post(
-            self,
-            data: dict,
-            data_task: dict,
-    ) -> None:
-        """
-        Метод для создания pdf-листов и jpg-файлов (для постов со средствами)
-
-        :param data: словарь со средствами, их плюсами, минусами и прочим
-        :param data_task: словарь с кодом задачи, количеством средств, категорией продукта
-        :return: None
-        """
-
-        task_name = data_task["Задача"]
-
-        create_pdf = PDFCreator()
-
-        generation_pictures = {
-
-            'Лучшее средство': create_pdf.gen_pages_for_six_product,
-            'Лучшее средство без канцерогенов': create_pdf.gen_pages_for_six_product,
-            'Разбор состава одного средства': create_pdf.gen_pages_for_one_product,
-
-        }
-
-        # Получаем пути для сохранения файлов
-        paths_by_task = {
-            'Лучшее средство': {
-                'pdf': self.paths_to_folders['telegram_pdf'],
-                'jpg': self.paths_to_folders['telegram_jpg'],
-            },
-            'Лучшее средство без канцерогенов': {
-                'pdf': self.paths_to_folders['telegram_pdf'],
-                'jpg': self.paths_to_folders['telegram_jpg'],
-            },
-            'Разбор состава одного средства': {
-                'pdf': self.paths_to_folders['telegram_pdf'],
-                'jpg': self.paths_to_folders['telegram_jpg'],
-            },
-        }
-
-        # формируем инфу для картинки в пост
-        list_with_info = main_forming_info_for_pdf(
-            data=data,
-            data_task=data_task,
-            product_categories=self.param_dif_products_categories,
-        )
-        print(f'{list_with_info=}')
-        # Вызываем нужную функцию генерации
-        generation_func = generation_pictures.get(task_name)
-
-        generation_func(
-            info=list_with_info,
-            # Формируем путь для сохранения
-            output_folder_pdf=paths_by_task[task_name]['pdf'],
-            output_folder_jpg=paths_by_task[task_name]['jpg'],
-        )
-
-        # копируем файлы из папки telegram jpg в instagram jpg
-        copy_jpg_files(
-            where_copy_from=paths_by_task[task_name]['jpg'],
-            where_copy_to=self.paths_to_folders['instagram_jpg'],
-        )
-
-        # копируем файлы из папки telegram jpg в pinterest jpg
-        copy_jpg_files(
-            where_copy_from=paths_by_task[task_name]['jpg'],
-            where_copy_to=self.paths_to_folders['pinterest_jpg'],
-        )
+        # # копируем файлы из папки telegram jpg в instagram jpg
+        # copy_jpg_files(
+        #     where_copy_from=paths_by_task[task_name]['jpg'],
+        #     where_copy_to=self.paths_to_folders['instagram_jpg'],
+        # )
+        #
+        # # копируем файлы из папки telegram jpg в pinterest jpg
+        # copy_jpg_files(
+        #     where_copy_from=paths_by_task[task_name]['jpg'],
+        #     where_copy_to=self.paths_to_folders['pinterest_jpg'],
+        # )
 
     def _forming_text_for_post(
             self,
@@ -510,11 +276,11 @@ class ControlManager:
         )
         # pprint(json_scheme)
 
-        # формирую путь для сохранения данных
-        self._get_output_folders(
-            path_to_output_folder=path_to_output_folder,
-            category=data_collection['Категория'],
-        )
+        # формирую пути для сохранения данных и создаю нужные папки
+        self.paths_to_folders = DirsConstructor(
+            base_output_folder_path=path_to_output_folder,
+            data_collection=data_collection,
+        ).get_output_folders()
 
         # cобираю промпт
         prompt = get_prompt(
@@ -543,21 +309,16 @@ class ControlManager:
         #     dict_with_hash=data_collection,
         # )
         #
-        #
-        # print('Формирование данных для картинок')
-        # data_for_images = self._forming_data_for_images(
-        #     json_file_path=file_path_to_saving_json,
-        #     data_tools=data_tools['Средства'],
-        # )
-        #
-        # pprint(f'{data_for_images=}')
-        # print('Создание картинок со средствами для постов в соц.сети.')
-        # self._create_pdf_jpg_for_post(
-        #     data=data_for_images,
-        #     data_task=data_for_dif_tasks,
-        # )
-        #
-        # print()
+        # print('Создание PDF и изображений со средствами для постов в соц.сети.')
+        self._create_pdf_jpg(
+            collection_data=data_collection,
+            info_data=data_tools,
+            selection_result=checking_file_with_response(
+                json_file_path=self.paths_to_folders["00_source_02_answer_gpt"]
+            ),
+            path_to_output_folder_pdf_file=self.paths_to_folders["00_source_03_pdf"],
+            path_to_output_folder_jpg_file=self.paths_to_folders["00_source_04_jpg"],
+        )
 
         # # print('Готовлю текстовое оформление поста.')
         # # self._forming_text_for_post(data=data, info_for_picture=info_for_picture)
