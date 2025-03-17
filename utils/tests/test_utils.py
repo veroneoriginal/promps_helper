@@ -1,15 +1,17 @@
 # pylint: skip-file
+
 """В этом модуле тестируем всю логику работы приложения"""
 
 import unittest
-from pprint import pprint
+
 
 from control_manager.control_manager import ControlManager
+
 # словарь с данными для формирования путей для сохраненяи данных
 from source.structure_folders import scheme_for_folders_name
+
 # словарь со всеми параметрами для разных категорий продуктов
 from source.structure_for_products import PARAMETERS_DIF_PRODUCT_CATEGORIES
-from utils.utils import decrypting_data_from_current_collection
 
 file_path_tools = '00_base/Средства.xlsx'
 file_path_collection = '00_base/Подборки для тестов.xlsx'
@@ -53,49 +55,50 @@ class TestUtils(unittest.TestCase):
 
         result = self.control_manager._take_data_from_collection(
             file_path_collection=file_path_collection,
-            cheking_unique=False,
+            checking_unique=False,
         )
 
-        # Если код "Лучшее средство"
-        # result = {
-        #  'Возраст': 32,
-        #  'Задача': 'Лучшее средство',
-        #  'Запрос': 'ЗВ8, ЗВ12',
-        #  'Итог': None,
-        #  'Лучший вариант': None,
-        #  'Пол': 'женский',
-        #  'Содержимое': 'Шампуни',
-        #  'Специалист': 'Т',
-        #  'Средства': '{\n'
-        #              '«Средство_1» : «ALTEREGO ITALY Curego Hydraday»,\n'
-        #              '«Средство_2» : «OUSHEN Curl & shine shampoo»,\n'
-        #              '«Средство_3» : «NATURA SIBERICA Oblepikha»,\n'
-        #              '«Средство_4» : «WELEDA Millet Nourishing»,\n'
-        #              '«Средство_5» : «PAYOT Shampoing doux biome-friendly»,\n'
-        #              '«Средство_6» : «LADOR Keratin LPP»\n'
-        #              '}',
-        #  'Тип': 'В1, В10',
-        #  'Хеш': '6157254f8a165e4f6baa6a45ee2ca32042b8de1d6a19680d11879ab43c7a5cd1'
-        #  }
+        # pprint(result)
 
-        # Разбор состава одного средства
-        #   result = {
-        #   'Возраст': 32,
-        #  'Задача': 'Разбор состава одного средства',
-        #  'Запрос': 'ЗЛ2',
-        #  'Итог': None,
-        #  'Лучший вариант': None,
-        #  'Пол': 'женский',
-        #  'Содержимое': 'уход за кожей лица',
-        #  'Специалист': 'Т',
-        #  'Средства': '{\n«Средство_1» : «ALTEREGO ITALY Curego Hydraday»\n}',
-        #  'Тип': 'КЛ1',
-        #  'Хеш': '1cf5f44310b2ea42c5b498aef5a314dcea315cf69f4a6d97c96101ea8e517229'
-        #  }
+        if result['Задача'] == 'Лучшее средство':
+            # Если код "Лучшее средство", то ожидаемый словарь имеет вид
+            expected_result = {
+                'Возраст': 32,
+                'Задача': 'Лучшее средство',
+                'Запрос': 'ЗВ8, ЗВ12',
+                'Итог': None,
+                'Лучший вариант': None,
+                'Пол': 'женский',
+                'Категория': 'шампуни',
+                'Специалист': 'Т',
+                'Средства': {'Средство_1': 'ALTEREGO ITALY Curego Hydraday',
+                             'Средство_2': 'OUSHEN Curl & shine shampoo',
+                             'Средство_3': 'NATURA SIBERICA Oblepikha',
+                             'Средство_4': 'WELEDA Millet Nourishing',
+                             'Средство_5': 'PAYOT Shampoing doux biome-friendly',
+                             'Средство_6': 'LADOR Keratin LPP'},
+                'Тип': 'В1, В10',
+                'Хеш': '6157254f8a165e4f6baa6a45ee2ca32042b8de1d6a19680d11879ab43c7a5cd1'}
 
-        pprint(result)
+            # Проверка, что результат равен ожидаемому
+            self.assertEqual(result, expected_result)
 
+        elif result['Задача'] == 'Разбор состава одного средства':
+            expected_result = {
+                'Возраст': 32,
+                'Задача': 'Разбор состава одного средства',
+                'Запрос': 'ЗЛ2',
+                'Итог': None,
+                'Категория': 'уход за кожей лица',
+                'Лучший вариант': None,
+                'Пол': 'женский',
+                'Специалист': 'Т',
+                'Средства': {'Средство_1': 'ALTEREGO ITALY Curego Hydraday'},
+                'Тип': 'КЛ1',
+                'Хеш': '1c1642426270e8bfe75322817e7c2995adde4627fe2b16cb989d89ae8d9ed034'}
 
+            # Проверка, что результат равен ожидаемому
+            self.assertEqual(result, expected_result)
 
     def test_get_output_folders(self):
         """
@@ -103,40 +106,48 @@ class TestUtils(unittest.TestCase):
         """
 
         data_collection = {
-         'Возраст': 32,
-         'Задача': 'Лучшее средство',
-         'Запрос': 'ЗВ8, ЗВ12',
-         'Итог': None,
-         'Лучший вариант': None,
-         'Пол': 'женский',
-         'Содержимое': 'Шампуни',
-         'Специалист': 'Т',
-         'Средства': '{\n'
-                     '«Средство_1» : «ALTEREGO ITALY Curego Hydraday»,\n'
-                     '«Средство_2» : «OUSHEN Curl & shine shampoo»,\n'
-                     '«Средство_3» : «NATURA SIBERICA Oblepikha»,\n'
-                     '«Средство_4» : «WELEDA Millet Nourishing»,\n'
-                     '«Средство_5» : «PAYOT Shampoing doux biome-friendly»,\n'
-                     '«Средство_6» : «LADOR Keratin LPP»\n'
-                     '}',
-         'Тип': 'В1, В10',
-         'Хеш': '6157254f8a165e4f6baa6a45ee2ca32042b8de1d6a19680d11879ab43c7a5cd1'
-         }
+            'Возраст': 32,
+            'Задача': 'Лучшее средство',
+            'Запрос': 'ЗВ8, ЗВ12',
+            'Итог': None,
+            'Лучший вариант': None,
+            'Пол': 'женский',
+            'Категория': 'шампуни',
+            'Специалист': 'Т',
+            'Средства': {'Средство_1': 'ALTEREGO ITALY Curego Hydraday',
+                         'Средство_2': 'OUSHEN Curl & shine shampoo',
+                         'Средство_3': 'NATURA SIBERICA Oblepikha',
+                         'Средство_4': 'WELEDA Millet Nourishing',
+                         'Средство_5': 'PAYOT Shampoing doux biome-friendly',
+                         'Средство_6': 'LADOR Keratin LPP'},
+            'Тип': 'В1, В10',
+            'Хеш': '6157254f8a165e4f6baa6a45ee2ca32042b8de1d6a19680d11879ab43c7a5cd1'}
 
         self.control_manager._get_output_folders(
             path_to_output_folder=path_to_output_folder,
-            category=data_collection['Содержимое'],
+            category=data_collection['Категория'],
         )
-        pprint(self.control_manager.paths_to_folders)
-        # получается
-        # {'answer_gpt': '00_base/00_info_for_post/16_03_25/1_Шампуни/answer_gpt',
-        #  'instagram_jpg': '00_base/00_info_for_post/16_03_25/1_Шампуни/instagram/jpg',
-        #  'instagram_text': '00_base/00_info_for_post/16_03_25/1_Шампуни/instagram/text',
-        #  'pinterest_jpg': '00_base/00_info_for_post/16_03_25/1_Шампуни/pinterest/jpg',
-        #  'prompt': '00_base/00_info_for_post/16_03_25/1_Шампуни/prompt',
-        #  'telegram_jpg': '00_base/00_info_for_post/16_03_25/1_Шампуни/telegram/jpg',
-        #  'telegram_pdf': '00_base/00_info_for_post/16_03_25/1_Шампуни/telegram/pdf',
-        #  'telegram_text': '00_base/00_info_for_post/16_03_25/1_Шампуни/telegram/text'}
+        folders = self.control_manager.paths_to_folders
 
+        expected_keys = [
+            'answer_gpt',
+            'instagram_jpg',
+            'instagram_text',
+            'pinterest_jpg',
+            'prompt',
+            'telegram_jpg',
+            'telegram_pdf',
+            'telegram_text'
+        ]
 
+        self.assertCountEqual(folders.keys(), expected_keys)
 
+        # получатся пути такого плана
+        # {'answer_gpt': '00_base/00_info_for_post/17_03_25/3_шампуни/answer_gpt',
+        #  'instagram_jpg': '00_base/00_info_for_post/17_03_25/3_шампуни/instagram/jpg',
+        #  'instagram_text': '00_base/00_info_for_post/17_03_25/3_шампуни/instagram/text',
+        #  'pinterest_jpg': '00_base/00_info_for_post/17_03_25/3_шампуни/pinterest/jpg',
+        #  'prompt': '00_base/00_info_for_post/17_03_25/3_шампуни/prompt',
+        #  'telegram_jpg': '00_base/00_info_for_post/17_03_25/3_шампуни/telegram/jpg',
+        #  'telegram_pdf': '00_base/00_info_for_post/17_03_25/3_шампуни/telegram/pdf',
+        #  'telegram_text': '00_base/00_info_for_post/17_03_25/3_шампуни/telegram/text'}

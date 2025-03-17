@@ -13,9 +13,9 @@ class JsonProcessingData:
     ):
         self.data_collection = data_collection
         self.method_for_task_code = {
-            'Лучшее средство': 'метод который расшифровывает ключ Средства для этого кода задачи',
-            'Лучшее средство без канцерогенов': 'метод который расшифровывает словарь для этого кода задачи',
-            'Разбор состава одного средства': 'метод который расшифровывает словарь для этого кода задачи',
+            'Лучшее средство': self.decryping_task_best_product,
+            'Лучшее средство без канцерогенов': self.decryping_task_best_product,
+            'Разбор состава одного средства': self.decryping_task_one_product,
             'Лучшая пара': 'метод который расшифровывает словарь для этого кода задачи',
             'Лучшее сочетание': 'метод который расшифровывает словарь для этого кода задачи',
             'Лучшая компоновка': 'метод который расшифровывает словарь для этого кода задачи',
@@ -29,7 +29,34 @@ class JsonProcessingData:
         С помощью этого метода определяю какую функцию для расшифровки вызывать
         """
         task = self.data_collection['Задача']
-        result = self.method_for_task_code[task]
-        return result(self.data_collection)
+        result_function = self.method_for_task_code[task]
+        return result_function(self.data_collection)
 
+    def decryping_task_best_product(
+            self,
+            data_collection: dict,
+    ) -> dict:
+        """
+        Метод для преобразования словаря по коду задачи - 'Лучшее средство'.
+        Считаем длину словаря по ключу 'Средства' и обновляем исходный словарь.
 
+        :param data_collection: словарь с подборкой
+        :return: словарь с текущей подборкой добавленным ключом 'Количество средств'
+        """
+
+        data_collection['Количество средств'] = len(data_collection['Средства'])
+
+        return data_collection
+
+    def decryping_task_one_product(
+            self,
+            data_collection: dict,
+    ) -> dict:
+        """
+        Функция для преобразования словаря по коду задачи - 'Разбор состава одного средства'.
+
+        :param data_collection: словарь с подборкой
+        :return:
+        """
+
+        return data_collection

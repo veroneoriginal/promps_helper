@@ -4,7 +4,7 @@
 """
 
 import sys
-
+import ast
 from typing import (
     Optional,
     Any,
@@ -278,7 +278,7 @@ class ExcelManager:
     def get_data_from_table_in_form_of_dict(
             self,
             ws_title: str,
-            cheking_unique: bool,
+            checking_unique: bool,
     ) -> dict:
         """
         Метод, в котором:
@@ -287,6 +287,7 @@ class ExcelManager:
         3) проверяем уникальность этой подборки
 
         :param ws_title: лист, с которого берем информацию
+        :param checking_unique: параметр, который отвечает за запись или незапись хеша в таблицу
         :return: возвращает либо словарь с данными о подборке (если она уникальная),
         либо возбуждает исключение и код дальше не идет
         """
@@ -303,35 +304,44 @@ class ExcelManager:
         # Индекс столбца "Хеш"
         hash_column_index = headers["Хеш"]
 
-        # 1) Находим строку, с которой работаем
+        # Находим строку, с которой работаем
         current_row = self.find_first_empty_row(
             sheet=sheet,
             result_index=result_index,
         )
 
-        # 2) получаем данные из таблицы и преобразовываем их в словарь
+        # получаем данные из таблицы и преобразовываем их в словарь
         dict_collection = self.load_info_about_collection(
             sheet=sheet,
             number_row=current_row,
             headers=headers,
         )
 
-        # 3) считаем хеш текущей подборки
+        # считаем хеш текущей подборки
         hash_collection = str(counting_hash(data=dict_collection))
         dict_collection['Хеш'] = hash_collection
 
-        # 4) проверяем уникальность этой подборки
+        # проверяем уникальность этой подборки
         self.checking_unique_current_collection(
             hash_value=hash_collection,
             hash_column_index=hash_column_index,
             sheet=sheet,
         )
-        if cheking_unique:
+        if checking_unique:
             # запись значения хеша в xlsx в строку с текущей подборкой
             sheet.cell(row=current_row, column=hash_column_index + 1, value=hash_collection)
 
             # Сохраняем изменения в файл
             self.wb.save(self.file_path)
+
+        # по ключу получаем строку, которая только внешне имеет вид словаря
+        products = dict_collection['Средства']
+
+        # Заменяем нестандартных кавычек на обычные
+        normalized_products = products.replace('«', '"').replace('»', '"')
+
+        # Превращаем строку в словарь и обновляем
+        dict_collection['Средства'] = ast.literal_eval(normalized_products)
 
         return dict_collection
 

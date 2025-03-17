@@ -1,3 +1,4 @@
+# pylint: skip-file
 class PDFDataProcessor:
     """
     Класс для подготовки данных к передаче в PDFCreator
@@ -87,7 +88,3 @@ class PDFDataProcessor:
         Лучшее средство
         """
         pass
-
-
-
-

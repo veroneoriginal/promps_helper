@@ -101,10 +101,10 @@ mapping = {
 # словарь со всеми параметрами для разных категорий продуктов
 PARAMETERS_DIF_PRODUCT_CATEGORIES = {
     "Базовые настройки": base_properties,
-    "Уход за кожей лица": facial_skin_care,
-    "Уход за телом": body_care,
-    "Макияж": makeup,
-    "Парфюмерия": perfumery,
-    "Стайлинг волос": hair_styling,
-    "Маппинг": mapping,
+    "уход за кожей лица": facial_skin_care,
+    "уход за телом": body_care,
+    "макияж": makeup,
+    "парфюмерия": perfumery,
+    "стайлинг волос": hair_styling,
+    "маппинг": mapping,
 }
