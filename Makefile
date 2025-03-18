@@ -7,10 +7,9 @@ run_test:
 
 class_test:
 	pytest -s /home/veronika/00_projects/promps_helper/utils/tests/test_utils.py::TestUtils
-
 one_test:
 	pytest -s /home/veronika/00_projects/promps_helper/utils/tests/test_utils.py::TestUtils::test_take_data_from_collection
 
 
 jsontest:
-	pytest -s /home/veronika/00_projects/promps_helper/json_constructor/test/test_json_scheme.py::TestJsonScheme::test_decryping_task_one_product
+	pytest -s /home/veronika/00_projects/promps_helper/json_constructor/test/test_json_scheme.py::TestJsonScheme

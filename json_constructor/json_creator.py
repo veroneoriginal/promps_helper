@@ -174,8 +174,8 @@ class JsonCreator:
             extension_schema = self._format_properties(extension_properties)
 
             # Добавляем новые поля в schema
-            product_properties = schema["schema"]["properties"]["product"]["properties"]
-            product_required = schema["schema"]["properties"]["product"]["required"]
+            product_properties = schema["schema"]["properties"]
+            product_required = schema["schema"]["required"]
 
             product_properties.update(extension_schema["properties"])
             product_required.extend(extension_schema["required"])

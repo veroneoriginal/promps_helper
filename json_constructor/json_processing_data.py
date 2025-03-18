@@ -13,9 +13,9 @@ class JsonProcessingData:
     ):
         self.data_collection = data_collection
         self.method_for_task_code = {
-            'Лучшее средство': self.decryping_task_best_product,
-            'Лучшее средство без канцерогенов': self.decryping_task_best_product,
-            'Разбор состава одного средства': self.decryping_task_one_product,
+            'Лучшее средство': self.decryption_task_best_product,
+            'Лучшее средство без канцерогенов': self.decryption_task_best_product,
+            'Разбор состава одного средства': self.decryption_task_one_product,
             'Лучшая пара': 'метод который расшифровывает словарь для этого кода задачи',
             'Лучшее сочетание': 'метод который расшифровывает словарь для этого кода задачи',
             'Лучшая компоновка': 'метод который расшифровывает словарь для этого кода задачи',
@@ -32,7 +32,7 @@ class JsonProcessingData:
         result_function = self.method_for_task_code[task]
         return result_function(self.data_collection)
 
-    def decryping_task_best_product(
+    def decryption_task_best_product(
             self,
             data_collection: dict,
     ) -> dict:
@@ -48,7 +48,7 @@ class JsonProcessingData:
 
         return data_collection
 
-    def decryping_task_one_product(
+    def decryption_task_one_product(
             self,
             data_collection: dict,
     ) -> dict:

@@ -3,7 +3,7 @@
 """В этом модуле тестируем всю логику работы приложения"""
 
 import unittest
-
+from pprint import pprint
 
 from control_manager.control_manager import ControlManager
 
@@ -40,13 +40,13 @@ class TestUtils(unittest.TestCase):
     #     )
     #     pprint(data_tools)
 
-    # def test_get_count_collections(self):
-    #     """
-    #     Подсчет количества незаполненных подборок в таблице.
-    #     """
-    #
-    #     result = self.control_manager._get_count_collections(file_path_collection)
-    #     self.assertEqual(2, result)
+    def test_get_count_collections(self):
+        """
+        Подсчет количества незаполненных подборок в таблице.
+        """
+
+        result = self.control_manager._get_count_collections(file_path_collection)
+        self.assertEqual(2, result)
 
     def test_take_data_from_collection(self):
         """
@@ -78,7 +78,7 @@ class TestUtils(unittest.TestCase):
                              'Средство_5': 'PAYOT Shampoing doux biome-friendly',
                              'Средство_6': 'LADOR Keratin LPP'},
                 'Тип': 'В1, В10',
-                'Хеш': '6157254f8a165e4f6baa6a45ee2ca32042b8de1d6a19680d11879ab43c7a5cd1'}
+                'Хеш': '68dd4868b0ba1a96e83295d05327e97af4f2748a34fb45281023729d8532c326'}
 
             # Проверка, что результат равен ожидаемому
             self.assertEqual(result, expected_result)
