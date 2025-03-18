@@ -2,7 +2,7 @@
 lint:
 	pylint $(shell git ls-files '*.py')
 
-run_test:
+run_tests:
 	pytest -s
 
 class_test:

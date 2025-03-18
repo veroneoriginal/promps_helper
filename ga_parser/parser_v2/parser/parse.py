@@ -1,11 +1,14 @@
-""" Логика парсера """
+""" Логика парсера второй версии"""
 
 import json
 import re
 
-from ga_parser.parser.generation_product_data import get_product_data_dict
-from ga_parser.parser.requests_funcs import get_page
-from ga_parser.utils.utils import download_image, path_to_universal
+from ga_parser.parser_v2.parser.generation_product_data import get_product_data_dict
+from ga_parser.utils.requests_funcs import get_page_v2
+from ga_parser.utils.utils import (
+    download_image,
+    add_text_to_image,
+)
 
 
 def get_product_card(html_text: str) -> dict | None:
@@ -36,18 +39,6 @@ def get_product_card(html_text: str) -> dict | None:
         return None
 
 
-def get_product_dict(url: str) -> dict | None:
-    """
-    Получает карточку продукта в виде словаря
-
-    :param url: url средства на сайте Золотого Яблока
-    :return: dict
-    """
-
-    html = get_page(url)
-    return get_product_card(html)
-
-
 def parse_product(
         url: str,
         image_dir_path: str,
@@ -62,12 +53,16 @@ def parse_product(
     :return: dict
     """
 
-    product_card_dict = get_product_dict(url=url)
-    product_data_dict = get_product_data_dict(product_card_dict, image_dir_path)
+    html = get_page_v2(url=url)
+    product_data_dict = get_product_data_dict(html=html, image_dir_path=image_dir_path)
+
     download_image(
         url=product_data_dict['Ссылка на изображение'],
-        product_title=product_data_dict['Название'],
-        image_dir_path=path_to_universal(image_dir_path)
+        file_save_path=product_data_dict['Ссылка на изображение в базе'],
+    )
+    add_text_to_image(
+        open_full_path=product_data_dict['Ссылка на изображение в базе'],
+        text=url,
     )
 
     return product_data_dict

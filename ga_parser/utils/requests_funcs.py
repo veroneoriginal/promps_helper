@@ -1,9 +1,52 @@
 """
 Запросы на сайт Золотого яблока и cdn за изображением
 """
+import time
 
 import requests
 from requests import Response
+
+from selenium import webdriver
+from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.support.ui import WebDriverWait
+
+from webdriver_manager.chrome import ChromeDriverManager
+
+
+def get_page_v2(
+        url: str,
+        timeout: int = 10,
+        headless: bool = True,
+) -> str | None:
+    # Настраиваем Chrome
+    chrome_options = Options()
+    if headless:
+        chrome_options.add_argument("--headless")  # Без GUI, если нужно
+    chrome_options.add_argument("--disable-blink-features=AutomationControlled")
+    chrome_options.add_argument("--no-sandbox")
+    chrome_options.add_argument("--disable-dev-shm-usage")
+
+    # Запускаем WebDriver
+    service = Service(ChromeDriverManager().install())
+    driver = webdriver.Chrome(service=service, options=chrome_options)
+
+    try:
+        driver.get(url)  # Открываем страницу
+        WebDriverWait(driver, timeout=timeout)  # Ожидаем загрузки
+
+        # Скроллим вниз, чтобы элементы стали видимыми
+        driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+        time.sleep(5)
+
+        # Получаем HTML после кликов
+        html = driver.page_source
+
+    finally:
+        driver.quit()  # Закрываем браузер
+
+    return html
+
 
 # Заголовки для запроса (имитируем запрос от браузера)
 HEADERS = {
