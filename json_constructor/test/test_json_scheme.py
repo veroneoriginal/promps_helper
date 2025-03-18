@@ -1,8 +1,10 @@
 # pylint: skip-file
-"""В этом модуле тестируем выбор json-схемы"""
+"""
+В этом модуле тестируем выбор json-схемы
+"""
 
 import unittest
-from pprint import pprint
+# from pprint import pprint
 
 from json_constructor.json_creator import JsonCreator
 from json_constructor.json_processing_data import JsonProcessingData
@@ -70,17 +72,20 @@ class TestJsonScheme(unittest.TestCase):
         }
 
         # Проверка, что добавился ключ 'Количество средств'
-        self.assertIn('Количество средств', result, msg="Отсутствует ключ 'Количество средств'")
+        self.assertIn('Количество средств', result,
+                      msg="Отсутствует ключ 'Количество средств'")
 
         # Проверка, что значение количества средств корректно
         self.assertEqual(result['Количество средств'], 6,
                          msg="Некорректное значение ключа 'Количество средств'")
 
         # Проверка, что добавился ровно один ключ
-        self.assertEqual(len(result.keys()), original_keys_count + 1, msg="Добавилось больше одного нового ключа")
+        self.assertEqual(len(result.keys()), original_keys_count + 1,
+                         msg="Добавилось больше одного нового ключа")
 
         # Проверка, что результат равен ожидаемому
-        self.assertEqual(result, expected_result, msg="Результат обработки не совпадает с ожидаемым словарём")
+        self.assertEqual(result, expected_result,
+                         msg="Результат обработки не совпадает с ожидаемым словарём")
 
     def test_get_json_scheme_for_best_product(self):
         """
@@ -138,15 +143,18 @@ class TestJsonScheme(unittest.TestCase):
                             },
                             "plus": {
                                 "type": "string",
-                                "description": "Описание плюсов 1-го средства (без названия средства)"
+                                "description":
+                                    "Описание плюсов 1-го средства (без названия средства)"
                             },
                             "minus": {
                                 "type": "string",
-                                "description": "Описание минусов 1-го средства (без названия средства)"
+                                "description":
+                                    "Описание минусов 1-го средства (без названия средства)"
                             },
                             "best_product": {
                                 "type": "boolean",
-                                "description": "Если это средство стало лучшим, поставь здесь True, если нет, то False"
+                                "description": "Если это средство стало лучшим, "
+                                               "поставь здесь True, если нет, то False"
                             }
                         },
                         "required": ["title", "plus", "minus", "best_product"],
@@ -155,13 +163,22 @@ class TestJsonScheme(unittest.TestCase):
                     "product_2": {
                         "type": "object",
                         "properties": {
-                            "title": {"type": "string", "description": "Название 2-го средства"},
-                            "plus": {"type": "string",
-                                     "description": "Описание плюсов 2-го средства (без названия средства)"},
-                            "minus": {"type": "string",
-                                      "description": "Описание минусов 2-го средства (без названия средства)"},
-                            "best_product": {"type": "boolean",
-                                             "description": "Если это средство стало лучшим, поставь здесь True, если нет, то False"}
+                            "title": {
+                                "type": "string",
+                                "description": "Название 2-го средства",
+                            },
+                            "plus": {
+                                "type": "string",
+                                "description": "Описание плюсов 2-го средства (без названия средства)",
+                            },
+                            "minus": {
+                                "type": "string",
+                                "description": "Описание минусов 2-го средства (без названия средства)",
+                            },
+                            "best_product": {
+                                "type": "boolean",
+                                "description": "Если это средство стало лучшим, "
+                                               "поставь здесь True, если нет, то False"}
                         },
                         "required": ["title", "plus", "minus", "best_product"],
                         "additionalProperties": False
@@ -169,13 +186,18 @@ class TestJsonScheme(unittest.TestCase):
                     "product_3": {
                         "type": "object",
                         "properties": {
-                            "title": {"type": "string", "description": "Название 3-го средства"},
-                            "plus": {"type": "string",
-                                     "description": "Описание плюсов 3-го средства (без названия средства)"},
-                            "minus": {"type": "string",
-                                      "description": "Описание минусов 3-го средства (без названия средства)"},
-                            "best_product": {"type": "boolean",
-                                             "description": "Если это средство стало лучшим, поставь здесь True, если нет, то False"}
+                            "title": {
+                                "type": "string", "description": "Название 3-го средства"},
+                            "plus": {
+                                "type": "string",
+                                "description": "Описание плюсов 3-го средства (без названия средства)"},
+                            "minus": {
+                                "type": "string",
+                                "description": "Описание минусов 3-го средства (без названия средства)"},
+                            "best_product": {
+                                "type": "boolean",
+                                "description": "Если это средство стало лучшим, "
+                                               "поставь здесь True, если нет, то False"}
                         },
                         "required": ["title", "plus", "minus", "best_product"],
                         "additionalProperties": False
@@ -189,7 +211,8 @@ class TestJsonScheme(unittest.TestCase):
                             "minus": {"type": "string",
                                       "description": "Описание минусов 4-го средства (без названия средства)"},
                             "best_product": {"type": "boolean",
-                                             "description": "Если это средство стало лучшим, поставь здесь True, если нет, то False"}
+                                             "description": "Если это средство стало лучшим, "
+                                                            "поставь здесь True, если нет, то False"}
                         },
                         "required": ["title", "plus", "minus", "best_product"],
                         "additionalProperties": False
@@ -197,13 +220,18 @@ class TestJsonScheme(unittest.TestCase):
                     "product_5": {
                         "type": "object",
                         "properties": {
-                            "title": {"type": "string", "description": "Название 5-го средства"},
-                            "plus": {"type": "string",
-                                     "description": "Описание плюсов 5-го средства (без названия средства)"},
-                            "minus": {"type": "string",
-                                      "description": "Описание минусов 5-го средства (без названия средства)"},
-                            "best_product": {"type": "boolean",
-                                             "description": "Если это средство стало лучшим, поставь здесь True, если нет, то False"}
+                            "title": {
+                                "type": "string", "description": "Название 5-го средства"},
+                            "plus": {
+                                "type": "string",
+                                "description": "Описание плюсов 5-го средства (без названия средства)"},
+                            "minus": {
+                                "type": "string",
+                                "description": "Описание минусов 5-го средства (без названия средства)"},
+                            "best_product": {
+                                "type": "boolean",
+                                "description": "Если это средство стало лучшим, "
+                                               "поставь здесь True, если нет, то False"}
                         },
                         "required": ["title", "plus", "minus", "best_product"],
                         "additionalProperties": False
@@ -211,13 +239,18 @@ class TestJsonScheme(unittest.TestCase):
                     "product_6": {
                         "type": "object",
                         "properties": {
-                            "title": {"type": "string", "description": "Название 6-го средства"},
-                            "plus": {"type": "string",
-                                     "description": "Описание плюсов 6-го средства (без названия средства)"},
-                            "minus": {"type": "string",
-                                      "description": "Описание минусов 6-го средства (без названия средства)"},
-                            "best_product": {"type": "boolean",
-                                             "description": "Если это средство стало лучшим, поставь здесь True, если нет, то False"}
+                            "title": {
+                                "type": "string", "description": "Название 6-го средства"},
+                            "plus": {
+                                "type": "string",
+                                "description": "Описание плюсов 6-го средства (без названия средства)"},
+                            "minus": {
+                                "type": "string",
+                                "description": "Описание минусов 6-го средства (без названия средства)"},
+                            "best_product": {
+                                "type": "boolean",
+                                "description": "Если это средство стало лучшим, "
+                                               "поставь здесь True, если нет, то False"}
                         },
                         "required": ["title", "plus", "minus", "best_product"],
                         "additionalProperties": False

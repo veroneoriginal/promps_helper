@@ -6,7 +6,7 @@ import os
 import json
 from datetime import datetime
 from pathlib import Path
-# from pprint import pprint
+from pprint import pprint
 
 from dotenv import load_dotenv
 from appeal_to_openai.main import main as appeal_to_openai_main
@@ -512,25 +512,27 @@ class ControlManager:
         # захожу в "Подборки" и считаю сколько подборок не заполнено
         count_collection = self._get_count_collections(file_path_collection)
 
-        for _ in range(count_collection):
-            # формирую словарь с первой подборкой
-            data_collection = self._take_data_from_collection(
-                file_path_collection=file_path_collection,
-                checking_unique=checking_unique,
-            )
+        # for _ in range(count_collection):
+        # формирую словарь с первой подборкой
+        data_collection = self._take_data_from_collection(
+            file_path_collection=file_path_collection,
+            checking_unique=checking_unique,
+        )
 
-            # pylint: disable=W0612 unused-variable
-            # определяю json-схему
-            json_scheme = get_json_scheme(
-                data_collection=data_collection,
-                product_categories=self.param_dif_products_categories,
-            )
+        # pylint: disable=W0612 unused-variable
+        # определяю json-схему
+        json_scheme = get_json_scheme(
+            data_collection=data_collection,
+            product_categories=self.param_dif_products_categories,
+        )
 
-            # формирую путь для сохранения данных
-            self._get_output_folders(
-                path_to_output_folder=path_to_output_folder,
-                category=data_collection['Категория'],
-            )
+        # формирую путь для сохранения данных
+        self._get_output_folders(
+            path_to_output_folder=path_to_output_folder,
+            category=data_collection['Категория'],
+        )
+
+        pprint(data_collection)
 
             # # обновляю словарь с текущей подборкой расшифрованными данными,
             # # за исключением пункта "Средства"
