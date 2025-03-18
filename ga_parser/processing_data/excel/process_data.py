@@ -29,7 +29,7 @@ class ExcelProcess:
 
     def check_products_dublicates(self):
         """
-        Проверяем дубликаты п ссылке или названии,
+        Проверяем дубликаты по ссылке или названии,
         если есть - закрашиваем красным строки
         """
 
@@ -39,19 +39,20 @@ class ExcelProcess:
             sheet_name=self.ws.title,
             usecols=[0, 1]
         )
+
         # Получаем названия колонок
         column_1, column_2 = df.columns
 
-        # Находим дубликаты с удалением пробелов по краям
-        df[column_1] = df[column_1].astype(str).str.strip()
-        df[column_2] = df[column_2].astype(str).str.strip()
-        duplicates_1 = df[column_1].duplicated(keep=False)
-        duplicates_2 = df[column_2].duplicated(keep=False)
+        # Очистка данных
+        df[column_1] = df[column_1].astype(str).str.strip().replace("nan", "").replace("", pd.NA)
+        df[column_2] = df[column_2].astype(str).str.strip().replace("nan", "").replace("", pd.NA)
+
+        # Фильтруем NaN перед поиском дубликатов
+        duplicates_1 = df[column_1].duplicated(keep=False) & df[column_1].notna()
+        duplicates_2 = df[column_2].duplicated(keep=False) & df[column_2].notna()
 
         # Проходим по строкам и выделяем дубликаты
-        # Начинаем с 2 (1 - заголовок)
         for row in range(2, len(df) + 2):
-            # Если есть дубликат в любой колонке
             if duplicates_1.iloc[row - 2] or duplicates_2.iloc[row - 2]:
                 self.set_row_color(
                     row=self.ws[row],
