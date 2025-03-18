@@ -117,37 +117,37 @@ def conversion_products(
     return "\n".join(list_cosmetic_products)
 
 
-def decrypting_info_from_products(
-        data: dict,
-        data_collection: dict,
-        category: str,
-) -> str:
-    """
-    Метод для расшифровки данных из блока Средства
-
-    :param data: словарь со всеми данными
-    :param data_collection: словарь с подборкой
-    :param category: категория, с который работаем
-    :return: словарь со средствами, их типом и составом
-    """
-
-    # получение строки с содержимым, которое было в ячейке
-    products_in_cell = data_collection[category]
-
-    # формирование из строки списка отдельных элементов
-    list_products = split_and_clean_type(type_of_need=products_in_cell, symbol="&&&")
-
-    # формируем словарь
-    products_full_info = {}
-    for number, product in enumerate(list_products):
-        products_full_info[product] = {
-            "Номер": number + 1,
-            "Тип продукта": data[category][product]["Тип продукта"],
-            "Состав": data[category][product]["Состав"],
-        }
-
-    # преобразование словаря со средствами в строку
-    return conversion_products(cosmetic_products=products_full_info)
+# def decrypting_info_from_products(
+#         data: dict,
+#         data_collection: dict,
+#         category: str,
+# ) -> str:
+#     """
+#     Метод для расшифровки данных из блока Средства
+#
+#     :param data: словарь со всеми данными
+#     :param data_collection: словарь с подборкой
+#     :param category: категория, с который работаем
+#     :return: словарь со средствами, их типом и составом
+#     """
+#
+#     # получение строки с содержимым, которое было в ячейке
+#     products_in_cell = data_collection[category]
+#
+#     # формирование из строки списка отдельных элементов
+#     list_products = split_and_clean_type(type_of_need=products_in_cell, symbol="&&&")
+#
+#     # формируем словарь
+#     products_full_info = {}
+#     for number, product in enumerate(list_products):
+#         products_full_info[product] = {
+#             "Номер": number + 1,
+#             "Тип продукта": data[category][product]["Тип продукта"],
+#             "Состав": data[category][product]["Состав"],
+#         }
+#
+#     # преобразование словаря со средствами в строку
+#     return conversion_products(cosmetic_products=products_full_info)
 
 
 def decrypting_data_from_current_collection(
@@ -190,12 +190,12 @@ def decrypting_data_from_current_collection(
         category="Специалист",
     )
 
-    # расшифровка средств
-    data_collection["Средства"] = decrypting_info_from_products(
-        data=data_tools,
-        data_collection=data_collection,
-        category="Средства",
-    )
+    # # расшифровка средств
+    # data_collection["Средства"] = decrypting_info_from_products(
+    #     data=data_tools,
+    #     data_collection=data_collection,
+    #     category="Средства",
+    # )
 
     return data_collection
 
@@ -245,6 +245,9 @@ def transforming_dict_from_json_file(
 
     # формирую словарь со средствами из json-a, чтобы его дальше дополнить
     transformed_dict = {}
+    print('transforming_dict_from_json_file')
+    print(data)
+    print()
 
     # проходим по значениям json-словаря
     for product_info in data.values():

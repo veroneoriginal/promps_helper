@@ -337,12 +337,11 @@ class PDFCreator:
         )
         safe_filename = os.path.basename(output_file).replace(".pdf", "")
 
-        for _, img in enumerate(images):
+        for idx, img in enumerate(images, start=1):
             jpg_filename = os.path.join(
                 output_folder_jpg,
-                f"{safe_filename}.jpg",
+                f"{safe_filename}_page_{idx}.jpg",  # добавляем индекс страницы!
             )
-            # Сохраняем как JPG
             img.save(jpg_filename, "JPEG")
 
     def _format_product_filename(
@@ -396,7 +395,7 @@ class PDFCreator:
         # В on_page_end мы передаём функцию отрисовки линии бренда поверх других
         # элементов с помощью канвы, а не flowebles.
         template = self._create_page_template(
-            frames=[frame,],
+            frames=[frame, ],
             on_page_end=self._on_page_end_brand_line_wrapper(product=product),
         )
 
@@ -420,14 +419,14 @@ class PDFCreator:
 
     def gen_pages_for_six_product(
             self,
-            list_with_info: list,
+            info: list,
             output_folder_pdf: Path,
             output_folder_jpg: Path,
     ) -> None:
         """
         Метод для создания PDF-файлов с наложенной бренд‑линей поверх основного контента.
 
-        :param list_with_info: список словарей с информацией о продуктах.
+        :param info: список словарей с информацией о продуктах.
         :param output_folder_pdf: путь (Path) к папке для сохранения PDF.
         :param output_folder_jpg: путь (Path) к папке для сохранения JPG.
         :return: None
@@ -436,7 +435,7 @@ class PDFCreator:
         # Ширина и высота страницы в пикселях
         self.sizes = (1024, 1280)
 
-        for product in list_with_info:
+        for product in info:
             # форматируем имя файла
             output_file = self._format_product_filename(
                 product=product,
@@ -460,3 +459,20 @@ class PDFCreator:
                 output_folder_jpg=output_folder_jpg,
                 output_file=output_file,
             )
+
+    def gen_pages_for_one_product(
+            self,
+            info: dict,
+            output_folder_pdf: Path,
+            output_folder_jpg: Path,
+    ) -> None:
+        """
+        Метод для создания PDF-файлов с наложенной бренд‑линей поверх
+        основного контента для одного продукта
+
+        :param info: словарь с информацией о продукте.
+        :param output_folder_pdf: путь (Path) к папке для сохранения PDF.
+        :param output_folder_jpg: путь (Path) к папке для сохранения JPG.
+        :return: None
+        """
+        print('▶️ Здесь будет логика генерации PDF и JPG для одного продукта')

@@ -6,20 +6,20 @@ import os
 import json
 from datetime import datetime
 from pathlib import Path
-from pprint import pprint
+# from pprint import pprint
 
 from dotenv import load_dotenv
 from appeal_to_openai.main import main as appeal_to_openai_main
 from appeal_to_openai.utils import checking_file_with_response
 from excel_process_data.process_data import ExcelManager
 from pdf.main_pdf import PDFCreator
-from pdf.utils import forming_info_for_pdf
+from pdf.utils import main_forming_info_for_pdf
 from post_constructor.post_constructor import create_text_for_post
-from prompt_constructor.constructor import PromptConstructor
-from prompt_constructor.json_schemes.main_json_schemes import determine_scheme_by_number_of_products
+from prompt_constructor.prompt_constructor import PromptConstructor
+from json_constructor.json_manager import get_json_scheme
 
 from utils.utils import (
-    decrypting_data_from_current_collection,
+    # decrypting_data_from_current_collection,
     copy_jpg_files,
     transforming_dict_from_json_file,
     add_keys_from_another_dict_to_one_dict,
@@ -28,12 +28,13 @@ from utils.utils import (
 
 class ControlManager:
     """
-    Класс, управляющий логикой весго проекта
+    Класс, управляющий логикой всего проекта
     """
 
-    def __init__(self, scheme_for_folders):
+    def __init__(self, scheme_for_folders, param_dif_products_categories):
         self.paths_to_folders = {}
         self.scheme_for_folders = scheme_for_folders
+        self.param_dif_products_categories = param_dif_products_categories
 
     def _take_data_from_table_tool(
             self,
@@ -73,11 +74,13 @@ class ControlManager:
     def _take_data_from_collection(
             self,
             file_path_collection: str,
+            checking_unique: bool,
     ) -> dict:
         """
         Метод для загрузки данных по текущей подборке из таблицы Подборки.
 
         :param file_path_collection: путь до документа Подборки.xlsx
+        :param checking_unique: параметр, который отвечает за запись или незапись хеша в таблицу
         :return: словарь с информацией о текущей подборке вида
 
             {'Возраст': '32',
@@ -99,7 +102,10 @@ class ControlManager:
         """
 
         excel_manager = ExcelManager(file_path=file_path_collection)
-        return excel_manager.get_data_from_table_in_form_of_dict(ws_title="Подборки")
+        return excel_manager.get_data_from_table_in_form_of_dict(
+            ws_title="Подборки",
+            checking_unique=checking_unique,
+        )
 
     def _bring_prompt(
             self,
@@ -177,6 +183,7 @@ class ControlManager:
             dict_with_hash=dict_with_hash,
             file_path=file_path,
         )
+        print('Данные по анализу подборки записаны в excel')
 
     def _create_timestamped_folder(
             self,
@@ -363,9 +370,6 @@ class ControlManager:
             del data['best_product']
             del data['result']
 
-        print('Нахожусь перед transformed_dict')
-        pprint(data)
-
         # трансформирую словарь из json-a в словарь, где ключи - названия средств
         transformed_dict = transforming_dict_from_json_file(data=data)
 
@@ -375,6 +379,7 @@ class ControlManager:
             "Юниты меры (мл/шт)",
             "Стоимость руб",
             "Ссылка на изображение в базе",
+            "Тип продукта",
         ]
 
         # дополняю transformed_dict ключами из data_tools
@@ -387,34 +392,70 @@ class ControlManager:
     def _create_pdf_jpg_for_post(
             self,
             data: dict,
+            data_task: dict,
     ) -> None:
         """
         Метод для создания pdf-листов и jpg-файлов (для постов со средствами)
 
         :param data: словарь со средствами, их плюсами, минусами и прочим
+        :param data_task: словарь с кодом задачи, количеством средств, категорией продукта
         :return: None
         """
 
-        # из словаря со всеми данными, формируем инфу для картинки в пост
-        list_with_info = forming_info_for_pdf(data=data)
+        task_name = data_task["Задача"]
 
         create_pdf = PDFCreator()
-        create_pdf.gen_pages_for_six_product(
-            list_with_info=list_with_info,
+
+        generation_pictures = {
+
+            'Лучшее средство': create_pdf.gen_pages_for_six_product,
+            'Лучшее средство без канцерогенов': create_pdf.gen_pages_for_six_product,
+            'Разбор состава одного средства': create_pdf.gen_pages_for_one_product,
+
+        }
+
+        # Получаем пути для сохранения файлов
+        paths_by_task = {
+            'Лучшее средство': {
+                'pdf': self.paths_to_folders['telegram_pdf'],
+                'jpg': self.paths_to_folders['telegram_jpg'],
+            },
+            'Лучшее средство без канцерогенов': {
+                'pdf': self.paths_to_folders['telegram_pdf'],
+                'jpg': self.paths_to_folders['telegram_jpg'],
+            },
+            'Разбор состава одного средства': {
+                'pdf': self.paths_to_folders['telegram_pdf'],
+                'jpg': self.paths_to_folders['telegram_jpg'],
+            },
+        }
+
+        # формируем инфу для картинки в пост
+        list_with_info = main_forming_info_for_pdf(
+            data=data,
+            data_task=data_task,
+            product_categories=self.param_dif_products_categories,
+        )
+        print(f'{list_with_info=}')
+        # Вызываем нужную функцию генерации
+        generation_func = generation_pictures.get(task_name)
+
+        generation_func(
+            info=list_with_info,
             # Формируем путь для сохранения
-            output_folder_pdf=self.paths_to_folders['telegram_pdf'],
-            output_folder_jpg=self.paths_to_folders['telegram_jpg'],
+            output_folder_pdf=paths_by_task[task_name]['pdf'],
+            output_folder_jpg=paths_by_task[task_name]['jpg'],
         )
 
         # копируем файлы из папки telegram jpg в instagram jpg
         copy_jpg_files(
-            where_copy_from=self.paths_to_folders['telegram_jpg'],
+            where_copy_from=paths_by_task[task_name]['jpg'],
             where_copy_to=self.paths_to_folders['instagram_jpg'],
         )
 
         # копируем файлы из папки telegram jpg в pinterest jpg
         copy_jpg_files(
-            where_copy_from=self.paths_to_folders['telegram_jpg'],
+            where_copy_from=paths_by_task[task_name]['jpg'],
             where_copy_to=self.paths_to_folders['pinterest_jpg'],
         )
 
@@ -448,19 +489,22 @@ class ControlManager:
             file_path_tools: str,
             file_path_collection: str,
             path_to_output_folder: str,
+            checking_unique: bool,
     ) -> None:
         """
         Главный метод класса, в котором собрана вся логика программы
 
         :param file_path_tools: путь до таблицы со всей инфой о средствах, типах и прочем
         :param file_path_collection: путь до таблицы с подборками
+        :param checking_unique: параметр, который отвечает за запись или незапись хеша в таблицу
         :param path_to_output_folder: путь до папки, в которую идет сохранение ответа от OpenAI,
         промпта, картинок и текста.
 
         :return: None
         """
 
-        # забираю все данные из таблицы "Средства"
+        # pylint: disable=W0612 unused-variable
+        # забираю все данные из таблицы "Средства", "Тип", "Запрос" и т.д.
         data_tools = self._take_data_from_table_tool(
             file_path_tools_table=file_path_tools,
         )
@@ -472,65 +516,68 @@ class ControlManager:
             # формирую словарь с первой подборкой
             data_collection = self._take_data_from_collection(
                 file_path_collection=file_path_collection,
+                checking_unique=checking_unique,
             )
 
-            # формирую словарь с информацией для json-схемы
-            data_for_dif_tasks = {
-                # определяем задачу для выбора в json-схемы
-                "Задача": data_collection['Задача'],
-                # считаем сколько средств подаем для анализа
-                "Количество элементов": len(data_collection['Средства']),
-                "Категория": data_collection['Содержимое']
-            }
-
-            # обновляю словарь с текущей подборкой расшифрованными данными
-            data_collection = decrypting_data_from_current_collection(
-                data_tools=data_tools,
+            # pylint: disable=W0612 unused-variable
+            # определяю json-схему
+            json_scheme = get_json_scheme(
                 data_collection=data_collection,
+                product_categories=self.param_dif_products_categories,
             )
 
             # формирую путь для сохранения данных
             self._get_output_folders(
                 path_to_output_folder=path_to_output_folder,
-                category=data_collection['Содержимое'],
+                category=data_collection['Категория'],
             )
 
-            print('Определение json-схемы.')
-            json_scheme = determine_scheme_by_number_of_products(data=data_for_dif_tasks)
+            # # обновляю словарь с текущей подборкой расшифрованными данными,
+            # # за исключением пункта "Средства"
+            # data_collection = decrypting_data_from_current_collection(
+            #     data_tools=data_tools,
+            #     data_collection=data_collection,
+            # )
 
-            # cобираю промпт
-            prompt = self._bring_prompt(
-                data=data_for_dif_tasks,
-                data_collection=data_collection,
-            )
+            # # cобираю промпт
+            # prompt = self._bring_prompt(
+            #     data=data_for_dif_tasks,
+            #     data_collection=data_collection,
+            # )
 
-            print('Отправка запроса в OpenAI.')
-            # self.paths_to_folders["answer_gpt"] будет содержать в себе
-            # 00_base/00_info_for_post/01_03_25/1_Шампуни/answer_gpt
-            file_path_to_saving_json = self._create_context_for_request_to_openai(
-                prompt_for_convert=prompt,
-                json_scheme=json_scheme,
-                folder_name=self.paths_to_folders["answer_gpt"],
-            )
-
-            # file_path_to_saving_json будет содержать в себе
-            # 00_base/00_info_for_post/01_03_25/1_Шампуни/answer_gpt/Анализ_средств.json
-            print('Разбор ответа от OpenAI.')
-            self._reviewing_response_from_openai(
-                file_path=file_path_collection,
-                json_file_path=file_path_to_saving_json,
-                dict_with_hash=data_collection,
-            )
-            print()
-
-            # print('Формирование данных для картинок.')
+            # print('Отправка запроса в OpenAI.')
+            # # self.paths_to_folders["answer_gpt"] будет содержать в себе
+            # # 00_base/00_info_for_post/01_03_25/1_Шампуни/answer_gpt
+            # file_path_to_saving_json = self._create_context_for_request_to_openai(
+            #     prompt_for_convert=prompt,
+            #     json_scheme=json_scheme,
+            #     folder_name=self.paths_to_folders["answer_gpt"],
+            # )
+            #
+            # # file_path_to_saving_json будет содержать в себе
+            # # 00_base/00_info_for_post/01_03_25/1_Шампуни/answer_gpt/Анализ_средств.json
+            # print('Разбор ответа от OpenAI.')
+            # self._reviewing_response_from_openai(
+            #     file_path=file_path_collection,
+            #     json_file_path=file_path_to_saving_json,
+            #     dict_with_hash=data_collection,
+            # )
+            #
+            #
+            # print('Формирование данных для картинок')
             # data_for_images = self._forming_data_for_images(
             #     json_file_path=file_path_to_saving_json,
             #     data_tools=data_tools['Средства'],
             # )
-
-            # print('Создание картинок со средствами для постов в соц.сети.')
-            # self._create_pdf_jpg_for_post(data=data_for_images)
             #
+            # pprint(f'{data_for_images=}')
+            # print('Создание картинок со средствами для постов в соц.сети.')
+            # self._create_pdf_jpg_for_post(
+            #     data=data_for_images,
+            #     data_task=data_for_dif_tasks,
+            # )
+            #
+            # print()
+
             # # print('Готовлю текстовое оформление поста.')
             # # self._forming_text_for_post(data=data, info_for_picture=info_for_picture)

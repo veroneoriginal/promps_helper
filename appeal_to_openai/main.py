@@ -50,7 +50,7 @@ def main(
     data = _processing_content_from_openai(result=result)
 
 
-    print('Сохраняю ответ, полученный от OpenAI')
+    # Сохраняю ответ, полученный от OpenAI
     file_path_to_saving_json = _save(
         data=data,
         folder_name=folder_name,
