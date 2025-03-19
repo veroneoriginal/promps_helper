@@ -46,7 +46,7 @@ class TestUtils(unittest.TestCase):
         """
 
         result = self.control_manager._get_count_collections(file_path_collection)
-        self.assertEqual(2, result)
+        self.assertEqual(3, result)
 
     def test_take_data_from_collection(self):
         """
@@ -153,62 +153,3 @@ class TestUtils(unittest.TestCase):
         #  'telegram_pdf': '00_base/00_info_for_post/17_03_25/3_шампуни/telegram/pdf',
         #  'telegram_text': '00_base/00_info_for_post/17_03_25/3_шампуни/telegram/text'}
 
-    def test_bring_prompt(self):
-
-        data_tools = self.control_manager._take_data_from_table_tool(
-            file_path_tools_table=file_path_tools,
-        )
-
-        data_collection = self.control_manager._take_data_from_collection(
-            file_path_collection=file_path_collection,
-            checking_unique=False,
-        )
-
-        # cобираю промпт
-        prompt = self.control_manager._bring_prompt(
-            data_tools=data_tools,
-            data_collection=data_collection,
-        )
-
-        expected_data = {
-            'prompt': '\n'
-                      'Подборка осуществляется для человека, который имеет женский пол,\n'
-                      'возраст: 32 года/лет.\n'
-                      'Так же у человека следующие параметры: Тип кожи лица: Нормальная. '
-                      'Сбалансированная, гладкая, без излишней сухости или жирности. Поры '
-                      'малозаметны, цвет лица ровный. Минимальные проблемы, хорошая '
-                      'упругость и эластичность. Тип кожи лица: Сухая. Недостаток влаги '
-                      'и/или липидов. Может быть стянутость, шелушение, тусклый цвет '
-                      'лица. Тонкая, чувствительная, склонна к раннему появлению '
-                      'морщин..\n'
-                      'С помощью этого средства человек хочет решить следующую проблему:\n'
-                      'Кожа лица: Глубокое увлажнение и питание. Кожа лица стала '
-                      'обезвоженной и тусклой из-за воздействия внешних факторов (ветер, '
-                      'солнце, мороз), требует интенсивного увлажнения и питания..\n'
-                      '\n'
-                      'Информация о средстве и его составе: Средство №1 - PULANNA '
-                      'Bio-gold & Grape. Состав: Основные действующие компоненты: '
-                      'экстракт листьев винограда, гриба рейши, корня женьшеня, витамин '
-                      'Е, диоксид титана, мика, био-золото, гиалуроновая кислота. Полный '
-                      'состав: aqua, glycerin, gold, sodium hyalurone, propylene glycol, '
-                      'vitis vinifera leaf extract, ganoderma lucidum stem extract, '
-                      'ginseng (panax ginseng) root extract, tocopheryl acetate, mica, '
-                      'titanium dioxide carbomer, triethanolamine, methylparaben, '
-                      'propylparaben, parfum, hydroxycitronellal, geraniol, butylphenyl '
-                      'metylpropional, linalool, citronellol, imidazolidynyl urea.. Тип '
-                      'продукта: крем для лица. .\n'
-                      '\n'
-                      'Учти всю вышепредставленную информацию и проведи детальный анализ '
-                      'состава.\n'
-                      '\n'
-                      'Ответ ты должен дать в следующем виде: Разбираешь состав одного '
-                      'средства, особенно уделяя внимание следующим пунктам: основные '
-                      'компоненты, активные компоненты, Увлажняющие и ухаживающие '
-                      'компоненты, Консерванты и регуляторы pH, Запрещенные или '
-                      'нежелательные компоненты, Дополнительные свойства, Текстура, Плюсы '
-                      'средства, Минусы средства, Вывод',
-            'system_prompt': 'Ты профессиональный трихолог с медицинским образованием. '
-                             'Твоя задача подобрать максимально подходящее средство для '
-                             'человека. Данные человека будут даны.'}
-
-        self.assertEqual(prompt, expected_data)

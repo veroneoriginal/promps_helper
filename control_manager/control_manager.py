@@ -7,7 +7,7 @@ import os
 import json
 from datetime import datetime
 from pathlib import Path
-import copy
+
 # from pprint import pprint
 
 from dotenv import load_dotenv
@@ -17,9 +17,8 @@ from excel_process_data.process_data import ExcelManager
 from pdf.main_pdf import PDFCreator
 from pdf.utils import main_forming_info_for_pdf
 from post_constructor.post_constructor import create_text_for_post
-from prompt_constructor.prompt_constructor import PromptConstructor
-from prompt_constructor.prompt_processing_data import PromptProcessingData
-from json_constructor.json_manager import get_json_scheme
+from json_constructor.main import get_json_scheme
+from prompt_constructor.main import get_prompt
 
 from utils.utils import (
     copy_jpg_files,
@@ -107,42 +106,6 @@ class ControlManager:
         return excel_manager.get_data_from_table_in_form_of_dict(
             ws_title="Подборки",
             checking_unique=checking_unique,
-        )
-
-    def _bring_prompt(
-            self,
-            data_tools: dict,
-            data_collection: dict,
-    ) -> dict:
-        """
-        Метод для вызова функции для создания промпта
-
-        :param data_tools: словарь с информацией для выбора промпта
-        :param data_collection: словарь с текущей подборкой
-        :return: промпт в виде словаря
-        """
-
-        # создаю копию словаря с текущей подборкой,
-        # т.к. иначе не добраться до кода задачи
-        copy_data_collection = copy.deepcopy(data_collection)
-
-        # расшифровываем данные текущей подборки с помощью таблицы со всеми средствми
-        prompt_processind_data = PromptProcessingData(
-            data_tools=data_tools,
-            data_collection=data_collection,
-        )
-
-        # получаем словарь с полностью расшифрованными данными
-        decrypted_collection = prompt_processind_data.decrypting_data_from_current_collection(
-            data_tools=data_tools,
-            data_collection=data_collection,
-        )
-
-        prompt_constructor = PromptConstructor()
-
-        return prompt_constructor.main_constructor_prompt(
-            data_decrypted=decrypted_collection,
-            data_collection=copy_data_collection,
         )
 
     def _create_context_for_request_to_openai(
@@ -549,12 +512,10 @@ class ControlManager:
         )
 
         # cобираю промпт
-        prompt = self._bring_prompt(
+        prompt = get_prompt(
             data_tools=data_tools,
             data_collection=data_collection,
         )
-
-        # pprint(prompt)
 
         # print('Отправка запроса в OpenAI.')
         # # self.paths_to_folders["answer_gpt"] будет содержать в себе

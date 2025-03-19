@@ -1,7 +1,7 @@
 class PromptProcessingData:
     """
     Класс, внутри которого расшифровываются все данные
-    текущей подборки в зависимости от кода задачи.
+    текущей подборки, в том числе 'средства' в зависимости от кода задачи.
 
     :param data_collection: данные подборки
     :return: расшифрованный словарь текущей подборки
@@ -169,7 +169,7 @@ class PromptProcessingData:
             product_data = data[category].get(product_name, {})
 
             products_full_info[product_name] = {
-                "Номер": number+1,
+                "Номер": number + 1,
                 "Тип продукта": product_data.get("Тип продукта", "Не указан"),
                 "Состав": product_data.get("Состав", "Не указан"),
             }
@@ -212,7 +212,7 @@ class PromptProcessingData:
         # преобразование словаря со средствами в строку
         return self._conversion_products(cosmetic_products=products_full_info)
 
-    def decrypting_data_from_current_collection(
+    def main_decryp_data_from_current_collection(
             self,
             data_tools: dict,
             data_collection: dict,
