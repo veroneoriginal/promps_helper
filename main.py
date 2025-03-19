@@ -15,5 +15,5 @@ if __name__ == '__main__':
         file_path_tools='00_base/Средства.xlsx',
         file_path_collection='00_base/Подборки.xlsx',
         path_to_output_folder='00_base/00_info_for_post/',
-        checking_unique=True,
+        checking_unique=False,
     )

@@ -15,11 +15,11 @@ from excel_process_data.process_data import ExcelManager
 from pdf.main_pdf import PDFCreator
 from pdf.utils import main_forming_info_for_pdf
 from post_constructor.post_constructor import create_text_for_post
-from prompt_constructor.prompt_constructor import PromptConstructor
+# from prompt_constructor.prompt_constructor import PromptConstructor
+from prompt_constructor.prompt_processing_data import PromptProcessingData
 from json_constructor.json_manager import get_json_scheme
 
 from utils.utils import (
-    # decrypting_data_from_current_collection,
     copy_jpg_files,
     transforming_dict_from_json_file,
     add_keys_from_another_dict_to_one_dict,
@@ -109,23 +109,38 @@ class ControlManager:
 
     def _bring_prompt(
             self,
-            data: dict,
+            data_tools: dict,
             data_collection: dict,
     ) -> dict:
         """
         Метод для вызова функции для создания промпта
 
-        :param data: словарь с информацией для выбора промпта
+        :param data_tools: словарь с информацией для выбора промпта
         :param data_collection: словарь с текущей подборкой
         :return: промпт в виде словаря
         """
 
-        prompt_constructor = PromptConstructor()
-
-        return prompt_constructor.main_constructor_prompt(
-            data=data,
+        # расшифровываем данные текущей подборки с помощью таблицы со всеми средствми
+        prompt_processind_data = PromptProcessingData(
+            data_tools=data_tools,
             data_collection=data_collection,
         )
+
+        # получаем словарь с полностью расшифрованными данными
+        decrypted_collection = prompt_processind_data.decrypting_data_from_current_collection(
+            data_tools=data_tools,
+            data_collection=data_collection,
+        )
+
+        # pprint(decrypted_collection)
+
+        # prompt_constructor = PromptConstructor()
+        #
+        # return prompt_constructor.main_constructor_prompt(
+        #     data=data,
+        #     data_collection=data_collection,
+        # )
+        return decrypted_collection
 
     def _create_context_for_request_to_openai(
             self,
@@ -532,54 +547,47 @@ class ControlManager:
             category=data_collection['Категория'],
         )
 
-        pprint(data_collection)
+        # pprint(data_collection)
 
-            # # обновляю словарь с текущей подборкой расшифрованными данными,
-            # # за исключением пункта "Средства"
-            # data_collection = decrypting_data_from_current_collection(
-            #     data_tools=data_tools,
-            #     data_collection=data_collection,
-            # )
+        # cобираю промпт
+        prompt = self._bring_prompt(
+            data_tools=data_tools,
+            data_collection=data_collection,
+        )
 
-            # # cобираю промпт
-            # prompt = self._bring_prompt(
-            #     data=data_for_dif_tasks,
-            #     data_collection=data_collection,
-            # )
+        # print('Отправка запроса в OpenAI.')
+        # # self.paths_to_folders["answer_gpt"] будет содержать в себе
+        # # 00_base/00_info_for_post/01_03_25/1_Шампуни/answer_gpt
+        # file_path_to_saving_json = self._create_context_for_request_to_openai(
+        #     prompt_for_convert=prompt,
+        #     json_scheme=json_scheme,
+        #     folder_name=self.paths_to_folders["answer_gpt"],
+        # )
+        #
+        # # file_path_to_saving_json будет содержать в себе
+        # # 00_base/00_info_for_post/01_03_25/1_Шампуни/answer_gpt/Анализ_средств.json
+        # print('Разбор ответа от OpenAI.')
+        # self._reviewing_response_from_openai(
+        #     file_path=file_path_collection,
+        #     json_file_path=file_path_to_saving_json,
+        #     dict_with_hash=data_collection,
+        # )
+        #
+        #
+        # print('Формирование данных для картинок')
+        # data_for_images = self._forming_data_for_images(
+        #     json_file_path=file_path_to_saving_json,
+        #     data_tools=data_tools['Средства'],
+        # )
+        #
+        # pprint(f'{data_for_images=}')
+        # print('Создание картинок со средствами для постов в соц.сети.')
+        # self._create_pdf_jpg_for_post(
+        #     data=data_for_images,
+        #     data_task=data_for_dif_tasks,
+        # )
+        #
+        # print()
 
-            # print('Отправка запроса в OpenAI.')
-            # # self.paths_to_folders["answer_gpt"] будет содержать в себе
-            # # 00_base/00_info_for_post/01_03_25/1_Шампуни/answer_gpt
-            # file_path_to_saving_json = self._create_context_for_request_to_openai(
-            #     prompt_for_convert=prompt,
-            #     json_scheme=json_scheme,
-            #     folder_name=self.paths_to_folders["answer_gpt"],
-            # )
-            #
-            # # file_path_to_saving_json будет содержать в себе
-            # # 00_base/00_info_for_post/01_03_25/1_Шампуни/answer_gpt/Анализ_средств.json
-            # print('Разбор ответа от OpenAI.')
-            # self._reviewing_response_from_openai(
-            #     file_path=file_path_collection,
-            #     json_file_path=file_path_to_saving_json,
-            #     dict_with_hash=data_collection,
-            # )
-            #
-            #
-            # print('Формирование данных для картинок')
-            # data_for_images = self._forming_data_for_images(
-            #     json_file_path=file_path_to_saving_json,
-            #     data_tools=data_tools['Средства'],
-            # )
-            #
-            # pprint(f'{data_for_images=}')
-            # print('Создание картинок со средствами для постов в соц.сети.')
-            # self._create_pdf_jpg_for_post(
-            #     data=data_for_images,
-            #     data_task=data_for_dif_tasks,
-            # )
-            #
-            # print()
-
-            # # print('Готовлю текстовое оформление поста.')
-            # # self._forming_text_for_post(data=data, info_for_picture=info_for_picture)
+        # # print('Готовлю текстовое оформление поста.')
+        # # self._forming_text_for_post(data=data, info_for_picture=info_for_picture)

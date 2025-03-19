@@ -1,7 +1,19 @@
+# pylint: skip-file
 """В этом модуле тестируем выбор промпта"""
 
 import unittest
 from prompt_constructor.prompt_constructor import PromptConstructor
+from control_manager.control_manager import ControlManager
+
+# словарь с данными для формирования путей для сохранения данных
+from source.structure_folders import scheme_for_folders_name
+
+# словарь со всеми параметрами для разных категорий продуктов
+from source.structure_for_products import PARAMETERS_DIF_PRODUCT_CATEGORIES
+
+file_path_tools = '00_base/Средства.xlsx'
+file_path_collection = '00_base/Подборки для тестов.xlsx'
+path_to_output_folder = '00_base/00_info_for_post/'
 
 
 class TestPromptConstructor(unittest.TestCase):
@@ -13,7 +25,17 @@ class TestPromptConstructor(unittest.TestCase):
         """
         Готовим объект PromptConstructor перед каждым тестом
         """
+
         self.prompt_constructor = PromptConstructor()
+
+        self.control_manager = ControlManager(
+            scheme_for_folders=scheme_for_folders_name,
+            param_dif_products_categories=PARAMETERS_DIF_PRODUCT_CATEGORIES
+        )
+
+        self.data_tools = self.control_manager._take_data_from_table_tool(
+            file_path_tools_table=file_path_tools,
+        )
 
     def test_main_constructor_prompt_best_product(self):
         """
@@ -209,9 +231,27 @@ class TestPromptConstructor(unittest.TestCase):
             data_collection=data_collection_for_one_product,
         )
 
-
         self.assertIsNotNone(result)
         self.assertIsInstance(result, dict)
 
         self.assertIn('prompt', result)
         self.assertIsInstance(result['prompt'], str)
+
+    def test_bring_prompt(self):
+        data_collection = {
+            'Возраст': 32,
+            'Задача': 'Лучшее средство',
+            'Запрос': 'ЗВ8, ЗВ12',
+            'Итог': None,
+            'Лучший вариант': None,
+            'Пол': 'женский',
+            'Категория': 'Шампуни',
+            'Специалист': 'Т',
+            'Средства': {'Средство_1': 'ALTEREGO ITALY Curego Hydraday'},
+            'Тип': 'В1, В10',
+            'Хеш': '1c1642426270e8bfe75322817e7c2995adde4627fe2b16cb989d89ae8d9ed034'}
+
+        self.control_manager._bring_prompt(
+            data_tools=self.data_tools,
+            data_collection=data_collection,
+        )

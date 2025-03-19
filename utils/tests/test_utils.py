@@ -7,7 +7,7 @@ from pprint import pprint
 
 from control_manager.control_manager import ControlManager
 
-# словарь с данными для формирования путей для сохраненяи данных
+# словарь с данными для формирования путей для сохранения данных
 from source.structure_folders import scheme_for_folders_name
 
 # словарь со всеми параметрами для разных категорий продуктов
@@ -93,9 +93,10 @@ class TestUtils(unittest.TestCase):
                 'Лучший вариант': None,
                 'Пол': 'женский',
                 'Специалист': 'Т',
-                'Средства': {'Средство_1': 'ALTEREGO ITALY Curego Hydraday'},
-                'Тип': 'КЛ1',
-                'Хеш': '1c1642426270e8bfe75322817e7c2995adde4627fe2b16cb989d89ae8d9ed034'}
+                'Средства': {'Средство_1': 'PULANNA Bio-gold & Grape'},
+                'Тип': 'КЛ1, КЛ2',
+                'Хеш': '5be8b5391782b170c129765d1b7500816e2309aa682d468f368ffb8cfaa02d40',
+            }
 
             # Проверка, что результат равен ожидаемому
             self.assertEqual(result, expected_result)
@@ -151,3 +152,59 @@ class TestUtils(unittest.TestCase):
         #  'telegram_jpg': '00_base/00_info_for_post/17_03_25/3_шампуни/telegram/jpg',
         #  'telegram_pdf': '00_base/00_info_for_post/17_03_25/3_шампуни/telegram/pdf',
         #  'telegram_text': '00_base/00_info_for_post/17_03_25/3_шампуни/telegram/text'}
+
+    def test_bring_prompt(self):
+
+        data_tools = self.control_manager._take_data_from_table_tool(
+            file_path_tools_table=file_path_tools,
+        )
+
+        data_collection = self.control_manager._take_data_from_collection(
+            file_path_collection=file_path_collection,
+            checking_unique=False,
+        )
+
+        # cобираю промпт
+        prompt = self.control_manager._bring_prompt(
+            data_tools=data_tools,
+            data_collection=data_collection,
+        )
+
+        expected_data = {
+            'Возраст': 32,
+            'Задача': 'Разбираешь состав одного средства, особенно уделяя внимание '
+                      'следующим пунктам: основные компоненты, активные компоненты, '
+                      'Увлажняющие и ухаживающие компоненты, Консерванты и регуляторы pH, '
+                      'Запрещенные или нежелательные компоненты, Дополнительные свойства, '
+                      'Текстура, Плюсы средства, Минусы средства, Вывод',
+            'Запрос': 'Кожа лица: Глубокое увлажнение и питание. Кожа лица стала '
+                      'обезвоженной и тусклой из-за воздействия внешних факторов (ветер, '
+                      'солнце, мороз), требует интенсивного увлажнения и питания.',
+            'Итог': None,
+            'Категория': 'уход за кожей лица',
+            'Лучший вариант': None,
+            'Пол': 'женский',
+            'Специалист': 'Ты профессиональный трихолог с медицинским образованием. Твоя '
+                          'задача подобрать максимально подходящее средство для человека. '
+                          'Данные человека будут даны.',
+            'Средства': 'Средство №1 - PULANNA Bio-gold & Grape. Состав: Основные '
+                        'действующие компоненты: экстракт листьев винограда, гриба рейши, '
+                        'корня женьшеня, витамин Е, диоксид титана, мика, био-золото, '
+                        'гиалуроновая кислота. Полный состав: aqua, glycerin, gold, '
+                        'sodium hyalurone, propylene glycol, vitis vinifera leaf extract, '
+                        'ganoderma lucidum stem extract, ginseng (panax ginseng) root '
+                        'extract, tocopheryl acetate, mica, titanium dioxide carbomer, '
+                        'triethanolamine, methylparaben, propylparaben, parfum, '
+                        'hydroxycitronellal, geraniol, butylphenyl metylpropional, '
+                        'linalool, citronellol, imidazolidynyl urea.. Тип продукта: крем '
+                        'для лица. ',
+            'Тип': 'Тип кожи лица: Нормальная. Сбалансированная, гладкая, без излишней '
+                   'сухости или жирности. Поры малозаметны, цвет лица ровный. Минимальные '
+                   'проблемы, хорошая упругость и эластичность. Тип кожи лица: Сухая. '
+                   'Недостаток влаги и/или липидов. Может быть стянутость, шелушение, '
+                   'тусклый цвет лица. Тонкая, чувствительная, склонна к раннему '
+                   'появлению морщин.',
+            'Хеш': '5be8b5391782b170c129765d1b7500816e2309aa682d468f368ffb8cfaa02d40',
+        }
+
+        self.assertEqual(prompt, expected_data)
