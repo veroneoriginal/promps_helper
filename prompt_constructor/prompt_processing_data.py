@@ -161,7 +161,7 @@ class PromptProcessingData:
 
         # получение словаря с содержимым, которое было в ячейке
         products_in_cell = data_collection[category]
-
+        # pylint: disable=W0612 unused-variable
         # формируем словарь
         products_full_info = {}
         for number, (product_key, product_name) in enumerate(products_in_cell.items()):
@@ -196,6 +196,7 @@ class PromptProcessingData:
         # получение словаря с содержимым, которое было в ячейке
         products_in_cell = data_collection[category]
 
+        # pylint: disable=W0612 unused-variable
         # формируем словарь
         products_full_info = {}
         for number, (product_key, product_name) in enumerate(products_in_cell.items(), start=1):

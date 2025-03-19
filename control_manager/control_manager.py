@@ -1,3 +1,4 @@
+# pylint: disable=W0612 unused-variable
 """
 В этом модуле - класс, управляющий логикой всего проекта
 """
@@ -6,7 +7,8 @@ import os
 import json
 from datetime import datetime
 from pathlib import Path
-from pprint import pprint
+import copy
+# from pprint import pprint
 
 from dotenv import load_dotenv
 from appeal_to_openai.main import main as appeal_to_openai_main
@@ -15,7 +17,7 @@ from excel_process_data.process_data import ExcelManager
 from pdf.main_pdf import PDFCreator
 from pdf.utils import main_forming_info_for_pdf
 from post_constructor.post_constructor import create_text_for_post
-# from prompt_constructor.prompt_constructor import PromptConstructor
+from prompt_constructor.prompt_constructor import PromptConstructor
 from prompt_constructor.prompt_processing_data import PromptProcessingData
 from json_constructor.json_manager import get_json_scheme
 
@@ -120,6 +122,10 @@ class ControlManager:
         :return: промпт в виде словаря
         """
 
+        # создаю копию словаря с текущей подборкой,
+        # т.к. иначе не добраться до кода задачи
+        copy_data_collection = copy.deepcopy(data_collection)
+
         # расшифровываем данные текущей подборки с помощью таблицы со всеми средствми
         prompt_processind_data = PromptProcessingData(
             data_tools=data_tools,
@@ -132,15 +138,12 @@ class ControlManager:
             data_collection=data_collection,
         )
 
-        # pprint(decrypted_collection)
+        prompt_constructor = PromptConstructor()
 
-        # prompt_constructor = PromptConstructor()
-        #
-        # return prompt_constructor.main_constructor_prompt(
-        #     data=data,
-        #     data_collection=data_collection,
-        # )
-        return decrypted_collection
+        return prompt_constructor.main_constructor_prompt(
+            data_decrypted=decrypted_collection,
+            data_collection=copy_data_collection,
+        )
 
     def _create_context_for_request_to_openai(
             self,
@@ -518,7 +521,6 @@ class ControlManager:
         :return: None
         """
 
-        # pylint: disable=W0612 unused-variable
         # забираю все данные из таблицы "Средства", "Тип", "Запрос" и т.д.
         data_tools = self._take_data_from_table_tool(
             file_path_tools_table=file_path_tools,
@@ -534,7 +536,6 @@ class ControlManager:
             checking_unique=checking_unique,
         )
 
-        # pylint: disable=W0612 unused-variable
         # определяю json-схему
         json_scheme = get_json_scheme(
             data_collection=data_collection,
@@ -547,13 +548,13 @@ class ControlManager:
             category=data_collection['Категория'],
         )
 
-        # pprint(data_collection)
-
         # cобираю промпт
         prompt = self._bring_prompt(
             data_tools=data_tools,
             data_collection=data_collection,
         )
+
+        # pprint(prompt)
 
         # print('Отправка запроса в OpenAI.')
         # # self.paths_to_folders["answer_gpt"] будет содержать в себе
