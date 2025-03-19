@@ -1,3 +1,5 @@
+from pprint import pprint
+
 from json_constructor.json_creator import JsonCreator
 from json_constructor.json_processing_data import JsonProcessingData
 
@@ -21,6 +23,8 @@ def get_json_scheme(
 
     # Вызов метода по преобразованию словаря по коду задачи
     update_data_collection = json_processing.distribution_on_task()
+
+    pprint(data_collection)
 
     # Создание экземпляра класса по созданию json-схемы
     json_creator = JsonCreator(

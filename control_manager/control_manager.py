@@ -8,7 +8,7 @@ import json
 from datetime import datetime
 from pathlib import Path
 
-# from pprint import pprint
+from pprint import pprint
 
 from dotenv import load_dotenv
 from appeal_to_openai.main import main as appeal_to_openai_main
@@ -505,6 +505,9 @@ class ControlManager:
             product_categories=self.param_dif_products_categories,
         )
 
+        print()
+        print()
+
         # формирую путь для сохранения данных
         self._get_output_folders(
             path_to_output_folder=path_to_output_folder,
@@ -516,6 +519,10 @@ class ControlManager:
             data_tools=data_tools,
             data_collection=data_collection,
         )
+
+        pprint(prompt)
+        print()
+        print()
 
         # print('Отправка запроса в OpenAI.')
         # # self.paths_to_folders["answer_gpt"] будет содержать в себе
