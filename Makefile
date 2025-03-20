@@ -13,3 +13,7 @@ one_test:
 
 jsontest:
 	pytest -s /home/veronika/00_projects/promps_helper/json_constructor/test/test_json_scheme.py::TestJsonScheme
+
+
+prompt_test:
+	pytest -s /home/veronika/00_projects/promps_helper/prompt_constructor/test_constructor/test_constructor.py::TestPromptConstructor
