@@ -1,3 +1,4 @@
+# pylint: disable=E0611: no-name-in-module
 from pdf.creator_logic.creator.document_creator import PDFConverterToImage
 from pdf.creator_logic.main import PDFCreator
 from pdf.pdf_data_processing.main import PDFDataProcessor

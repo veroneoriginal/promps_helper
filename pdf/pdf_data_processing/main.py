@@ -1,3 +1,4 @@
+# pylint: disable=E0611: no-name-in-module
 from pdf.pdf_data_processing.tasks_logic.best_product.main import best_product_task_main
 
 
