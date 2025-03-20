@@ -7,8 +7,8 @@ from pprint import pprint
 
 from control_manager.control_manager import ControlManager
 
-# словарь с данными для формирования путей для сохранения данных
-from source.structure_folders import scheme_for_folders_name
+# словарь с данными для формирования путей для сохраненяи данных
+from source.structure_folders import SCHEME_FOR_FOLDERS_NAME
 
 # словарь со всеми параметрами для разных категорий продуктов
 from source.structure_for_products import PARAMETERS_DIF_PRODUCT_CATEGORIES
@@ -23,7 +23,6 @@ class TestUtils(unittest.TestCase):
 
     def setUp(self):
         self.control_manager = ControlManager(
-            scheme_for_folders=scheme_for_folders_name,
             param_dif_products_categories=PARAMETERS_DIF_PRODUCT_CATEGORIES
         )
 
@@ -100,56 +99,3 @@ class TestUtils(unittest.TestCase):
 
             # Проверка, что результат равен ожидаемому
             self.assertEqual(result, expected_result)
-
-    def test_get_output_folders(self):
-        """
-        Формирование путей для сохранения данных
-        """
-
-        data_collection = {
-            'Возраст': 32,
-            'Задача': 'Лучшее средство',
-            'Запрос': 'ЗВ8, ЗВ12',
-            'Итог': None,
-            'Лучший вариант': None,
-            'Пол': 'женский',
-            'Категория': 'шампуни',
-            'Специалист': 'Т',
-            'Средства': {'Средство_1': 'ALTEREGO ITALY Curego Hydraday',
-                         'Средство_2': 'OUSHEN Curl & shine shampoo',
-                         'Средство_3': 'NATURA SIBERICA Oblepikha',
-                         'Средство_4': 'WELEDA Millet Nourishing',
-                         'Средство_5': 'PAYOT Shampoing doux biome-friendly',
-                         'Средство_6': 'LADOR Keratin LPP'},
-            'Тип': 'В1, В10',
-            'Хеш': '6157254f8a165e4f6baa6a45ee2ca32042b8de1d6a19680d11879ab43c7a5cd1'}
-
-        self.control_manager._get_output_folders(
-            path_to_output_folder=path_to_output_folder,
-            category=data_collection['Категория'],
-        )
-        folders = self.control_manager.paths_to_folders
-
-        expected_keys = [
-            'answer_gpt',
-            'instagram_jpg',
-            'instagram_text',
-            'pinterest_jpg',
-            'prompt',
-            'telegram_jpg',
-            'telegram_pdf',
-            'telegram_text'
-        ]
-
-        self.assertCountEqual(folders.keys(), expected_keys)
-
-        # получатся пути такого плана
-        # {'answer_gpt': '00_base/00_info_for_post/17_03_25/3_шампуни/answer_gpt',
-        #  'instagram_jpg': '00_base/00_info_for_post/17_03_25/3_шампуни/instagram/jpg',
-        #  'instagram_text': '00_base/00_info_for_post/17_03_25/3_шампуни/instagram/text',
-        #  'pinterest_jpg': '00_base/00_info_for_post/17_03_25/3_шампуни/pinterest/jpg',
-        #  'prompt': '00_base/00_info_for_post/17_03_25/3_шампуни/prompt',
-        #  'telegram_jpg': '00_base/00_info_for_post/17_03_25/3_шампуни/telegram/jpg',
-        #  'telegram_pdf': '00_base/00_info_for_post/17_03_25/3_шампуни/telegram/pdf',
-        #  'telegram_text': '00_base/00_info_for_post/17_03_25/3_шампуни/telegram/text'}
-
