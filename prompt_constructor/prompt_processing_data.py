@@ -1,3 +1,6 @@
+from pprint import pprint
+
+
 class PromptProcessingData:
     """
     Класс, внутри которого расшифровываются все данные
@@ -19,7 +22,7 @@ class PromptProcessingData:
             'Лучшее средство без канцерогенов': self.decrypting_info_code_best_product,
             'Разбор состава одного средства': self.decrypting_info_code_one_product,
             'Лучшая пара': 'метод который расшифровывает словарь для этого кода задачи',
-            'Лучшее сочетание': 'метод который расшифровывает словарь для этого кода задачи',
+            'Лучшее сочетание': self.decrypting_info_code_best_product,
             'Лучшая компоновка': 'метод который расшифровывает словарь для этого кода задачи',
             'Аналог': 'метод который расшифровывает словарь для этого кода задачи',
             'Наиболее похож': 'метод который расшифровывает словарь для этого кода задачи',
@@ -155,12 +158,13 @@ class PromptProcessingData:
 
         :param data: словарь со всеми данными
         :param data_collection: словарь с подборкой
-        :param category: категория, с который работаем
+        :param category: категория, с которой работаем
         :return: словарь со средствами, их типом и составом
         """
 
-        # получение словаря с содержимым, которое было в ячейке
+        # получение словаря с содержимым
         products_in_cell = data_collection[category]
+
         # pylint: disable=W0612 unused-variable
         # формируем словарь
         products_full_info = {}
@@ -212,6 +216,50 @@ class PromptProcessingData:
         # преобразование словаря со средствами в строку
         return self._conversion_products(cosmetic_products=products_full_info)
 
+    def decrypting_origin_product_info(
+            self,
+            data: dict,
+            data_collection: dict,
+            category: str,
+    ) -> str:
+        """
+        Метод для расшифровки данных по 'Исходному средству' из data_collection.
+
+        :param data: словарь со всеми данными (включая подробную инфу по продуктам)
+        :param data_collection: словарь с подборкой (где есть ключ 'Исходное средство')
+        :param category: категория, с которой работаем
+        :return: строка с подробной информацией по исходному средству
+        """
+
+        # Получаем название исходного средства из data_collection
+        origin_product_name = data_collection.get("Исходное средство")
+
+        # Ищем данные по origin_product_name в основном data словаре
+        origin_product_data = data.get(category, {}).get(origin_product_name, {})
+
+        # Формируем словарь с информацией о средстве
+        origin_product_full_info = {
+            origin_product_name: {
+                "Тип продукта": origin_product_data.get("Тип продукта", "Не указан"),
+                "Состав": origin_product_data.get("Состав", "Не указан")
+            }
+        }
+
+        # Возвращаем результат, преобразованный в строку
+
+        # Достаём значения
+        product_info = origin_product_full_info[origin_product_name]
+
+        result_string = (
+            f"Название средства: {origin_product_name}. "
+            f"Тип продукта: {product_info['Тип продукта']}. "
+            f"Состав: {product_info['Состав']}. "
+        )
+
+        pprint(f'{result_string=}')
+        return result_string
+
+
     def main_decryp_data_from_current_collection(
             self,
             data_tools: dict,
@@ -233,6 +281,13 @@ class PromptProcessingData:
             data_collection=data_collection,
             category="Средства",
         )
+
+        if "Исходное средство" in data_collection:
+            data_collection["Исходное средство"] = self.decrypting_origin_product_info(
+                data=data_tools,
+                data_collection=data_collection,
+                category="Исходное средство",
+            )
 
         # расшифровка данных по ключу Тип
         data_collection['Тип'] = self._decrypting_data_from_cell(

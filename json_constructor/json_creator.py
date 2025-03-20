@@ -23,7 +23,7 @@ class JsonCreator:
                 self.create_json_scheme_for_best_product_carcinogen_free,
             'Разбор состава одного средства': self.create_json_scheme_for_one_product,
             'Лучшая пара': 'метод создает json-схему для текущей подборки по коду задачи',
-            'Лучшее сочетание': 'метод создает json-схему для текущей подборки по коду задачи',
+            'Лучшее сочетание': self.create_json_scheme_for_best_combination,
             'Лучшая компоновка': 'метод создает json-схему для текущей подборки по коду задачи',
             'Аналог': 'метод создает json-схему для текущей подборки по коду задачи',
             'Наиболее похож': 'метод создает json-схему для текущей подборки по коду задачи',
@@ -36,6 +36,74 @@ class JsonCreator:
         """
         task = self.data_collection['Задача']
         return self.method_for_task_code[task]()
+
+    def create_json_scheme_for_best_combination(self):
+        """
+        Метод для динамического формирования json-схемы
+        для кода задачи 'Лучшее сочетание'
+
+        :return: json-схема для заданного количества средств
+        """
+
+        schema = {
+            "name": "cosmetics_analysis",
+            "strict": True,
+            "schema": {
+                "type": "object",
+                "properties": {
+                    "origin_product": {
+                        "type": "string",
+                        "description": "Исходное средство, к которому подбирается сочетание"
+                    },
+                    "best_combination": {
+                        "type": "string",
+                        "description":
+                            "Название одного средства из списка,"
+                            " которое лучше всего сочетается с исходным."
+                    },
+                    "result": {
+                        "type": "string",
+                        "description": "Итоговая рекомендация, вывод"
+                    }
+                },
+                "required": ["origin_product", "best_combination", "result"],
+                "additionalProperties": False
+            }
+        }
+
+        # Добавляем продукты динамически
+        products = {}
+        for i in range(1, self.data_collection["Количество средств"] + 1):
+            product_key = f"product_{i}"
+            products[product_key] = {
+                "type": "object",
+                "properties": {
+                    "title": {
+                        "type": "string",
+                        "description": f"Название {i}-го средства"
+                    },
+                    "result": {
+                        "type": "string",
+                        "description": "Объяснение, почему выбрали или не выбрали это средство."
+                    },
+
+                    "best_combination": {
+                        "type": "boolean",
+                        "description": "Если это средство попало в сочетание с исходным,"
+                                       " поставь здесь True, иначе False"
+                    }
+                },
+                "required": ["title", "result", "best_combination"],
+                "additionalProperties": False
+            }
+
+        # Добавляем продукты в свойства схемы
+        schema["schema"]["properties"].update(products)
+
+        # Добавляем продукты в список `required`
+        schema["schema"]["required"].extend(products.keys())
+
+        return schema
 
     def create_json_scheme_for_best_product(
             self,

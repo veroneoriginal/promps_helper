@@ -498,15 +498,17 @@ class ControlManager:
             file_path_collection=file_path_collection,
             checking_unique=checking_unique,
         )
+        print('Перед json схемой')
+        pprint(data_collection)
+        print()
+
 
         # определяю json-схему
         json_scheme = get_json_scheme(
             data_collection=data_collection,
             product_categories=self.param_dif_products_categories,
         )
-
-        print()
-        print()
+        # pprint(json_scheme)
 
         # формирую путь для сохранения данных
         self._get_output_folders(
@@ -520,9 +522,8 @@ class ControlManager:
             data_collection=data_collection,
         )
 
+        print('cобираю промпт')
         pprint(prompt)
-        print()
-        print()
 
         # print('Отправка запроса в OpenAI.')
         # # self.paths_to_folders["answer_gpt"] будет содержать в себе

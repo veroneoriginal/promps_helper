@@ -27,8 +27,6 @@ def get_prompt(
         data_collection=data_collection,
     )
 
-
-
     # получение словаря с полностью расшифрованными данными
     decrypted_collection = prompt_proces_data.main_decryp_data_from_current_collection(
         data_tools=data_tools,
