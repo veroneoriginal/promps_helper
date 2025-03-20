@@ -11,10 +11,10 @@ from reportlab.platypus import (
     Paragraph,
     Frame,
     PageTemplate,
-    Flowable,
+    Flowable, PageBreak, FrameBreak, NextPageTemplate,
 )
 
-from pdf.creator_logic.creator.fonts_and_styles import BASE_PDF_STYLE
+from pdf.creator_logic.creator.fonts_and_styles.styles import PDF_STYLE
 
 
 def _pixels_to_points(
@@ -82,13 +82,12 @@ class PDFPageTemplateandFrameBuilder:
         """
         frames = []
         for frame in frames_data:
-            frames.append(
-                self._create_frame(
-                    frame_id=str(frame[0]),
-                    x1_y1=frame[1],
-                    width_height=frame[2],
-                )
+            created_frame = self._create_frame(
+                frame_id=str(frame[0]),
+                x1_y1=frame[1],
+                width_height=frame[2],
             )
+            frames.append(created_frame)
         return frames
 
     def _create_page_template(
@@ -119,6 +118,7 @@ class PDFPageTemplateandFrameBuilder:
         :return: список готовых шаблонов страниц
         """
         templates = []
+
         for template_id, frames_data in templates_data.items():
             frames = self._create_frames(frames_data=frames_data)
             template = self._create_page_template(
@@ -149,45 +149,58 @@ class PDFFlowablesCreator:
         :return: список flowables-элементов
         """
         flowables_structure = self.data['Элементы и стили']
-        for flowable_number in list(flowables_structure.keys()):
-            flowable_object = flowables_structure[flowable_number]
-            match flowable_object['Объект']:
+        for flowable_object in flowables_structure:
+            flowable_type = flowable_object[0]
+            flowable_data = flowable_object[1]
+            match flowable_type:
                 case 'Image':
                     self._create_image(
-                        img_path=self.data[flowable_object['Ключ в подборке']],
-                        width=flowable_object['width'],
-                        height=flowable_object['height'],
+                        img_path=self.data[flowable_data['Ключ в подборке']],
+                        width=flowable_data['width'],
+                        height=flowable_data['height'],
                     )
                 case 'Paragraph':
                     text = (
-                            flowable_object.get('Текст', None)
-                            or self.data[flowable_object['Ключ в подборке']]
+                            flowable_data.get('Текст', None)
+                            or self.data[flowable_data['Ключ в подборке']]
                     )
                     self._create_paragraph(
                         text=text,
-                        style=self._get_style(flowable_object['Стиль']),
+                        style=self._get_style(flowable_data['Стиль']),
+                        upper=flowable_data.get('Заглавными', False)
                     )
                 case 'Spacer':
                     self._create_spacer(
-                        width=flowable_object['width'],
-                        height=flowable_object['height'],
+                        width=flowable_data['width'],
+                        height=flowable_data['height'],
                     )
+                case 'NextPageTemplate':
+                    self.flowables.append(NextPageTemplate(
+                        pt=flowable_data['template_id']
+                    ))
+                case 'PageBreak':
+                    self.flowables.append(PageBreak())
+                case 'FrameBreak':
+                    self.flowables.append(FrameBreak())
+
         return self.flowables
 
     def _create_paragraph(
             self,
             text: str,
             style: ParagraphStyle,
+            upper: bool,
 
     ) -> None:
         """
         Создаёт параграф с текстом и добавляет в общий список
         :param text: текст
         :param style: стиль
+        :param upper: сделать заглавными
         :return: None
         """
         paragraph = Paragraph(
-            text=text,
+            text=text.upper() if upper else text,
             style=style,
         )
         self.flowables.append(paragraph)
@@ -196,7 +209,7 @@ class PDFFlowablesCreator:
         """
         Возвращает объект стиля по имени
         """
-        return BASE_PDF_STYLE[style_name]
+        return PDF_STYLE[style_name]
 
     def _create_image(
             self,

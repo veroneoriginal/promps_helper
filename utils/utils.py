@@ -4,6 +4,12 @@ import json
 from pathlib import Path
 
 
+def debug_args(**kwargs):
+    """
+    Выводит все аргументы функции со значениями
+    """
+    print(", ".join(f"{k}={v!r}" for k, v in kwargs.items()))
+
 def copy_jpg_files(
         where_copy_from: Path,
         where_copy_to: Path,

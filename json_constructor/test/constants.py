@@ -185,9 +185,9 @@ expected_schema_for_one_product = {
                 "type": "string",
                 "description": "Подробно поясни суть запрещенных или нежелательных компонентов"
             },
-            "additional_properties": {
+            "additional_components": {
                 "type": "string",
-                "description": "Если есть какие-то дополнительные свойства, укажи их и поясни"
+                "description": "Если есть какие-то дополнительные компоненты, укажи их и поясни"
             },
             "texture": {
                 "type": "string",
@@ -239,7 +239,7 @@ expected_schema_for_one_product = {
             "moisturizing_and_care",
             "preservatives_and_ph_regulators",
             "banned_or_unwanted",
-            "additional_properties",
+            "additional_components",
             "texture",
             "plus",
             "minus",
