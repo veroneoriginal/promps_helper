@@ -22,7 +22,7 @@ class JsonCreator:
             'Лучшее средство без канцерогенов':
                 self.create_json_scheme_for_best_product_carcinogen_free,
             'Разбор состава одного средства': self.create_json_scheme_for_one_product,
-            'Лучшая пара': 'метод создает json-схему для текущей подборки по коду задачи',
+            'Лучшая пара': self.create_json_scheme_for_best_pair,
             'Лучшее сочетание': self.create_json_scheme_for_best_combination,
             'Лучшая компоновка': 'метод создает json-схему для текущей подборки по коду задачи',
             'Аналог': 'метод создает json-схему для текущей подборки по коду задачи',
@@ -317,5 +317,70 @@ class JsonCreator:
 
             product_properties.update(extension_schema["properties"])
             product_required.extend(extension_schema["required"])
+
+        return schema
+
+    def create_json_scheme_for_best_pair(
+            self,
+    ) -> dict:
+        """
+        Метод для динамического формирования json-схемы для кода задачи 'Лучшая пара'
+
+        :return: json-схема для заданного количества пар
+        """
+        schema = {
+            "name": "cosmetics_analysis",
+            "strict": True,
+            "schema": {
+                "type": "object",
+                "properties": {
+                    "best_pair": {
+                        "type": "string",
+                        "description":
+                            "Название пары средств, которая считается лучшей среди всех предложенных"
+                    },
+                    "result": {
+                        "type": "string",
+                        "description": "Итоговая рекомендация по лучшей паре, вывод"
+                    }
+                },
+                "required": ["best_pair", "result"],
+                "additionalProperties": False
+            }
+        }
+
+        # Добавляем продукты динамически
+        products = {}
+        for i in range(1, self.data_collection["Количество пар"] + 1):
+            product_key = f"pair_{i}"
+            products[product_key] = {
+                "type": "object",
+                "properties": {
+                    "title": {
+                        "type": "string",
+                        "description":
+                            f"Названия двух средств из пары №{i}, перечисленные через запятую"
+                    },
+                    "result": {
+                        "type": "string",
+                        "description":
+                            "Объяснение, почему эта пара выбрана как лучшая или почему нет"
+                    },
+                    "best_pair": {
+                        "type": "boolean",
+                        "description": "Если эта пара средств выбрана как лучшая среди всех пар,"
+                                       " поставь здесь True; если нет — False"
+
+                    }
+                },
+                "required": ["title", "result", "best_pair"],
+                "additionalProperties": False
+            }
+
+        # Добавляем продукты в свойства схемы
+        schema["schema"]["properties"].update(products)
+
+        # Добавляем продукты в список `required`
+        schema["schema"]["required"].extend(products.keys())
 
         return schema

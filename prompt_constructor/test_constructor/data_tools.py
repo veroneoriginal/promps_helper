@@ -1,3 +1,4 @@
+# pylint: skip-file
 # в этом модуле база данных для тестов
 
 data_tools = {

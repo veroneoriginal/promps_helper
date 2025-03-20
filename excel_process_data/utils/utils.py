@@ -3,6 +3,7 @@ import hashlib
 import json
 import re
 import datetime
+# from pprint import pprint
 
 from typing import Optional
 from openpyxl.worksheet.worksheet import Worksheet
@@ -124,6 +125,24 @@ def function_for_forming_dict_with_correlation(
     return selection_dict
 
 
+def converting_lists(
+        products: list,
+) -> list:
+    """
+    Функция для преобразования списка списков в 1 единый список
+
+    :param products: список списков со средствами
+    :return: список со средствами
+    """
+    flat_products = []  # создаём пустой список
+
+    for sublist in products:  # проходим по каждому вложенному списку
+        for item in sublist:  # проходим по каждому элементу вложенного списка
+            flat_products.append(item)  # добавляем элемент в итоговый список
+
+    return flat_products
+
+
 def counting_hash(
         data: dict,
 ) -> str:
@@ -144,13 +163,19 @@ def counting_hash(
     # Преобразуем строку словаря в список значений
     edit_products = list(json.loads(edit_products).values())
 
-    # Сортируем и приводим к кортежу
-    data_copy['Средства'] = tuple(sorted(edit_products))
+    if data['Задача'] == "Лучшая пара":
+        convert_products = converting_lists(products=edit_products)
+        # Сортируем и приводим к кортежу
+        data_copy['Средства'] = tuple(convert_products)
+    else:
+        # Сортируем и приводим к кортежу
+        data_copy['Средства'] = tuple(edit_products)
 
     # привожу к нормальному виду "Тип"
     edit_type = data['Тип']
     types_list = edit_type.split(',')
-    data_copy['Тип'] = tuple(sorted([type_elem.strip() for type_elem in types_list]))
+    # pylint: disable=R1728 consider-using-generator
+    data_copy['Тип'] = tuple([type_elem.strip() for type_elem in types_list])
 
     data_copy['Возраст'] = str(data_copy['Возраст'])
 
@@ -168,6 +193,7 @@ def counting_hash(
             new_list.append(item)  # Добавляем остальные элементы как есть
 
     final_tuple = tuple(sorted(new_list))
+
     final_str = str(final_tuple).encode()
 
     return hashlib.sha256(final_str).hexdigest()
