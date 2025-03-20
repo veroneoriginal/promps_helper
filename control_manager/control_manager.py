@@ -275,7 +275,7 @@ class ControlManager:
             data_collection=data_collection,
             product_categories=self.param_dif_products_categories,
         )
-        pprint(json_scheme)
+        # pprint(json_scheme)
 
         # формирую пути для сохранения данных и создаю нужные папки
         self.paths_to_folders = DirsConstructor(

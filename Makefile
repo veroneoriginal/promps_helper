@@ -25,8 +25,7 @@ class_test_pdf_main_utils:
 
 
 one_test:
-	pytest -s /home/veronika/00_projects/promps_helper/utils/tests/test_utils.py::TestUtils::test_take_data_from_collection
-
+	pytest -s /home/veronika/00_projects/promps_helper/utils/tests/test_utils.py::TestUtils
 
 jsontest:
 	pytest -s /home/veronika/00_projects/promps_helper/json_constructor/test/test_json_scheme.py::TestJsonScheme

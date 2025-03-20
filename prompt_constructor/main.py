@@ -32,6 +32,7 @@ def get_prompt(
         data_tools=data_tools,
         data_collection=data_collection,
     )
+    print()
     pprint(decrypted_collection)
 
     prompt_constructor = PromptConstructor()
