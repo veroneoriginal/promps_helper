@@ -1,5 +1,3 @@
-from pprint import pprint
-
 
 class PromptProcessingData:
     """
@@ -234,7 +232,6 @@ class PromptProcessingData:
         # Получаем название исходного средства из data_collection
         origin_product_name = data_collection.get("Исходное средство")
 
-        # Ищем данные по origin_product_name в основном data словаре
         origin_product_data = data.get(category, {}).get(origin_product_name, {})
 
         # Формируем словарь с информацией о средстве
@@ -256,7 +253,6 @@ class PromptProcessingData:
             f"Состав: {product_info['Состав']}. "
         )
 
-        pprint(f'{result_string=}')
         return result_string
 
 
@@ -286,7 +282,7 @@ class PromptProcessingData:
             data_collection["Исходное средство"] = self.decrypting_origin_product_info(
                 data=data_tools,
                 data_collection=data_collection,
-                category="Исходное средство",
+                category="Средства",
             )
 
         # расшифровка данных по ключу Тип

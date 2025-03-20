@@ -265,9 +265,9 @@ class ControlManager:
             file_path_collection=file_path_collection,
             checking_unique=checking_unique,
         )
-        print('Перед json схемой')
-        pprint(data_collection)
-        print()
+        # print('Перед json схемой')
+        # pprint(data_collection)
+        # print()
 
 
         # определяю json-схему
@@ -275,7 +275,7 @@ class ControlManager:
             data_collection=data_collection,
             product_categories=self.param_dif_products_categories,
         )
-        # pprint(json_scheme)
+        pprint(json_scheme)
 
         # формирую пути для сохранения данных и создаю нужные папки
         self.paths_to_folders = DirsConstructor(
@@ -290,7 +290,7 @@ class ControlManager:
         )
 
         print('cобираю промпт')
-        pprint(prompt)
+        # pprint(prompt)
 
         # print('Отправка запроса в OpenAI.')
         # # self.paths_to_folders["answer_gpt"] будет содержать в себе
@@ -311,15 +311,15 @@ class ControlManager:
         # )
         #
         # print('Создание PDF и изображений со средствами для постов в соц.сети.')
-        self._create_pdf_jpg(
-            collection_data=data_collection,
-            info_data=data_tools,
-            selection_result=checking_file_with_response(
-                json_file_path=self.paths_to_folders["00_source_02_answer_gpt"]
-            ),
-            path_to_output_folder_pdf_file=self.paths_to_folders["00_source_03_pdf"],
-            path_to_output_folder_jpg_file=self.paths_to_folders["00_source_04_jpg"],
-        )
+        # self._create_pdf_jpg(
+        #     collection_data=data_collection,
+        #     info_data=data_tools,
+        #     selection_result=checking_file_with_response(
+        #         json_file_path=self.paths_to_folders["00_source_02_answer_gpt"]
+        #     ),
+        #     path_to_output_folder_pdf_file=self.paths_to_folders["00_source_03_pdf"],
+        #     path_to_output_folder_jpg_file=self.paths_to_folders["00_source_04_jpg"],
+        # )
 
         # # print('Готовлю текстовое оформление поста.')
         # # self._forming_text_for_post(data=data, info_for_picture=info_for_picture)

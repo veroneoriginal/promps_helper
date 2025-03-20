@@ -472,3 +472,132 @@ expected_schema_for_best_prod_carcinogen = {
                'type': 'object'},
     'strict': True}
 
+best_combination_json = {
+    'name': 'cosmetics_analysis',
+    'schema': {'additionalProperties': False,
+               'properties': {'best_combination': {'description': 'Название '
+                                                                  'одного '
+                                                                  'средства из '
+                                                                  'списка, '
+                                                                  'которое лучше '
+                                                                  'всего '
+                                                                  'сочетается с '
+                                                                  'исходным.',
+                                                   'type': 'string'},
+                              'origin_product': {'description': 'Исходное '
+                                                                'средство, к '
+                                                                'которому '
+                                                                'подбирается '
+                                                                'сочетание',
+                                                 'type': 'string'},
+                              'product_1': {'additionalProperties': False,
+                                            'properties': {
+                                                'best_combination': {'description': 'Если '
+                                                                                    'это '
+                                                                                    'средство '
+                                                                                    'попало '
+                                                                                    'в '
+                                                                                    'сочетание '
+                                                                                    'с '
+                                                                                    'исходным, '
+                                                                                    'поставь '
+                                                                                    'здесь '
+                                                                                    'True, '
+                                                                                    'иначе '
+                                                                                    'False',
+                                                                     'type': 'boolean'},
+                                                'result': {'description': 'Объяснение, '
+                                                                          'почему '
+                                                                          'выбрали '
+                                                                          'или '
+                                                                          'не '
+                                                                          'выбрали '
+                                                                          'это '
+                                                                          'средство.',
+                                                           'type': 'string'},
+                                                'title': {'description': 'Название '
+                                                                         '1-го '
+                                                                         'средства',
+                                                          'type': 'string'}},
+                                            'required': ['title',
+                                                         'result',
+                                                         'best_combination'],
+                                            'type': 'object'},
+                              'product_2': {'additionalProperties': False,
+                                            'properties': {
+                                                'best_combination': {'description': 'Если '
+                                                                                    'это '
+                                                                                    'средство '
+                                                                                    'попало '
+                                                                                    'в '
+                                                                                    'сочетание '
+                                                                                    'с '
+                                                                                    'исходным, '
+                                                                                    'поставь '
+                                                                                    'здесь '
+                                                                                    'True, '
+                                                                                    'иначе '
+                                                                                    'False',
+                                                                     'type': 'boolean'},
+                                                'result': {'description': 'Объяснение, '
+                                                                          'почему '
+                                                                          'выбрали '
+                                                                          'или '
+                                                                          'не '
+                                                                          'выбрали '
+                                                                          'это '
+                                                                          'средство.',
+                                                           'type': 'string'},
+                                                'title': {'description': 'Название '
+                                                                         '2-го '
+                                                                         'средства',
+                                                          'type': 'string'}},
+                                            'required': ['title',
+                                                         'result',
+                                                         'best_combination'],
+                                            'type': 'object'},
+                              'product_3': {'additionalProperties': False,
+                                            'properties': {
+                                                'best_combination': {'description': 'Если '
+                                                                                    'это '
+                                                                                    'средство '
+                                                                                    'попало '
+                                                                                    'в '
+                                                                                    'сочетание '
+                                                                                    'с '
+                                                                                    'исходным, '
+                                                                                    'поставь '
+                                                                                    'здесь '
+                                                                                    'True, '
+                                                                                    'иначе '
+                                                                                    'False',
+                                                                     'type': 'boolean'},
+                                                'result': {'description': 'Объяснение, '
+                                                                          'почему '
+                                                                          'выбрали '
+                                                                          'или '
+                                                                          'не '
+                                                                          'выбрали '
+                                                                          'это '
+                                                                          'средство.',
+                                                           'type': 'string'},
+                                                'title': {'description': 'Название '
+                                                                         '3-го '
+                                                                         'средства',
+                                                          'type': 'string'}},
+                                            'required': ['title',
+                                                         'result',
+                                                         'best_combination'],
+                                            'type': 'object'},
+                              'result': {'description': 'Итоговая рекомендация, '
+                                                        'вывод',
+                                         'type': 'string'}},
+               'required': ['origin_product',
+                            'best_combination',
+                            'result',
+                            'product_1',
+                            'product_2',
+                            'product_3'],
+               'type': 'object'},
+    'strict': True,
+}

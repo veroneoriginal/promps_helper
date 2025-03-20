@@ -4,6 +4,8 @@
 """
 
 import unittest
+from pprint import pprint
+
 # from pprint import pprint
 
 from json_constructor.json_creator import JsonCreator
@@ -11,7 +13,7 @@ from json_constructor.json_processing_data import JsonProcessingData
 from json_constructor.test.constants import (
     expected_schema_for_best_product,
     expected_schema_for_one_product,
-    expected_schema_for_best_prod_carcinogen,
+    expected_schema_for_best_prod_carcinogen, best_combination_json,
 )
 from source.structure_for_products import PARAMETERS_DIF_PRODUCT_CATEGORIES
 
@@ -216,5 +218,47 @@ class TestJsonScheme(unittest.TestCase):
         self.assertEqual(
             actual_schema,
             expected_schema_for_best_prod_carcinogen,
+            msg="Схема не совпадает с ожидаемой",
+        )
+
+    def test_get_json_scheme_for_best_combination(self):
+        """
+        Проверка работы метода для преобразования словаря
+        по коду задачи - 'Лучшее сочетание' и получения json-схемы
+        """
+        data_collection = {
+            'Возраст': 32,
+            'Задача': 'Лучшее сочетание',
+            'Запрос': 'ЗВ8, ЗВ12',
+            'Исходное средство': 'R+CO Atlantis Moisturizing B5 Shampoo',
+            'Итог': None,
+            'Категория': 'шампуни',
+            'Количество средств': 3,
+            'Лучший вариант': None,
+            'Пол': 'женский',
+            'Специалист': 'Т',
+            'Средства': {'Средство_1': 'R+CO Television Perfect Hair Conditioner',
+                         'Средство_2': 'R+CO Atlantis Moisturizing B5 Conditioner',
+                         'Средство_3': 'R+CO TELEVISION Perfect Hair Masque'},
+            'Тип': 'В1, В10',
+            'Хеш': '2d2918a9e091164a303dd3c652d052b2b2bcc3bb88dd7c075a4c8b31aed75b6d',
+        }
+        # product_categories можно пустым (если в этой логике не участвует)
+        product_categories = {}
+
+        # Инициализация JsonCreator и получение схемы
+        json_creator = JsonCreator(
+            data_collection=data_collection,
+            product_categories=product_categories,
+        )
+
+        actual_schema = json_creator.get_json_scheme_for_distribution_on_task()
+        # print('работаем из теста')
+        # pprint(actual_schema)
+
+        # Проверка, что схема совпадает с ожидаемой
+        self.assertEqual(
+            actual_schema,
+            best_combination_json,
             msg="Схема не совпадает с ожидаемой",
         )
