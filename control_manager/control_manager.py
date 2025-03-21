@@ -266,17 +266,11 @@ class ControlManager:
             checking_unique=checking_unique,
         )
 
-        # print('Перед json схемой')
-        # pprint(data_collection)
-
         # определяю json-схему
         json_scheme = get_json_scheme(
             data_collection=data_collection,
             product_categories=self.param_dif_products_categories,
         )
-
-        pprint(json_scheme)
-        exit()
 
         # формирую пути для сохранения данных и создаю нужные папки
         self.paths_to_folders = DirsConstructor(
@@ -289,27 +283,25 @@ class ControlManager:
             data_tools=data_tools,
             data_collection=data_collection,
         )
-
-        print('cобираю промпт')
         # pprint(prompt)
 
-        print('Отправка запроса в OpenAI.')
-        # self.paths_to_folders["answer_gpt"] будет содержать в себе
-        # 00_base/00_info_for_post/01_03_25/1_Шампуни/answer_gpt
-        file_path_to_saving_json = self._create_context_for_request_to_openai(
-            prompt_for_convert=prompt,
-            json_scheme=json_scheme,
-            folder_name=self.paths_to_folders["answer_gpt"],
-        )
-
-        # file_path_to_saving_json будет содержать в себе
-        # 00_base/00_info_for_post/01_03_25/1_Шампуни/answer_gpt/Анализ_средств.json
-        print('Разбор ответа от OpenAI.')
-        self._reviewing_response_from_openai(
-            file_path=file_path_collection,
-            json_file_path=file_path_to_saving_json,
-            dict_with_hash=data_collection,
-        )
+        # print('Отправка запроса в OpenAI.')
+        # # self.paths_to_folders["answer_gpt"] будет содержать в себе
+        # # 00_base/00_info_for_post/01_03_25/1_Шампуни/answer_gpt
+        # file_path_to_saving_json = self._create_context_for_request_to_openai(
+        #     prompt_for_convert=prompt,
+        #     json_scheme=json_scheme,
+        #     folder_name=self.paths_to_folders["answer_gpt"],
+        # )
+        #
+        # # file_path_to_saving_json будет содержать в себе
+        # # 00_base/00_info_for_post/01_03_25/1_Шампуни/answer_gpt/Анализ_средств.json
+        # print('Разбор ответа от OpenAI.')
+        # self._reviewing_response_from_openai(
+        #     file_path=file_path_collection,
+        #     json_file_path=file_path_to_saving_json,
+        #     dict_with_hash=data_collection,
+        # )
 
         # print('Создание PDF и изображений со средствами для постов в соц.сети.')
         # self._create_pdf_jpg(

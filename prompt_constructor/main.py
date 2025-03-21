@@ -1,5 +1,5 @@
 import copy
-from pprint import pprint
+# from pprint import pprint
 
 from prompt_constructor.prompt_constructor import PromptConstructor
 from prompt_constructor.prompt_processing_data import PromptProcessingData
@@ -32,8 +32,8 @@ def get_prompt(
         data_tools=data_tools,
         data_collection=data_collection,
     )
-    print()
-    pprint(decrypted_collection)
+    # print()
+    # pprint(decrypted_collection)
 
     prompt_constructor = PromptConstructor()
 

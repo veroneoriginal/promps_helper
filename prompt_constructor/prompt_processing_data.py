@@ -1,4 +1,3 @@
-
 class PromptProcessingData:
     """
     Класс, внутри которого расшифровываются все данные
@@ -19,7 +18,7 @@ class PromptProcessingData:
             'Лучшее средство': self.decrypting_info_code_best_product,
             'Лучшее средство без канцерогенов': self.decrypting_info_code_best_product,
             'Разбор состава одного средства': self.decrypting_info_code_one_product,
-            'Лучшая пара': 'метод который расшифровывает словарь для этого кода задачи',
+            'Лучшая пара': self.decrypting_best_pair,
             'Лучшее сочетание': self.decrypting_info_code_best_product,
             'Лучшая компоновка': 'метод который расшифровывает словарь для этого кода задачи',
             'Аналог': 'метод который расшифровывает словарь для этого кода задачи',
@@ -255,6 +254,59 @@ class PromptProcessingData:
 
         return result_string
 
+    def _format_pairs_for_prompt(
+            self,
+            pairs: dict) -> str:
+        """
+        Метод, работающий для кода задачи "Лучшая пара", форматирует
+        пары средств в читаемую строку для промпта.
+        """
+        output = ""
+        for pair_name, products in pairs.items():
+            output += f"\n{pair_name}:\n"
+            for product_name, product_info in products.items():
+                output += f"- Продукт: {product_name}\n"
+                output += f"  Тип продукта: {product_info.get('Тип продукта', 'Не указан')}\n"
+                output += f"  Состав: {product_info.get('Состав', 'Не указан')}\n"
+        return output
+
+    def decrypting_best_pair(
+            self,
+            data: dict,
+            data_collection: dict,
+            category: str,
+    ) -> dict:
+        """
+        Метод для расшифровки ключа средства для кода задачи "Лучшая пара".
+        :param data: словарь со всеми данными по средствам
+        :param data_collection: словарь с подборкой пар
+        :param category: категория, с которой работаем
+        :return: словарь с расшифрованными данными по каждой паре
+        """
+
+        # Получаем пары из подборки
+        pairs = data_collection.get(category, {})
+
+        # Сюда сохраняем результат
+        result = {}
+
+        # Проходим по всем парам
+        for pair_key, product_list in pairs.items():
+            pair_info = {}
+
+            for product_name in product_list:
+                product_data = data.get(category, {}).get(product_name, {})
+
+                pair_info[product_name] = {
+                    "Тип продукта": product_data.get("Тип продукта", "Не указан"),
+                    "Состав": product_data.get("Состав", "Не указан"),
+                }
+
+            result[pair_key] = pair_info
+
+        new_result = self._format_pairs_for_prompt(pairs=result)
+
+        return new_result
 
     def main_decryp_data_from_current_collection(
             self,
@@ -272,11 +324,18 @@ class PromptProcessingData:
         # расшифровка средств в зависимости от задачи
         function_for_decryption_products = self.method_for_task_code[data_collection["Задача"]]
 
-        data_collection["Средства"] = function_for_decryption_products(
-            data=data_tools,
-            data_collection=data_collection,
-            category="Средства",
-        )
+        if data_collection["Задача"] == "Лучшая пара":
+            data_collection["Средства"] = function_for_decryption_products(
+                data=data_tools,
+                data_collection=data_collection,
+                category="Средства",
+            )
+        else:
+            data_collection["Средства"] = function_for_decryption_products(
+                data=data_tools,
+                data_collection=data_collection,
+                category="Средства",
+            )
 
         if "Исходное средство" in data_collection:
             data_collection["Исходное средство"] = self.decrypting_origin_product_info(

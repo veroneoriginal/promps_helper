@@ -5,7 +5,6 @@ import copy
 
 import unittest
 # from pprint import pprint
-
 from prompt_constructor.prompt_constructor import PromptConstructor
 from prompt_constructor.prompt_processing_data import PromptProcessingData
 
@@ -18,6 +17,8 @@ from prompt_constructor.test_constructor.constants import (
     expected_prompt_for_best_prod_carcinogen,
     best_combination_decryped,
     best_combination_prompt,
+    best_pair_decryped,
+    best_pair_prompt,
 )
 
 
@@ -180,3 +181,55 @@ class TestPromptConstructor(unittest.TestCase):
         )
 
         self.assertEqual(prompt, best_combination_prompt)
+
+    def test_main_decryp_data_from_best_pair(self):
+        """
+        Проверка, что данные текущей подборки по коду 'Лучшая пара'
+        расшифровываются и что промпт получается корректный
+        """
+
+        # текущая подборка
+        data_collection = {
+            'Возраст': 32,
+            'Задача': 'Лучшая пара',
+            'Запрос': 'ЗВ8, ЗВ12',
+            'Итог': None,
+            'Категория': 'Шампуни',
+            'Количество пар': 2,
+            'Лучший вариант': None,
+            'Пол': 'женский',
+            'Специалист': 'Т',
+            'Средства': {'Пара_1': ['R+CO Dallas Biotin Thickening Shampoo',
+                                    'R+CO TELEVISION Perfect Hair Masque'],
+                         'Пара_2': ['R+CO Atlantis Moisturizing B5 Shampoo',
+                                    'R+CO Television Perfect Hair Conditioner']},
+            'Тип': 'В1, В10',
+            'Хеш': '18f0117c05399c5e88d3fa97931d4f0ec183260f09c49a0e6aabe61489efd544'}
+
+        # создание копии словаря с текущей подборкой,
+        # т.к. иначе не добраться до кода задачи
+        copy_data_collection = copy.deepcopy(data_collection)
+
+        prompt_proces_data = PromptProcessingData(
+            data_tools=data_tools,
+            data_collection=data_collection,
+        )
+
+        # текущая подборка (расшифрованная)
+        decrypted_collection = prompt_proces_data.main_decryp_data_from_current_collection(
+            data_tools=data_tools,
+            data_collection=data_collection,
+        )
+
+        # проверяем результат расшифровки по текущей подборке
+        self.assertEqual(decrypted_collection, best_pair_decryped)
+
+        prompt_constructor = PromptConstructor()
+
+        # проверяем результат создания промпта по текущей подборке
+        prompt = prompt_constructor.main_constructor_prompt(
+            data_decrypted=decrypted_collection,
+            data_collection=copy_data_collection,
+        )
+
+        self.assertEqual(prompt, best_pair_prompt)

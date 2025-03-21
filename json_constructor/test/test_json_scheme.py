@@ -1,4 +1,3 @@
-# pylint: skip-file
 """
 В этом модуле тестируем выбор json-схемы
 """
@@ -6,14 +5,14 @@
 import unittest
 from pprint import pprint
 
-# from pprint import pprint
-
 from json_constructor.json_creator import JsonCreator
 from json_constructor.json_processing_data import JsonProcessingData
 from json_constructor.test.constants import (
     expected_schema_for_best_product,
     expected_schema_for_one_product,
-    expected_schema_for_best_prod_carcinogen, best_combination_json,
+    expected_schema_for_best_prod_carcinogen,
+    best_combination_json,
+    best_pair_json,
 )
 from source.structure_for_products import PARAMETERS_DIF_PRODUCT_CATEGORIES
 
@@ -154,7 +153,7 @@ class TestJsonScheme(unittest.TestCase):
             'Итог': None,
             'Лучший вариант': None,
             'Пол': 'женский',
-            'Категория': 'уход за кожей лица',
+            'Категория': 'Уход за кожей лица',
             'Специалист': 'Т',
             'Средства': {'Средство_1': 'ALTEREGO ITALY Curego Hydraday'},
             'Тип': 'КЛ1',
@@ -191,7 +190,7 @@ class TestJsonScheme(unittest.TestCase):
             'Задача': 'Лучшее средство без канцерогенов',
             'Запрос': 'ЗВ8, ЗВ12',
             'Итог': None,
-            'Категория': 'шампуни',
+            'Категория': 'Шампуни',
             'Количество средств': 4,
             'Лучший вариант': None,
             'Пол': 'женский',
@@ -232,7 +231,7 @@ class TestJsonScheme(unittest.TestCase):
             'Запрос': 'ЗВ8, ЗВ12',
             'Исходное средство': 'R+CO Atlantis Moisturizing B5 Shampoo',
             'Итог': None,
-            'Категория': 'шампуни',
+            'Категория': 'Шампуни',
             'Количество средств': 3,
             'Лучший вариант': None,
             'Пол': 'женский',
@@ -260,5 +259,46 @@ class TestJsonScheme(unittest.TestCase):
         self.assertEqual(
             actual_schema,
             best_combination_json,
+            msg="Схема не совпадает с ожидаемой",
+        )
+
+    def test_get_json_scheme_for_best_pair(self):
+        """
+        Проверка работы метода для преобразования словаря
+        по коду задачи - 'Лучшая пара' и получения json-схемы
+        """
+        data_collection = {
+            'Возраст': 32,
+            'Задача': 'Лучшая пара',
+            'Запрос': 'ЗВ8, ЗВ12',
+            'Итог': None,
+            'Категория': 'Шампуни',
+            'Количество пар': 2,
+            'Лучший вариант': None,
+            'Пол': 'женский',
+            'Специалист': 'Т',
+            'Средства': {'Пара_1': ['R+CO Dallas Biotin Thickening Shampoo',
+                                    'R+CO TELEVISION Perfect Hair Masque'],
+                         'Пара_2': ['R+CO Atlantis Moisturizing B5 Shampoo',
+                                    'R+CO Television Perfect Hair Conditioner']},
+            'Тип': 'В1, В10',
+            'Хеш': '18f0117c05399c5e88d3fa97931d4f0ec183260f09c49a0e6aabe61489efd544'}
+        # product_categories можно пустым (если в этой логике не участвует)
+        product_categories = {}
+
+        # Инициализация JsonCreator и получение схемы
+        json_creator = JsonCreator(
+            data_collection=data_collection,
+            product_categories=product_categories,
+        )
+
+        actual_schema = json_creator.get_json_scheme_for_distribution_on_task()
+        # print('работаем из теста')
+        # pprint(actual_schema)
+
+        # Проверка, что схема совпадает с ожидаемой
+        self.assertEqual(
+            actual_schema,
+            best_pair_json,
             msg="Схема не совпадает с ожидаемой",
         )
