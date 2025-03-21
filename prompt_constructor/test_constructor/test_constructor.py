@@ -17,8 +17,8 @@ from prompt_constructor.test_constructor.constants import (
     expected_prompt_for_best_prod_carcinogen,
     best_combination_decryped,
     best_combination_prompt,
-    best_pair_decryped,
-    best_pair_prompt,
+    best_set_decryped,
+    best_set_prompt,
 )
 
 
@@ -40,13 +40,13 @@ class TestPromptConstructor(unittest.TestCase):
             'Задача': 'Разбор состава одного средства',
             'Запрос': 'ЗЛ2',
             'Итог': None,
-            'Категория': 'уход за кожей лица',
+            'Категория': 'Уход за кожей лица',
             'Лучший вариант': None,
             'Пол': 'женский',
             'Специалист': 'Т',
             'Средства': {'Средство_1': 'PULANNA Bio-gold & Grape'},
             'Тип': 'КЛ1, КЛ2',
-            'Хеш': '5be8b5391782b170c129765d1b7500816e2309aa682d468f368ffb8cfaa02d40',
+            'Хеш': 'a4ece7b3cb7753cfa8d776f0bf751aa8d0ee38b2302c05ac93d4da0bd6c605eb',
         }
 
         # создание копии словаря с текущей подборкой,
@@ -72,7 +72,7 @@ class TestPromptConstructor(unittest.TestCase):
         # проверяем результат создания промпта по текущей подборке
         prompt = prompt_constructor.main_constructor_prompt(
             data_decrypted=decrypted_collection,
-            data_collection=copy_data_collection,
+            task=copy_data_collection['Задача'],
         )
 
         self.assertEqual(prompt, prompt_for_one_product)
@@ -90,7 +90,7 @@ class TestPromptConstructor(unittest.TestCase):
             'Задача': 'Лучшее средство без канцерогенов',
             'Запрос': 'ЗВ8, ЗВ12',
             'Итог': None,
-            'Категория': 'шампуни',
+            'Категория': 'Шампуни',
             'Количество средств': 3,
             'Лучший вариант': None,
             'Пол': 'женский',
@@ -99,7 +99,7 @@ class TestPromptConstructor(unittest.TestCase):
                          'Средство_2': 'NATURA SIBERICA Oblepikha',
                          'Средство_3': 'ALTEREGO ITALY Curego Hydraday'},
             'Тип': 'В1, В10',
-            'Хеш': 'cdd6f7ca257e7f4fc9fa309bce83f7a0c3527b94d576daa29e0f1fac523b6259'}
+            'Хеш': '6fa98fcf493402f8874e2771f891b25e8e5abbd8f8b6c4555e014791f3581407'}
 
         # создание копии словаря с текущей подборкой,
         # т.к. иначе не добраться до кода задачи
@@ -124,7 +124,7 @@ class TestPromptConstructor(unittest.TestCase):
         # проверяем результат создания промпта по текущей подборке
         prompt = prompt_constructor.main_constructor_prompt(
             data_decrypted=decrypted_collection,
-            data_collection=copy_data_collection,
+            task=copy_data_collection['Задача'],
         )
 
         self.assertEqual(prompt, expected_prompt_for_best_prod_carcinogen)
@@ -142,7 +142,7 @@ class TestPromptConstructor(unittest.TestCase):
             'Запрос': 'ЗВ8, ЗВ12',
             'Исходное средство': 'R+CO Atlantis Moisturizing B5 Shampoo',
             'Итог': None,
-            'Категория': 'шампуни',
+            'Категория': 'Шампуни',
             'Количество средств': 3,
             'Лучший вариант': None,
             'Пол': 'женский',
@@ -151,7 +151,7 @@ class TestPromptConstructor(unittest.TestCase):
                          'Средство_2': 'R+CO Atlantis Moisturizing B5 Conditioner',
                          'Средство_3': 'R+CO TELEVISION Perfect Hair Masque'},
             'Тип': 'В1, В10',
-            'Хеш': '2d2918a9e091164a303dd3c652d052b2b2bcc3bb88dd7c075a4c8b31aed75b6d',
+            'Хеш': '6a161403f3463652963265593cd6faf0ce327b9ef49d0fc183ee340fbbe9dc39',
         }
 
         # создание копии словаря с текущей подборкой,
@@ -177,12 +177,12 @@ class TestPromptConstructor(unittest.TestCase):
         # проверяем результат создания промпта по текущей подборке
         prompt = prompt_constructor.main_constructor_prompt(
             data_decrypted=decrypted_collection,
-            data_collection=copy_data_collection,
+            task=copy_data_collection['Задача'],
         )
 
         self.assertEqual(prompt, best_combination_prompt)
 
-    def test_main_decryp_data_from_best_pair(self):
+    def test_main_decryp_data_from_best_set(self):
         """
         Проверка, что данные текущей подборки по коду 'Лучшая пара'
         расшифровываются и что промпт получается корректный
@@ -191,7 +191,7 @@ class TestPromptConstructor(unittest.TestCase):
         # текущая подборка
         data_collection = {
             'Возраст': 32,
-            'Задача': 'Лучшая пара',
+            'Задача': 'Лучший набор',
             'Запрос': 'ЗВ8, ЗВ12',
             'Итог': None,
             'Категория': 'Шампуни',
@@ -199,12 +199,13 @@ class TestPromptConstructor(unittest.TestCase):
             'Лучший вариант': None,
             'Пол': 'женский',
             'Специалист': 'Т',
-            'Средства': {'Пара_1': ['R+CO Dallas Biotin Thickening Shampoo',
-                                    'R+CO TELEVISION Perfect Hair Masque'],
-                         'Пара_2': ['R+CO Atlantis Moisturizing B5 Shampoo',
-                                    'R+CO Television Perfect Hair Conditioner']},
+            'Средства': {'Пара_1': {'Средство_1': 'ALTEREGO ITALY Curego Hydraday',
+                                    'Средство_2': 'ALTEREGO ITALY Curego Hydraday'},
+                         'Пара_2': {'Средство_1': 'ALTEREGO ITALY Curego Hydraday',
+                                    'Средство_2': 'ALTEREGO ITALY Curego Hydraday'}},
             'Тип': 'В1, В10',
-            'Хеш': '18f0117c05399c5e88d3fa97931d4f0ec183260f09c49a0e6aabe61489efd544'}
+            'Хеш': '1961938df56f42e4cd8a467ad1b87ab1b556f9bc3f022fb6a1a8919889cd5292',
+        }
 
         # создание копии словаря с текущей подборкой,
         # т.к. иначе не добраться до кода задачи
@@ -222,14 +223,14 @@ class TestPromptConstructor(unittest.TestCase):
         )
 
         # проверяем результат расшифровки по текущей подборке
-        self.assertEqual(decrypted_collection, best_pair_decryped)
+        self.assertEqual(decrypted_collection, best_set_decryped)
 
         prompt_constructor = PromptConstructor()
 
         # проверяем результат создания промпта по текущей подборке
         prompt = prompt_constructor.main_constructor_prompt(
             data_decrypted=decrypted_collection,
-            data_collection=copy_data_collection,
+            task=copy_data_collection['Задача'],
         )
 
-        self.assertEqual(prompt, best_pair_prompt)
+        self.assertEqual(prompt, best_set_prompt)

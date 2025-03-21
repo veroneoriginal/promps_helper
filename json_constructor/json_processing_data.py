@@ -16,7 +16,7 @@ class JsonProcessingData:
             'Лучшее средство': self.decryption_task_best_product,
             'Лучшее средство без канцерогенов': self.decryption_task_best_product,
             'Разбор состава одного средства': self.decryption_task_one_product,
-            'Лучшая пара': self.decryption_task_best_pair,
+            'Лучший набор': self.decryption_task_best_pair,
             'Лучшее сочетание': self.decryption_task_best_combination,
             'Лучшая компоновка': 'метод который расшифровывает словарь для этого кода задачи',
             'Аналог': 'метод который расшифровывает словарь для этого кода задачи',
@@ -89,7 +89,7 @@ class JsonProcessingData:
         Считаем сколько пар в текущей подборке.
 
         :param data_collection: словарь с текущей подборкой
-        :return: словарь с текущей подборкой добавленным ключом 'Исходное средство'
+        :return: словарь с текущей подборкой добавленным ключом 'Количество пар'
         """
 
         data_collection['Количество пар'] = len(data_collection['Средства'])

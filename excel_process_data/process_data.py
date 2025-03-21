@@ -5,6 +5,7 @@
 
 import sys
 import ast
+
 from typing import (
     Optional,
     Any,
@@ -77,7 +78,7 @@ class ExcelManager:
             self,
             ws_title: str,
             column_name: str,
-    )-> dict:
+    ) -> dict:
         """
         Универсальный метод для загрузки данных из Excel.
 
@@ -425,7 +426,6 @@ class ExcelManager:
         if hash_value in values:
             raise ValueError("Такая подборка уже существует.")
         return True  # то есть такой подборки еще нет
-
 
     def update_excel_with_json(
             self,

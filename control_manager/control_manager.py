@@ -18,11 +18,11 @@ from post_constructor.post_constructor import create_text_for_post
 from json_constructor.main import get_json_scheme
 from prompt_constructor.main import get_prompt
 
-from utils.utils import (
-    copy_jpg_files,
-    transforming_dict_from_json_file,
-    add_keys_from_another_dict_to_one_dict,
-)
+# from utils.utils import (
+#     copy_jpg_files,
+#     transforming_dict_from_json_file,
+#     add_keys_from_another_dict_to_one_dict,
+# )
 
 
 class ControlManager:
@@ -283,7 +283,9 @@ class ControlManager:
             data_tools=data_tools,
             data_collection=data_collection,
         )
+
         # pprint(prompt)
+        print('все прошло')
 
         # print('Отправка запроса в OpenAI.')
         # # self.paths_to_folders["answer_gpt"] будет содержать в себе

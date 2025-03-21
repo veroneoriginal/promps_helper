@@ -22,7 +22,7 @@ class JsonCreator:
             'Лучшее средство без канцерогенов':
                 self.create_json_scheme_for_best_product_carcinogen_free,
             'Разбор состава одного средства': self.create_json_scheme_for_one_product,
-            'Лучшая пара': self.create_json_scheme_for_best_pair,
+            'Лучший набор': self.create_json_scheme_for_best_pair,
             'Лучшее сочетание': self.create_json_scheme_for_best_combination,
             'Лучшая компоновка': 'метод создает json-схему для текущей подборки по коду задачи',
             'Аналог': 'метод создает json-схему для текущей подборки по коду задачи',
@@ -337,7 +337,7 @@ class JsonCreator:
                     "best_pair": {
                         "type": "string",
                         "description":
-                            "Название пары средств, которая считается лучшей "
+                            "Названия средств внутри пары, которая считается лучшей "
                             "среди всех предложенных"
                     },
                     "result": {
@@ -366,6 +366,16 @@ class JsonCreator:
                         "type": "string",
                         "description":
                             "Объяснение, почему эта пара выбрана как лучшая или почему нет"
+                    },
+                    "product_1": {
+                        "type": "string",
+                        "description":
+                            f"Название средства №1 из пары №{i}"
+                    },
+                    "product_2": {
+                        "type": "string",
+                        "description":
+                            f"Название средства №2 из пары №{i}"
                     },
                     "best_pair": {
                         "type": "boolean",

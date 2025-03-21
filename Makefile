@@ -27,9 +27,24 @@ class_test_pdf_main_utils:
 one_test:
 	pytest -s /home/veronika/00_projects/promps_helper/utils/tests/test_utils.py::TestUtils
 
+
+excel_test:
+	pytest -s /home/veronika/00_projects/promps_helper/excel_process_data/utils/test/test_utils.py::TestUtils
+
 jsontest:
 	pytest -s /home/veronika/00_projects/promps_helper/json_constructor/test/test_json_scheme.py::TestJsonScheme
 
 
 prompt_test:
 	pytest -s /home/veronika/00_projects/promps_helper/prompt_constructor/test_constructor/test_constructor.py::TestPromptConstructor
+
+proc_test:
+	pytest -s /home/veronika/00_projects/promps_helper/prompt_constructor/test_constructor/test_processing_data.py::TestProcessingData
+
+
+veron_test:
+	pytest -s /home/veronika/00_projects/promps_helper/excel_process_data/utils/test/test_utils.py::TestUtils
+	pytest -s /home/veronika/00_projects/promps_helper/excel_process_data/utils/test/test_utils.py::TestUtils
+	pytest -s /home/veronika/00_projects/promps_helper/prompt_constructor/test_constructor/test_processing_data.py::TestProcessingData
+	pytest -s /home/veronika/00_projects/promps_helper/json_constructor/test/test_json_scheme.py::TestJsonScheme
+

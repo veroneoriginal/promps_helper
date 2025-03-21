@@ -12,7 +12,7 @@ from json_constructor.test.constants import (
     expected_schema_for_one_product,
     expected_schema_for_best_prod_carcinogen,
     best_combination_json,
-    best_pair_json,
+    best_set_json,
 )
 from source.structure_for_products import PARAMETERS_DIF_PRODUCT_CATEGORIES
 
@@ -21,11 +21,11 @@ class TestJsonScheme(unittest.TestCase):
 
     def test_decryption_task_best_product(self):
         """
-        Проверка работы метода decryption_task_best_product для преобразования словаря
-        по коду задачи - 'Лучшее средство'.
+        Проверка работы метода decryption_task_best_product для преобразования
+        словаря по коду задачи - 'Лучшее средство'.
         Тест проверяет, что:
         - осуществляется добавление ключа 'Количество средств'
-        - правильное количество средств
+        - правильно считается количество средств
         """
 
         data_collection = {
@@ -51,7 +51,7 @@ class TestJsonScheme(unittest.TestCase):
 
         # Инициализация объекта и вызов метода
         json_proc_data = JsonProcessingData(data_collection=data_collection)
-        result = json_proc_data.distribution_on_task()
+        result = json_proc_data.decryption_task_best_product(data_collection=data_collection)
         # pprint(result)
 
         # Ожидаемый результат
@@ -222,8 +222,8 @@ class TestJsonScheme(unittest.TestCase):
 
     def test_get_json_scheme_for_best_combination(self):
         """
-        Проверка работы метода для преобразования словаря
-        по коду задачи - 'Лучшее сочетание' и получения json-схемы
+        Проверка работы метода для получения json-схемы
+        по коду задачи - 'Лучшее сочетание'
         """
         data_collection = {
             'Возраст': 32,
@@ -262,14 +262,14 @@ class TestJsonScheme(unittest.TestCase):
             msg="Схема не совпадает с ожидаемой",
         )
 
-    def test_get_json_scheme_for_best_pair(self):
+    def test_get_json_scheme_for_best_set(self):
         """
         Проверка работы метода для преобразования словаря
-        по коду задачи - 'Лучшая пара' и получения json-схемы
+        по коду задачи - 'Лучший набор' и получения json-схемы
         """
         data_collection = {
             'Возраст': 32,
-            'Задача': 'Лучшая пара',
+            'Задача': 'Лучший набор',
             'Запрос': 'ЗВ8, ЗВ12',
             'Итог': None,
             'Категория': 'Шампуни',
@@ -277,12 +277,15 @@ class TestJsonScheme(unittest.TestCase):
             'Лучший вариант': None,
             'Пол': 'женский',
             'Специалист': 'Т',
-            'Средства': {'Пара_1': ['R+CO Dallas Biotin Thickening Shampoo',
-                                    'R+CO TELEVISION Perfect Hair Masque'],
-                         'Пара_2': ['R+CO Atlantis Moisturizing B5 Shampoo',
-                                    'R+CO Television Perfect Hair Conditioner']},
+            'Средства': {
+                'Пара_1': {'Средство_1': 'ALTEREGO ITALY Curego Hydraday',
+                           'Средство_2': 'ALTEREGO ITALY Curego Hydraday'},
+                'Пара_2': {'Средство_1': 'ALTEREGO ITALY Curego Hydraday',
+                           'Средство_2': 'ALTEREGO ITALY Curego Hydraday'},
+            },
             'Тип': 'В1, В10',
-            'Хеш': '18f0117c05399c5e88d3fa97931d4f0ec183260f09c49a0e6aabe61489efd544'}
+            'Хеш': '1961938df56f42e4cd8a467ad1b87ab1b556f9bc3f022fb6a1a8919889cd5292',
+        }
         # product_categories можно пустым (если в этой логике не участвует)
         product_categories = {}
 
@@ -299,6 +302,6 @@ class TestJsonScheme(unittest.TestCase):
         # Проверка, что схема совпадает с ожидаемой
         self.assertEqual(
             actual_schema,
-            best_pair_json,
+            best_set_json,
             msg="Схема не совпадает с ожидаемой",
         )
