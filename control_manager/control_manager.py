@@ -284,18 +284,13 @@ class ControlManager:
             data_collection=data_collection,
         )
 
-        # pprint(prompt)
-        print('все прошло')
+        print('Отправка запроса в OpenAI.')
+        file_path_to_saving_json = self._create_context_for_request_to_openai(
+            prompt_for_convert=prompt,
+            json_scheme=json_scheme,
+            folder_name=self.paths_to_folders["00_source_02_answer_gpt"],
+        )
 
-        # print('Отправка запроса в OpenAI.')
-        # # self.paths_to_folders["answer_gpt"] будет содержать в себе
-        # # 00_base/00_info_for_post/01_03_25/1_Шампуни/answer_gpt
-        # file_path_to_saving_json = self._create_context_for_request_to_openai(
-        #     prompt_for_convert=prompt,
-        #     json_scheme=json_scheme,
-        #     folder_name=self.paths_to_folders["answer_gpt"],
-        # )
-        #
         # # file_path_to_saving_json будет содержать в себе
         # # 00_base/00_info_for_post/01_03_25/1_Шампуни/answer_gpt/Анализ_средств.json
         # print('Разбор ответа от OpenAI.')

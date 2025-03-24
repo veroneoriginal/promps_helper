@@ -22,7 +22,7 @@ class JsonCreator:
             'Лучшее средство без канцерогенов':
                 self.create_json_scheme_for_best_product_carcinogen_free,
             'Разбор состава одного средства': self.create_json_scheme_for_one_product,
-            'Лучший набор': self.create_json_scheme_for_best_pair,
+            'Лучший набор': self.create_json_scheme_for_best_set,
             'Лучшее сочетание': self.create_json_scheme_for_best_combination,
             'Лучшая компоновка': 'метод создает json-схему для текущей подборки по коду задачи',
             'Аналог': 'метод создает json-схему для текущей подборки по коду задачи',
@@ -320,7 +320,7 @@ class JsonCreator:
 
         return schema
 
-    def create_json_scheme_for_best_pair(
+    def create_json_scheme_for_best_set(
             self,
     ) -> dict:
         """
@@ -334,18 +334,18 @@ class JsonCreator:
             "schema": {
                 "type": "object",
                 "properties": {
-                    "best_pair": {
+                    "best_set": {
                         "type": "string",
                         "description":
-                            "Названия средств внутри пары, которая считается лучшей "
-                            "среди всех предложенных"
+                            "Названия средств внутри набора, который считается лучшим "
+                            "среди всех предложенных."
                     },
                     "result": {
                         "type": "string",
-                        "description": "Итоговая рекомендация по лучшей паре, вывод"
+                        "description": "Итоговая рекомендация по лучшему набору, вывод"
                     }
                 },
-                "required": ["best_pair", "result"],
+                "required": ["best_set", "result"],
                 "additionalProperties": False
             }
         }
@@ -360,12 +360,12 @@ class JsonCreator:
                     "title": {
                         "type": "string",
                         "description":
-                            f"Названия двух средств из пары №{i}, перечисленные через запятую"
+                            f"Названия средств из набора №{i}, перечисленные через запятую"
                     },
                     "result": {
                         "type": "string",
                         "description":
-                            "Объяснение, почему эта пара выбрана как лучшая или почему нет"
+                            "Объяснение, почему этот набор выбран как лучший, или почему он не выбран"
                     },
                     "product_1": {
                         "type": "string",
