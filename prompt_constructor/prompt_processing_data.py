@@ -1,4 +1,4 @@
-from pprint import pprint
+from dotenv.variables import Literal
 
 
 class PromptProcessingData:
@@ -20,8 +20,8 @@ class PromptProcessingData:
         self.method_for_task_code = {
             'Лучшее средство': self.decrypting_info_code_best_product,
             'Лучшее средство без канцерогенов': self.decrypting_info_code_best_product,
-            'Разбор состава одного средства': self.decrypting_info_code_one_product,
-            'Лучшая пара': 'метод который расшифровывает словарь для этого кода задачи',
+            'Разбор состава одного средства': self.decrypting_info_code_best_product,
+            'Лучший набор': self.decrypting_best_set,
             'Лучшее сочетание': self.decrypting_info_code_best_product,
             'Лучшая компоновка': 'метод который расшифровывает словарь для этого кода задачи',
             'Аналог': 'метод который расшифровывает словарь для этого кода задачи',
@@ -44,42 +44,35 @@ class PromptProcessingData:
         :return: список очищенных значений, например ['B2', 'B1'] или ['B2']
         """
 
-        if isinstance(type_of_need, tuple):
-            # Если передан кортеж, сразу превращаем его в список строк
-            return [str(value).strip() for value in type_of_need if value]
+        # Убираем лишние пробелы с начала и конца строки
+        type_need = type_of_need.strip()
 
-        if isinstance(type_of_need, str):
-            # Убираем лишние пробелы с начала и конца строки
-            type_need = type_of_need.strip()
+        # Проверяем, есть ли символ в строке
+        if symbol in type_need:
+            # Если есть символ, разделяем и очищаем значения
+            values = type_need.split(symbol)
+            return [value.strip() for value in values]
 
-            # Проверяем, есть ли символ в строке
-            if symbol in type_need:
-                # Если есть символ, разделяем и очищаем значения
-                values = type_need.split(symbol)
-                return [value.strip() for value in values if value.strip()]
-
-            # Если символа нет, возвращаем список с одним очищенным значением
-            return [type_need] if type_need else []
-
-        return []
+        # Если символа нет, возвращаем список с одним очищенным значением
+        return [type_need.strip()]
 
     def _decrypting_data_from_cell(
             self,
             data: dict,
             data_collection: dict,
-            category: str,
+            key_for_decrypted: str,
     ) -> str:
         """
         Метод для расшифровки данных из блоков Тип, Запрос
 
         :param data: словарь со всеми данными
         :param data_collection: словарь с подборкой
-        :param category: категория, с который работаем
+        :param key_for_decrypted: категория, с который работаем
         :return: расшифрованная строка
         """
 
         # получение строки с содержимым, которое было в ячейке ТИП
-        body_part_type = data_collection[category]
+        body_part_type = data_collection[key_for_decrypted]
 
         # формирование из строки списка отдельных элементов
         list_body_part_type = self._split_and_clean_type(
@@ -92,7 +85,7 @@ class PromptProcessingData:
 
         # расшифровывание кодов и добавление в этот новый список
         for element in list_body_part_type:
-            params.append(data[category][element])
+            params.append(data[key_for_decrypted][element])
 
         # преобразование списка словарей в предложения
         sentences = []
@@ -106,22 +99,22 @@ class PromptProcessingData:
             self,
             data: dict,
             data_collection: dict,
-            category: str,
+            key_for_decrypted: str,
     ) -> str:
         """
         Метод для расшифровки данных из блоков Задача, Специалист
 
         :param data: словарь со всеми данными
         :param data_collection: словарь с подборкой
-        :param category: категория, с который работаем
+        :param key_for_decrypted: категория, с который работаем
         :return: расшифрованная строка
         """
 
         # получение строки с содержимым, которое было в ячейке
-        body_part_type = data_collection[category]
+        body_part_type = data_collection[key_for_decrypted]
 
         # обращение по полученному коду к основному словарю с содержимым
-        dict_with_full_info = data[category][body_part_type]
+        dict_with_full_info = data[key_for_decrypted][body_part_type]
 
         return f"{dict_with_full_info['Описание']}"
 
@@ -140,102 +133,107 @@ class PromptProcessingData:
 
         for key, value in cosmetic_products.items():
             list_cosmetic_products.append(
-                f"Средство №{value['Номер']} - {key}. "
+                f"{value['Номер']} - {key}. "
                 f"Состав: {value['Состав']}. Тип продукта: {value['Тип продукта']}. ")
 
         # строка, которая объединяет инфо о всех сред-х в единый текст блок с переносами строк
         return "\n".join(list_cosmetic_products)
 
+    def decryped_dict_with_one_product(
+            self,
+            data: dict,
+            product_name: str,
+            list_name: Literal = 'Средства',
+    ) -> dict:
+        """
+        Метод для создания словаря с расшифрованным средством
+
+        :param data: база данных
+        :param product_name: название средства
+        :param list_name: название листа из базы данных со средствами
+
+        :return: словарь с расшифрованным средством
+        """
+
+        product_data = data[list_name][product_name]
+
+        return {
+            "Тип продукта": product_data.get("Тип продукта", "Не указан"),
+            "Состав": product_data.get("Состав", "Не указан"),
+        }
+
+    def decryption_product_current_collection(
+            self,
+            data: dict,
+            products: dict,
+    ) -> dict:
+        """
+        Метод, с помощью которого расшифровываем словарь со средствами из текущй подборки
+
+        :param data: словарь со всеми данными
+        :param products: словарь из ключа Средства из текущей подборки
+
+        :return: расшифрованный словарь со средствами
+        """
+        # формируем словарь
+        formated_products = {}
+
+        for product_key, product_name in products.items():
+            # ищем данные по product_name в основном data словаре
+            formated_products[product_name] = self.decryped_dict_with_one_product(
+                data=data,
+                product_name=product_name,
+            )
+
+            formated_products[product_name]["Номер"] = product_key
+
+        return formated_products
+
     def decrypting_info_code_best_product(
             self,
             data: dict,
             data_collection: dict,
-            category: str,
+            key_for_decrypted: str,
     ) -> str:
         """
         Метод для расшифровки данных из блока Средства для кода задачи
-        'Лучшее средство' и 'Лучшее средство без канцерогенов'
+        'Лучшее средство', 'Лучшее средство без канцерогенов', 'Лучшее сочетание'
 
         :param data: словарь со всеми данными
         :param data_collection: словарь с подборкой
-        :param category: категория, с которой работаем
+        :param key_for_decrypted: категория, с которой работаем
         :return: словарь со средствами, их типом и составом
         """
 
-        # получение словаря с содержимым
-        products_in_cell = data_collection[category]
+        # получение словаря из ключа Средства из текущей подборки
+        products: dict = data_collection[key_for_decrypted]
 
-        # pylint: disable=W0612 unused-variable
-        # формируем словарь
-        products_full_info = {}
-        for number, (product_key, product_name) in enumerate(products_in_cell.items()):
-            # ищем данные по product_name в основном data словаре
-            product_data = data[category].get(product_name, {})
-
-            products_full_info[product_name] = {
-                "Номер": number + 1,
-                "Тип продукта": product_data.get("Тип продукта", "Не указан"),
-                "Состав": product_data.get("Состав", "Не указан"),
-            }
-
+        formated_products = self.decryption_product_current_collection(
+            data=data,
+            products=products,
+        )
         # преобразование словаря со средствами в строку
-        return self._conversion_products(cosmetic_products=products_full_info)
-
-    def decrypting_info_code_one_product(
-            self,
-            data: dict,
-            data_collection: dict,
-            category: str,
-    ) -> str:
-        """
-        Метод для расшифровки данных из блока Средства для
-        кода задачи 'Разбор состава одного средства'
-
-        :param data: словарь со всеми данными
-        :param data_collection: словарь с подборкой
-        :param category: категория, с который работаем
-        :return: словарь со средствами, их типом и составом
-        """
-
-        # получение словаря с содержимым, которое было в ячейке
-        products_in_cell = data_collection[category]
-
-        # pylint: disable=W0612 unused-variable
-        # формируем словарь
-        products_full_info = {}
-        for number, (product_key, product_name) in enumerate(products_in_cell.items(), start=1):
-            # ищем данные по product_name в основном data словаре
-            product_data = data[category].get(product_name, {})
-
-            products_full_info[product_name] = {
-                "Номер": number,
-                "Тип продукта": product_data.get("Тип продукта", "Не указан"),
-                "Состав": product_data.get("Состав", "Не указан"),
-            }
-
-        # преобразование словаря со средствами в строку
-        return self._conversion_products(cosmetic_products=products_full_info)
+        return self._conversion_products(cosmetic_products=formated_products)
 
     def decrypting_origin_product_info(
             self,
             data: dict,
             data_collection: dict,
-            category: str,
+            key_for_decrypted: str,
     ) -> str:
         """
         Метод для расшифровки данных по 'Исходному средству' из data_collection.
 
         :param data: словарь со всеми данными (включая подробную инфу по продуктам)
         :param data_collection: словарь с подборкой (где есть ключ 'Исходное средство')
-        :param category: категория, с которой работаем
+        :param key_for_decrypted: категория, с которой работаем
         :return: строка с подробной информацией по исходному средству
         """
 
         # Получаем название исходного средства из data_collection
         origin_product_name = data_collection.get("Исходное средство")
 
-        # Ищем данные по origin_product_name в основном data словаре
-        origin_product_data = data.get(category, {}).get(origin_product_name, {})
+        origin_product_data = data.get(key_for_decrypted, {}).get(origin_product_name, {})
 
         # Формируем словарь с информацией о средстве
         origin_product_full_info = {
@@ -256,9 +254,62 @@ class PromptProcessingData:
             f"Состав: {product_info['Состав']}. "
         )
 
-        pprint(f'{result_string=}')
         return result_string
 
+    def _format_set_for_prompt(
+            self,
+            product_set: dict,
+    ) -> str:
+        """
+        Метод, работающий для кода задачи "Лучший набор", форматирует наборы
+        средств в читаемую строку для промпта.
+
+        :param product_set: набор из средств (пара, тройка, четверка средств)
+        :return: набор средств преобразованный из словаря в строку
+        """
+        lines = []
+
+        for product_group_name, products in product_set.items():
+            lines.append(f"\n{product_group_name}:")
+            for product_name, product_info in products.items():
+                lines.append(f"Продукт: {product_name}. "
+                             f"Тип продукта: {product_info.get('Тип продукта', 'Не указан')}. "
+                             f"Состав: {product_info.get('Состав', 'Не указан')}. ")
+
+        return "\n".join(lines)
+
+    def decrypting_best_set(
+            self,
+            data: dict,
+            data_collection: dict,
+            key_for_decrypted: str,
+    ) -> str:
+        """
+        Метод для расшифровки ключа средства для кода задачи 'Лучший набор'.
+
+        :param data: словарь со всеми данными по средствам
+        :param data_collection: словарь с подборкой наборов
+        :param key_for_decrypted: категория, с которой работаем
+        :return: строка с расшифрованными данными по каждой паре
+        """
+
+        # получение словаря из ключа Средства из текущей подборки
+        products: dict = data_collection[key_for_decrypted]
+
+        # Сюда сохраняем результат
+        group_products = {}
+
+        # Проходим по всем группам
+        for product_group_name, product_dict in products.items():
+
+            formated_products = self.decryption_product_current_collection(
+                data=data,
+                products=product_dict,
+            )
+
+            group_products[product_group_name] = formated_products
+
+        return self._format_set_for_prompt(product_set=group_products)
 
     def main_decryp_data_from_current_collection(
             self,
@@ -279,42 +330,35 @@ class PromptProcessingData:
         data_collection["Средства"] = function_for_decryption_products(
             data=data_tools,
             data_collection=data_collection,
-            category="Средства",
+            key_for_decrypted="Средства",
         )
-
-        if "Исходное средство" in data_collection:
-            data_collection["Исходное средство"] = self.decrypting_origin_product_info(
-                data=data_tools,
-                data_collection=data_collection,
-                category="Исходное средство",
-            )
 
         # расшифровка данных по ключу Тип
         data_collection['Тип'] = self._decrypting_data_from_cell(
             data=data_tools,
             data_collection=data_collection,
-            category="Тип",
+            key_for_decrypted="Тип",
         )
 
         # расшифровка данных по ключу Запрос
         data_collection["Запрос"] = self._decrypting_data_from_cell(
             data=data_tools,
             data_collection=data_collection,
-            category="Запрос",
+            key_for_decrypted="Запрос",
         )
 
         # расшифровка данных по ключу Задача - ее содержимое пойдет в settings
         data_collection["Задача"] = self._decrypting_info_from_cell(
             data=data_tools,
             data_collection=data_collection,
-            category="Задача",
+            key_for_decrypted="Задача",
         )
 
         # расшифровка данных по ключу Специалист - ее содержимое пойдет в system
         data_collection["Специалист"] = self._decrypting_info_from_cell(
             data=data_tools,
             data_collection=data_collection,
-            category="Специалист",
+            key_for_decrypted="Специалист",
         )
 
         return data_collection

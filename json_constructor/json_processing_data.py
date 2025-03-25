@@ -16,7 +16,7 @@ class JsonProcessingData:
             'Лучшее средство': self.decryption_task_best_product,
             'Лучшее средство без канцерогенов': self.decryption_task_best_product,
             'Разбор состава одного средства': self.decryption_task_one_product,
-            'Лучшая пара': 'метод который расшифровывает словарь для этого кода задачи',
+            'Лучший набор': self.decryption_task_best_set,
             'Лучшее сочетание': self.decryption_task_best_combination,
             'Лучшая компоновка': 'метод который расшифровывает словарь для этого кода задачи',
             'Аналог': 'метод который расшифровывает словарь для этого кода задачи',
@@ -75,7 +75,25 @@ class JsonProcessingData:
         :return: словарь с текущей подборкой добавленным ключом 'Исходное средство'
         """
 
-        data_collection['Исходное средство'] = data_collection['Средства'].pop('Исходное средство')
         data_collection['Количество средств'] = len(data_collection['Средства'])
+
+        return data_collection
+
+    def decryption_task_best_set(
+            self,
+            data_collection: dict,
+    ) -> dict:
+        """
+        Метод для преобразования словаря по коду задачи - 'Лучшая пара'.
+        Считаем сколько пар в текущей подборке.
+
+        :param data_collection: словарь с текущей подборкой
+        :return: словарь с текущей подборкой добавленным ключом 'Количество пар'
+        """
+
+        data_collection['Количество наборов'] = len(data_collection['Средства'])
+        data_collection['Количество средств в наборе'] = len(
+            list(data_collection['Средства'].values())[0]
+        )
 
         return data_collection

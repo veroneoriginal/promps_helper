@@ -1,8 +1,10 @@
+import ast
 import copy
 import hashlib
-import json
+
 import re
 import datetime
+
 
 from typing import Optional
 from openpyxl.worksheet.worksheet import Worksheet
@@ -124,6 +126,58 @@ def function_for_forming_dict_with_correlation(
     return selection_dict
 
 
+def converting_lists(
+        products: list,
+) -> list:
+    """
+    Функция для преобразования списка списков в 1 единый список
+
+    :param products: список списков со средствами
+    :return: список со средствами
+    """
+    flat_products = []  # создаём пустой список
+
+    for sublist in products:  # проходим по каждому вложенному списку
+        for item in sublist:  # проходим по каждому элементу вложенного списка
+            flat_products.append(item)  # добавляем элемент в итоговый список
+
+    return flat_products
+
+
+def get_values(
+        data,
+        list_with_product=None,
+) -> list:
+    """
+    Рекурсивная функция для извлечения всех значений из словаря любой вложенности.
+
+    - Функция проходит по каждому элементу словаря.
+    - Если значение элемента является ещё одним словарём (dict),
+    функция вызывает сама себя (рекурсия) и продолжает обход на более глубоком уровне.
+    - Если значение не является словарём (например, строка, число и т.д.),
+    оно добавляется в результирующий список.
+
+    :param data: словарь, из которого необходимо получить все значения.
+    Может содержать вложенные словари.
+    :param list_with_product: список, в который будут добавляться найденные значения.
+    Если не передан, создаётся новый пустой список.
+
+    :return: список со средствами, забранными из сложенной структуры
+    """
+    if list_with_product is None:
+        list_with_product = []
+
+    for _, value in data.items():
+        if isinstance(value, dict):
+            # Рекурсивно спускаемся на уровень ниже
+            get_values(value, list_with_product)
+        else:
+            # Добавляем найденное значение в список
+            list_with_product.append(value)
+
+    return list_with_product
+
+
 def counting_hash(
         data: dict,
 ) -> str:
@@ -137,37 +191,34 @@ def counting_hash(
     # Создаем копию словаря с данными по текущей подборке, чтобы не изменять оригинал
     data_copy = copy.deepcopy(data)
 
-    # привожу к нормальному виду "Средства"
-    # получаю строку
-    edit_products = data_copy['Средства'].replace("«", '"').replace("»", '"').replace('\n', '')
+    # pylint: disable=C0301 line-too-long
+    # привожу к нормальному виду "Средства" / получаю строку
+    edit_products = data_copy['Средства'].replace("«", '"').replace("»", '"').replace('\n', '').lower()
 
-    # Преобразуем строку словаря в список значений
-    edit_products = list(json.loads(edit_products).values())
+    # Преобразуем строку в словарь
+    edit_products_dict = ast.literal_eval(edit_products)
 
-    # Сортируем и приводим к кортежу
-    data_copy['Средства'] = tuple(sorted(edit_products))
+    # приводим к кортежу
+    data_copy['Средства'] = get_values(edit_products_dict)
 
     # привожу к нормальному виду "Тип"
-    edit_type = data['Тип']
-    types_list = edit_type.split(',')
-    data_copy['Тип'] = tuple(sorted([type_elem.strip() for type_elem in types_list]))
+    edit_type_list = data['Тип'].split(',')
+    data_copy['Тип'] = [type_elem.strip() for type_elem in edit_type_list]
 
     data_copy['Возраст'] = str(data_copy['Возраст'])
 
     list_for_hash = []
     for key, value in data_copy.items():
         if key not in ("Содержимое", "Лучший вариант", "Итог", "Хеш"):
-            list_for_hash.append(value)
+            if isinstance(value, (list, tuple)):
+                list_for_hash.extend(value)  # Разворачиваем список или кортеж
+            else:
+                list_for_hash.append(value)
 
-    # Создаём новый список, "разворачивая" кортежи
-    new_list = []
-    for item in list_for_hash:
-        if isinstance(item, tuple):
-            new_list.extend(item)  # Добавляем элементы кортежа напрямую
-        else:
-            new_list.append(item)  # Добавляем остальные элементы как есть
+    # Сортируем список для консистентности хеша
+    final_list = sorted(list_for_hash)
 
-    final_tuple = tuple(sorted(new_list))
-    final_str = str(final_tuple).encode()
+    # Хэшируем как строку
+    final_str = str(final_list).encode()
 
     return hashlib.sha256(final_str).hexdigest()

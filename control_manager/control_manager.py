@@ -1,12 +1,10 @@
-# pylint: skip-file
+
 """
 В этом модуле - класс, управляющий логикой всего проекта
 """
 
 import os
 from pathlib import Path
-
-from pprint import pprint
 
 from dotenv import load_dotenv
 from appeal_to_openai.main import main as appeal_to_openai_main
@@ -18,11 +16,11 @@ from post_constructor.post_constructor import create_text_for_post
 from json_constructor.main import get_json_scheme
 from prompt_constructor.main import get_prompt
 
-from utils.utils import (
-    copy_jpg_files,
-    transforming_dict_from_json_file,
-    add_keys_from_another_dict_to_one_dict,
-)
+# from utils.utils import (
+#     copy_jpg_files,
+#     transforming_dict_from_json_file,
+#     add_keys_from_another_dict_to_one_dict,
+# )
 
 
 class ControlManager:
@@ -259,48 +257,41 @@ class ControlManager:
         # захожу в "Подборки" и считаю сколько подборок не заполнено
         count_collection = self._get_count_collections(file_path_collection)
 
-        # for _ in range(count_collection):
-        # формирую словарь с первой подборкой
-        data_collection = self._take_data_from_collection(
-            file_path_collection=file_path_collection,
-            checking_unique=checking_unique,
-        )
-        print('Перед json схемой')
-        pprint(data_collection)
-        print()
+        for _ in range(count_collection):
+            # формирую словарь с подборкой
+            data_collection = self._take_data_from_collection(
+                file_path_collection=file_path_collection,
+                checking_unique=checking_unique,
+            )
+
+            # определяю json-схему
+            json_scheme = get_json_scheme(
+                data_collection=data_collection,
+                product_categories=self.param_dif_products_categories,
+            )
+
+            # формирую пути для сохранения данных и создаю нужные папки
+            self.paths_to_folders = DirsConstructor(
+                base_output_folder_path=path_to_output_folder,
+                data_collection=data_collection,
+            ).get_output_folders()
+
+            # cобираю промпт
+            prompt = get_prompt(
+                data_tools=data_tools,
+                data_collection=data_collection,
+            )
+
+            print('Отправка запроса в OpenAI.')
+            # pylint: disable=W0612 unused-variable
+            file_path_to_saving_json = self._create_context_for_request_to_openai(
+                prompt_for_convert=prompt,
+                json_scheme=json_scheme,
+                folder_name=self.paths_to_folders["00_source_02_answer_gpt"],
+            )
+            print('Смотрите ответ от OPENAI\n')
 
 
-        # определяю json-схему
-        json_scheme = get_json_scheme(
-            data_collection=data_collection,
-            product_categories=self.param_dif_products_categories,
-        )
-        # pprint(json_scheme)
-
-        # формирую пути для сохранения данных и создаю нужные папки
-        self.paths_to_folders = DirsConstructor(
-            base_output_folder_path=path_to_output_folder,
-            data_collection=data_collection,
-        ).get_output_folders()
-
-        # cобираю промпт
-        prompt = get_prompt(
-            data_tools=data_tools,
-            data_collection=data_collection,
-        )
-
-        print('cобираю промпт')
-        pprint(prompt)
-
-        # print('Отправка запроса в OpenAI.')
-        # # self.paths_to_folders["answer_gpt"] будет содержать в себе
-        # # 00_base/00_info_for_post/01_03_25/1_Шампуни/answer_gpt
-        # file_path_to_saving_json = self._create_context_for_request_to_openai(
-        #     prompt_for_convert=prompt,
-        #     json_scheme=json_scheme,
-        #     folder_name=self.paths_to_folders["answer_gpt"],
-        # )
-        #
         # # file_path_to_saving_json будет содержать в себе
         # # 00_base/00_info_for_post/01_03_25/1_Шампуни/answer_gpt/Анализ_средств.json
         # print('Разбор ответа от OpenAI.')
@@ -309,17 +300,17 @@ class ControlManager:
         #     json_file_path=file_path_to_saving_json,
         #     dict_with_hash=data_collection,
         # )
-        #
+
         # print('Создание PDF и изображений со средствами для постов в соц.сети.')
-        self._create_pdf_jpg(
-            collection_data=data_collection,
-            info_data=data_tools,
-            selection_result=checking_file_with_response(
-                json_file_path=self.paths_to_folders["00_source_02_answer_gpt"]
-            ),
-            path_to_output_folder_pdf_file=self.paths_to_folders["00_source_03_pdf"],
-            path_to_output_folder_jpg_file=self.paths_to_folders["00_source_04_jpg"],
-        )
+        # self._create_pdf_jpg(
+        #     collection_data=data_collection,
+        #     info_data=data_tools,
+        #     selection_result=checking_file_with_response(
+        #         json_file_path=self.paths_to_folders["00_source_02_answer_gpt"]
+        #     ),
+        #     path_to_output_folder_pdf_file=self.paths_to_folders["00_source_03_pdf"],
+        #     path_to_output_folder_jpg_file=self.paths_to_folders["00_source_04_jpg"],
+        # )
 
         # # print('Готовлю текстовое оформление поста.')
         # # self._forming_text_for_post(data=data, info_for_picture=info_for_picture)
