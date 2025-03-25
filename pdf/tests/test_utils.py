@@ -4,7 +4,7 @@ from pathlib import Path
 from pprint import pprint
 
 from pdf.tests.data_example import (
-    TEST_EXPECTED_RESULT_FROM_PDF_DATA_PROCESSING,
+    TEST_BEST_PRODUCT_EXPECTED_RESULT_BEST_PRODUCT,
     TEST_PATH_TO_OUTPUT_FOLDER_JPG_FILE,
 )
 from pdf.utils import _get_pdf_file_paths
@@ -18,7 +18,7 @@ class TestUtils(unittest.TestCase):
         Создание путей для конвертации PDF в JPEG
         """
         result = _get_pdf_file_paths(
-            input_data=TEST_EXPECTED_RESULT_FROM_PDF_DATA_PROCESSING['Данные'],
+            input_data=TEST_BEST_PRODUCT_EXPECTED_RESULT_BEST_PRODUCT['Данные'],
             path_to_output_folder_jpg_file=TEST_PATH_TO_OUTPUT_FOLDER_JPG_FILE
         )
 

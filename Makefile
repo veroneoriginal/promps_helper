@@ -6,10 +6,10 @@ run_tests:
 	pytest -s
 
 class_test_pdf_all_process:
-	pytest -s pdf/tests/test_main.py::TestCreatePdf
+	pytest -s pdf/tests/test_main.py::TestCreatePdf::test_analysis_composition_one_product
 
 class_test_pdf_processing:
-	pytest -s pdf/pdf_data_processing/tasks_logic/best_product/tests/test_best_product.py::TestBestProduct
+	pytest -s pdf/pdf_data_processing/tasks_logic/tests/test_tasks_logic_process.py::TestTasksDataProcessing::test_analysis_composition_one_product_shampoo
 
 class_test_pdf_creator:
 	pytest -s pdf/creator_logic/tests/test_main.py::TestPDFCreator
@@ -23,6 +23,8 @@ class_test_dirs_creator:
 class_test_pdf_main_utils:
 	pytest -s pdf/tests/test_utils.py::TestUtils
 
+class_test_pdf_tasks_utils:
+	pytest -s pdf/pdf_data_processing/tests/test_task_utils.py::TestTasksUtils
 
 excel_test:
 	pytest -s /home/veronika/00_projects/promps_helper/excel_process_data/utils/test/test_utils.py::TestUtils

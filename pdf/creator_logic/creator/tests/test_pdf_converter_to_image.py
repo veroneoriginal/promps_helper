@@ -9,20 +9,20 @@ input_data = {
         '01_test_base/00_info_for_post/22_22_2222/100_Шампуни/00_source/03_pdf/alterego_italy_scalpego_balancing.pdf'):
         {
             'jpg_file_name': Path(
-                '01_test_base/00_info_for_post/22_22_2222/100_Шампуни/00_source/04_JPG/alterego_italy_scalpego_balancing.jpg'),
+                '01_test_base/00_info_for_post/22_22_2222/100_Шампуни/00_source/04_jpg/alterego_italy_scalpego_balancing.jpg'),
             'size': (1024, 1280)
         },
     Path(
         '01_test_base/00_info_for_post/22_22_2222/100_Шампуни/00_source/03_pdf/loreal_professionnel_serioxyl_advanced.pdf'):
         {
             'jpg_file_name': Path(
-                '01_test_base/00_info_for_post/22_22_2222/100_Шампуни/00_source/04_JPG/loreal_professionnel_serioxyl_advanced.jpg'),
+                '01_test_base/00_info_for_post/22_22_2222/100_Шампуни/00_source/04_jpg/loreal_professionnel_serioxyl_advanced.jpg'),
             'size': (1024, 1280)
         },
     Path('01_test_base/00_info_for_post/22_22_2222/100_Шампуни/00_source/03_pdf/natura_siberica_oblepikha.pdf'):
         {
             'jpg_file_name': Path(
-                '01_test_base/00_info_for_post/22_22_2222/100_Шампуни/00_source/04_JPG/natura_siberica_oblepikha.jpg'),
+                '01_test_base/00_info_for_post/22_22_2222/100_Шампуни/00_source/04_jpg/natura_siberica_oblepikha.jpg'),
             'size': (1024, 1280)
         }
 }
