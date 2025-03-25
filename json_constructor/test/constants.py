@@ -608,132 +608,134 @@ best_combination_json = {
 
 best_set_json = {
     'name': 'cosmetics_analysis',
-    'schema': {'additionalProperties': False,
-               'properties': {'best_pair': {'description': 'Названия средств '
-                                                           'внутри пары, которая '
-                                                           'считается лучшей '
-                                                           'среди всех '
-                                                           'предложенных',
-                                            'type': 'string'},
-                              'pair_1': {'additionalProperties': False,
-                                         'properties': {'best_pair': {'description': 'Если '
-                                                                                     'эта '
-                                                                                     'пара '
-                                                                                     'средств '
-                                                                                     'выбрана '
-                                                                                     'как '
-                                                                                     'лучшая '
-                                                                                     'среди '
-                                                                                     'всех '
-                                                                                     'пар, '
-                                                                                     'поставь '
-                                                                                     'здесь '
-                                                                                     'True; '
-                                                                                     'если '
-                                                                                     'нет '
-                                                                                     '— '
-                                                                                     'False',
-                                                                      'type': 'boolean'},
-                                                        'product_1': {'description': 'Название '
-                                                                                     'средства '
-                                                                                     '№1 '
-                                                                                     'из '
-                                                                                     'пары '
-                                                                                     '№1',
-                                                                      'type': 'string'},
-                                                        'product_2': {'description': 'Название '
-                                                                                     'средства '
-                                                                                     '№2 '
-                                                                                     'из '
-                                                                                     'пары '
-                                                                                     '№1',
-                                                                      'type': 'string'},
-                                                        'result': {'description': 'Объяснение, '
-                                                                                  'почему '
-                                                                                  'эта '
-                                                                                  'пара '
-                                                                                  'выбрана '
-                                                                                  'как '
-                                                                                  'лучшая '
-                                                                                  'или '
-                                                                                  'почему '
-                                                                                  'нет',
-                                                                   'type': 'string'},
-                                                        'title': {'description': 'Названия '
-                                                                                 'двух '
-                                                                                 'средств '
-                                                                                 'из '
-                                                                                 'пары '
-                                                                                 '№1, '
-                                                                                 'перечисленные '
-                                                                                 'через '
-                                                                                 'запятую',
-                                                                  'type': 'string'}},
-                                         'required': ['title',
-                                                      'result',
-                                                      'best_pair'],
-                                         'type': 'object'},
-                              'pair_2': {'additionalProperties': False,
-                                         'properties': {'best_pair': {'description': 'Если '
-                                                                                     'эта '
-                                                                                     'пара '
-                                                                                     'средств '
-                                                                                     'выбрана '
-                                                                                     'как '
-                                                                                     'лучшая '
-                                                                                     'среди '
-                                                                                     'всех '
-                                                                                     'пар, '
-                                                                                     'поставь '
-                                                                                     'здесь '
-                                                                                     'True; '
-                                                                                     'если '
-                                                                                     'нет '
-                                                                                     '— '
-                                                                                     'False',
-                                                                      'type': 'boolean'},
-                                                        'product_1': {'description': 'Название '
-                                                                                     'средства '
-                                                                                     '№1 '
-                                                                                     'из '
-                                                                                     'пары '
-                                                                                     '№2',
-                                                                      'type': 'string'},
-                                                        'product_2': {'description': 'Название '
-                                                                                     'средства '
-                                                                                     '№2 '
-                                                                                     'из '
-                                                                                     'пары '
-                                                                                     '№2',
-                                                                      'type': 'string'},
-                                                        'result': {'description': 'Объяснение, '
-                                                                                  'почему '
-                                                                                  'эта '
-                                                                                  'пара '
-                                                                                  'выбрана '
-                                                                                  'как '
-                                                                                  'лучшая '
-                                                                                  'или '
-                                                                                  'почему '
-                                                                                  'нет',
-                                                                   'type': 'string'},
-                                                        'title': {'description': 'Названия '
-                                                                                 'двух '
-                                                                                 'средств '
-                                                                                 'из '
-                                                                                 'пары '
-                                                                                 '№2, '
-                                                                                 'перечисленные '
-                                                                                 'через '
-                                                                                 'запятую',
-                                                                  'type': 'string'}},
-                                         'required': ['title',
-                                                      'result',
-                                                      'best_pair'],
-                                         'type': 'object'},
-                              'result': {'description': 'Итоговая рекомендация по '
-                                                        'лучшей паре, вывод',
-                                         'type': 'string'}},
-               'required': ['best_pair', 'result', 'pair_1', 'pair_2'],
-               'type': 'object'},
+    'schema': {
+        'additionalProperties': False,
+        'properties': {'best_set': {'description': 'Названия средств '
+                                                   'внутри набора, который '
+                                                   'считается лучшим среди '
+                                                   'всех предложенных.',
+                                    'type': 'string'},
+                       'result': {'description': 'Итоговая рекомендация по '
+                                                 'лучшему набору, вывод',
+                                  'type': 'string'},
+                       'set_1': {'additionalProperties': False,
+                                 'properties': {'best_set': {'description': 'Если '
+                                                                            'этот '
+                                                                            'набор '
+                                                                            'выбран '
+                                                                            'как '
+                                                                            'лучший '
+                                                                            'среди '
+                                                                            'всех, '
+                                                                            'поставь '
+                                                                            'True; '
+                                                                            'если '
+                                                                            'нет '
+                                                                            '— '
+                                                                            'False',
+                                                             'type': 'boolean'},
+                                                'product_1': {'description': 'Название '
+                                                                             'средства '
+                                                                             '№1 '
+                                                                             'из '
+                                                                             'набора '
+                                                                             '№1',
+                                                              'type': 'string'},
+                                                'product_2': {'description': 'Название '
+                                                                             'средства '
+                                                                             '№2 '
+                                                                             'из '
+                                                                             'набора '
+                                                                             '№1',
+                                                              'type': 'string'},
+                                                'result': {'description': 'Объяснение, '
+                                                                          'почему '
+                                                                          'этот '
+                                                                          'набор '
+                                                                          'выбран '
+                                                                          'как '
+                                                                          'лучший, '
+                                                                          'или '
+                                                                          'почему '
+                                                                          'он '
+                                                                          'не '
+                                                                          'выбран',
+                                                           'type': 'string'},
+                                                'title': {'description': 'Названия '
+                                                                         'всех '
+                                                                         'средств '
+                                                                         'из '
+                                                                         'набора '
+                                                                         '№1, '
+                                                                         'перечисленные '
+                                                                         'через '
+                                                                         'запятую',
+                                                          'type': 'string'}},
+                                 'required': ['title',
+                                              'result',
+                                              'best_set',
+                                              'product_1',
+                                              'product_2'],
+                                 'type': 'object'},
+                       'set_2': {'additionalProperties': False,
+                                 'properties': {'best_set': {'description': 'Если '
+                                                                            'этот '
+                                                                            'набор '
+                                                                            'выбран '
+                                                                            'как '
+                                                                            'лучший '
+                                                                            'среди '
+                                                                            'всех, '
+                                                                            'поставь '
+                                                                            'True; '
+                                                                            'если '
+                                                                            'нет '
+                                                                            '— '
+                                                                            'False',
+                                                             'type': 'boolean'},
+                                                'product_1': {'description': 'Название '
+                                                                             'средства '
+                                                                             '№1 '
+                                                                             'из '
+                                                                             'набора '
+                                                                             '№2',
+                                                              'type': 'string'},
+                                                'product_2': {'description': 'Название '
+                                                                             'средства '
+                                                                             '№2 '
+                                                                             'из '
+                                                                             'набора '
+                                                                             '№2',
+                                                              'type': 'string'},
+                                                'result': {'description': 'Объяснение, '
+                                                                          'почему '
+                                                                          'этот '
+                                                                          'набор '
+                                                                          'выбран '
+                                                                          'как '
+                                                                          'лучший, '
+                                                                          'или '
+                                                                          'почему '
+                                                                          'он '
+                                                                          'не '
+                                                                          'выбран',
+                                                           'type': 'string'},
+                                                'title': {'description': 'Названия '
+                                                                         'всех '
+                                                                         'средств '
+                                                                         'из '
+                                                                         'набора '
+                                                                         '№2, '
+                                                                         'перечисленные '
+                                                                         'через '
+                                                                         'запятую',
+                                                          'type': 'string'}},
+                                 'required': ['title',
+                                              'result',
+                                              'best_set',
+                                              'product_1',
+                                              'product_2'],
+                                 'type': 'object'}},
+        'required': ['best_set', 'result', 'set_1', 'set_2'],
+        'type': 'object'},
     'strict': True}

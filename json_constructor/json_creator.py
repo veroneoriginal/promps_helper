@@ -324,10 +324,14 @@ class JsonCreator:
             self,
     ) -> dict:
         """
-        Метод для динамического формирования json-схемы для кода задачи 'Лучшая пара'
+        Метод для динамического формирования json-схемы для кода задачи 'Лучший набор'
 
-        :return: json-схема для заданного количества пар
+        :return: json-схема для заданного количества наборов и средств внутри наборов
         """
+
+        num_sets = self.data_collection.get("Количество наборов", 0)
+        num_products_per_set = self.data_collection.get("Количество средств в наборе", 0)
+
         schema = {
             "name": "cosmetics_analysis",
             "strict": True,
@@ -350,48 +354,57 @@ class JsonCreator:
             }
         }
 
-        # Добавляем продукты динамически
-        products = {}
-        for i in range(1, self.data_collection["Количество пар"] + 1):
-            product_key = f"pair_{i}"
-            products[product_key] = {
-                "type": "object",
-                "properties": {
-                    "title": {
-                        "type": "string",
-                        "description":
-                            f"Названия средств из набора №{i}, перечисленные через запятую"
-                    },
-                    "result": {
-                        "type": "string",
-                        "description":
-                            "Объяснение, почему этот набор выбран как лучший, или почему он не выбран"
-                    },
-                    "product_1": {
-                        "type": "string",
-                        "description":
-                            f"Название средства №1 из пары №{i}"
-                    },
-                    "product_2": {
-                        "type": "string",
-                        "description":
-                            f"Название средства №2 из пары №{i}"
-                    },
-                    "best_pair": {
-                        "type": "boolean",
-                        "description": "Если эта пара средств выбрана как лучшая среди всех пар,"
-                                       " поставь здесь True; если нет — False"
+        # Генерируем схемы для каждого набора
+        for i in range(1, num_sets + 1):
+            set_key = f"set_{i}"
 
-                    }
+            # Создаем словарь для описания всех средств внутри текущего набора
+            product_properties = {}
+
+            # Проходимся по каждому средству внутри набора
+            for j in range(1, num_products_per_set + 1):
+                # Формируем ключ для средства, например: product_1, product_2, и т.д.
+                product_key = f"product_{j}"
+
+                # Описываем свойства каждого средства
+                product_properties[product_key] = {
+                    "type": "string",
+                    "description": f"Название средства №{j} из набора №{i}"
+                }
+
+            # Добавляем стандартные поля
+            set_properties = {
+                "title": {
+                    "type": "string",
+                    "description": f"Названия всех средств из набора №{i},"
+                                   f" перечисленные через запятую"
                 },
-                "required": ["title", "result", "best_pair"],
+                "result": {
+                    "type": "string",
+                    "description": "Объяснение, почему этот набор выбран как лучший,"
+                                   " или почему он не выбран"
+                },
+                "best_set": {
+                    "type": "boolean",
+                    "description": "Если этот набор выбран как лучший среди всех,"
+                                   " поставь True; если нет — False"
+                }
+            }
+
+            # Объединяем поля
+            set_properties.update(product_properties)
+
+            # Формируем список обязательных полей
+            required_fields = ["title", "result", "best_set"] + list(product_properties.keys())
+
+            schema["schema"]["properties"][set_key] = {
+                "type": "object",
+                "properties": set_properties,
+                "required": required_fields,
                 "additionalProperties": False
             }
 
-        # Добавляем продукты в свойства схемы
-        schema["schema"]["properties"].update(products)
-
-        # Добавляем продукты в список `required`
-        schema["schema"]["required"].extend(products.keys())
+            # Обязательно требуем наличие ключа для этого набора
+            schema["schema"]["required"].append(set_key)
 
         return schema

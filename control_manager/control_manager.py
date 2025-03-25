@@ -1,4 +1,4 @@
-# pylint: skip-file
+
 """
 В этом модуле - класс, управляющий логикой всего проекта
 """
@@ -6,7 +6,7 @@
 import os
 from pathlib import Path
 
-from pprint import pprint
+# from pprint import pprint
 
 from dotenv import load_dotenv
 from appeal_to_openai.main import main as appeal_to_openai_main
@@ -259,37 +259,40 @@ class ControlManager:
         # захожу в "Подборки" и считаю сколько подборок не заполнено
         count_collection = self._get_count_collections(file_path_collection)
 
-        # for _ in range(count_collection):
-        # формирую словарь с подборкой
-        data_collection = self._take_data_from_collection(
-            file_path_collection=file_path_collection,
-            checking_unique=checking_unique,
-        )
+        for _ in range(count_collection):
+            # формирую словарь с подборкой
+            data_collection = self._take_data_from_collection(
+                file_path_collection=file_path_collection,
+                checking_unique=checking_unique,
+            )
 
-        # определяю json-схему
-        json_scheme = get_json_scheme(
-            data_collection=data_collection,
-            product_categories=self.param_dif_products_categories,
-        )
+            # определяю json-схему
+            json_scheme = get_json_scheme(
+                data_collection=data_collection,
+                product_categories=self.param_dif_products_categories,
+            )
 
-        # формирую пути для сохранения данных и создаю нужные папки
-        self.paths_to_folders = DirsConstructor(
-            base_output_folder_path=path_to_output_folder,
-            data_collection=data_collection,
-        ).get_output_folders()
+            # формирую пути для сохранения данных и создаю нужные папки
+            self.paths_to_folders = DirsConstructor(
+                base_output_folder_path=path_to_output_folder,
+                data_collection=data_collection,
+            ).get_output_folders()
 
-        # cобираю промпт
-        prompt = get_prompt(
-            data_tools=data_tools,
-            data_collection=data_collection,
-        )
+            # cобираю промпт
+            prompt = get_prompt(
+                data_tools=data_tools,
+                data_collection=data_collection,
+            )
 
-        print('Отправка запроса в OpenAI.')
-        file_path_to_saving_json = self._create_context_for_request_to_openai(
-            prompt_for_convert=prompt,
-            json_scheme=json_scheme,
-            folder_name=self.paths_to_folders["00_source_02_answer_gpt"],
-        )
+            print('Отправка запроса в OpenAI.')
+            # pylint: disable=W0612 unused-variable
+            file_path_to_saving_json = self._create_context_for_request_to_openai(
+                prompt_for_convert=prompt,
+                json_scheme=json_scheme,
+                folder_name=self.paths_to_folders["00_source_02_answer_gpt"],
+            )
+            print('Смотрите ответ от OPENAI\n')
+
 
         # # file_path_to_saving_json будет содержать в себе
         # # 00_base/00_info_for_post/01_03_25/1_Шампуни/answer_gpt/Анализ_средств.json

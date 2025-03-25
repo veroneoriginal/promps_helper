@@ -3,7 +3,6 @@
 """
 
 import unittest
-# from pprint import pprint
 
 from json_constructor.json_creator import JsonCreator
 from json_constructor.json_processing_data import JsonProcessingData
@@ -252,8 +251,6 @@ class TestJsonScheme(unittest.TestCase):
         )
 
         actual_schema = json_creator.get_json_scheme_for_distribution_on_task()
-        # print('работаем из теста')
-        # pprint(actual_schema)
 
         # Проверка, что схема совпадает с ожидаемой
         self.assertEqual(
@@ -273,19 +270,19 @@ class TestJsonScheme(unittest.TestCase):
             'Запрос': 'ЗВ8, ЗВ12',
             'Итог': None,
             'Категория': 'Шампуни',
-            'Количество пар': 2,
-            'Лучший вариант': None,
+            'Количество наборов': 2,
+            'Количество средств в наборе': 2,
+            'Лучший вариант': 'не работает, ошибка в json схеме',
             'Пол': 'женский',
             'Специалист': 'Т',
-            'Средства': {
-                'Пара_1': {'Средство_1': 'ALTEREGO ITALY Curego Hydraday',
-                           'Средство_2': 'ALTEREGO ITALY Curego Hydraday'},
-                'Пара_2': {'Средство_1': 'ALTEREGO ITALY Curego Hydraday',
-                           'Средство_2': 'ALTEREGO ITALY Curego Hydraday'},
-            },
+            'Средства': {'Набор_1': {'Средство_1': 'R+CO Dallas Biotin Thickening Shampoo',
+                                     'Средство_2': 'R+CO TELEVISION Perfect Hair Masque'},
+                         'Набор_2': {'Средство_1': 'R+CO Atlantis Moisturizing B5 Shampoo',
+                                     'Средство_2': 'R+CO Television Perfect Hair '
+                                                   'Conditioner'}},
             'Тип': 'В1, В10',
-            'Хеш': '1961938df56f42e4cd8a467ad1b87ab1b556f9bc3f022fb6a1a8919889cd5292',
-        }
+            'Хеш': 'cfc392bfd045eb548d8989bb96c1ac57385a16a804291d38f93415ac1ae340d1'}
+
         # product_categories можно пустым (если в этой логике не участвует)
         product_categories = {}
 
