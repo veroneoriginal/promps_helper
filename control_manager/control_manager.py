@@ -6,8 +6,6 @@
 import os
 from pathlib import Path
 
-# from pprint import pprint
-
 from dotenv import load_dotenv
 from appeal_to_openai.main import main as appeal_to_openai_main
 from appeal_to_openai.utils import checking_file_with_response

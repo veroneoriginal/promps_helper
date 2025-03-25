@@ -197,7 +197,7 @@ class PromptProcessingData:
     ) -> str:
         """
         Метод для расшифровки данных из блока Средства для кода задачи
-        'Лучшее средство' и 'Лучшее средство без канцерогенов'
+        'Лучшее средство', 'Лучшее средство без канцерогенов', 'Лучшее сочетание'
 
         :param data: словарь со всеми данными
         :param data_collection: словарь с подборкой
@@ -332,13 +332,6 @@ class PromptProcessingData:
             data_collection=data_collection,
             key_for_decrypted="Средства",
         )
-
-        if "Исходное средство" in data_collection:
-            data_collection["Исходное средство"] = self.decrypting_origin_product_info(
-                data=data_tools,
-                data_collection=data_collection,
-                key_for_decrypted="Средства",
-            )
 
         # расшифровка данных по ключу Тип
         data_collection['Тип'] = self._decrypting_data_from_cell(

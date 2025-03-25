@@ -75,7 +75,6 @@ class JsonProcessingData:
         :return: словарь с текущей подборкой добавленным ключом 'Исходное средство'
         """
 
-        data_collection['Исходное средство'] = data_collection['Средства'].pop('Исходное средство')
         data_collection['Количество средств'] = len(data_collection['Средства'])
 
         return data_collection
