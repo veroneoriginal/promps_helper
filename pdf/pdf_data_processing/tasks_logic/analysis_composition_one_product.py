@@ -1,3 +1,6 @@
+# pylint: disable=C0301 line-too-long
+# pylint: disable=E0611 no-name-in-module
+
 from pathlib import Path
 
 from pdf.pdf_data_processing.tasks_utils import (

@@ -1,3 +1,4 @@
+# pylint: disable=C0301: line-too-long
 import unittest
 
 from pdf.main import create_pdf

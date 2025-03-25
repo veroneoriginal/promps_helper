@@ -1,7 +1,12 @@
+# pylint: disable=C0301 line-too-long
+# pylint: disable=E0611 no-name-in-module
 import unittest
 
-from pdf.pdf_data_processing.tasks_utils import calculate_price_per_standard_unit, calc_base_price_ratio
-from pdf.tests.data_example import TEST_BEST_PRODUCT_INFO_DATA
+from pdf.pdf_data_processing.tasks_utils import (
+    calculate_price_per_standard_unit,
+    calc_base_price_ratio,
+)
+from pdf.tests.tests_best_product.data_example import TEST_BEST_PRODUCT_INFO_DATA
 
 
 class TestTasksUtils(unittest.TestCase):

@@ -1,4 +1,5 @@
 from pathlib import Path
+from types import MappingProxyType
 
 from source.pdf_structure_mapping import get_pdf_structure
 from source.structure_for_products import MAPPING_KEYS
@@ -137,7 +138,8 @@ def calculate_price_per_standard_unit(
         price_rub: int | float,
 ) -> str:
     """
-    Рассчитывает стоимость за стандартный объем (100 или 50) в зависимости от количества и единицы измерения.
+    Рассчитывает стоимость за стандартный объем (100 или 50) в зависимости
+    от количества и единицы измерения.
 
     :param quantity: Количество меры (например, 250, 50, 2)
     :param unit: Юниты меры (например, "мл", "гр", "л")
@@ -173,7 +175,7 @@ def calculate_price_per_standard_unit(
 
 def mapping_keys_to_rus(
         data: dict,
-        mapping: dict = MAPPING_KEYS,
+        mapping:  MappingProxyType = MAPPING_KEYS,
 ) -> dict:
     """
     Заменяет ключи в словаре `data` на русские аналоги из `mapping`, если они есть.

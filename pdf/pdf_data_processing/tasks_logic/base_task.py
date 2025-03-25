@@ -1,8 +1,16 @@
+# pylint: disable=E0611: no-name-in-module
 from copy import deepcopy
 from pathlib import Path
 
-from pdf.pdf_data_processing.tasks_utils import calc_base_price_ratio, get_brand_line_sizes, format_product_filename, \
-    get_pdf_doc_sizes, get_pdf_flowables, get_pdf_page_templates, mapping_keys_to_rus
+from pdf.pdf_data_processing.tasks_utils import (
+    calc_base_price_ratio,
+    get_brand_line_sizes,
+    format_product_filename,
+    get_pdf_doc_sizes,
+    get_pdf_flowables,
+    get_pdf_page_templates,
+    mapping_keys_to_rus,
+)
 
 
 def process_products_common(

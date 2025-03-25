@@ -1,11 +1,8 @@
 # pylint: disable=E0611: no-name-in-module
-from copy import deepcopy
 from pathlib import Path
 
-from pdf.pdf_data_processing.tasks_logic.base_task import _get_base_info_by_product
 from pdf.pdf_data_processing.tasks_utils import (
     get_brand_line_path,
-    mapping_keys_to_rus,
 )
 
 
@@ -34,6 +31,7 @@ def best_product_get_brand_line_path(
     )
 
 
+# pylint: disable=W0613 unused-argument
 def best_product_task_main(
         collection_data: dict,
         info_data: dict,
@@ -61,4 +59,3 @@ def best_product_task_main(
         )
         )
     }
-

@@ -1,7 +1,7 @@
 import unittest
 
 from pdf.creator_logic.main import PDFCreator
-from pdf.tests.data_example import TEST_BEST_PRODUCT_EXPECTED_RESULT_BEST_PRODUCT
+from pdf.tests.tests_best_product.data_example import TEST_BEST_PRODUCT_EXPECTED_RESULT_BEST_PRODUCT
 
 
 class TestPDFCreator(unittest.TestCase):
