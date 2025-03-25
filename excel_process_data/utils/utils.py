@@ -209,7 +209,7 @@ def counting_hash(
 
     list_for_hash = []
     for key, value in data_copy.items():
-        if key not in ("Содержимое", "Лучший вариант", "Итог", "Хеш"):
+        if key not in ("Содержимое", "Лучший вариант", "Путь", "Хеш"):
             if isinstance(value, (list, tuple)):
                 list_for_hash.extend(value)  # Разворачиваем список или кортеж
             else:

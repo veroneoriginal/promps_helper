@@ -63,6 +63,9 @@ class DirsConstructor:
         # Создаем папки для соц.сетей и их внутренние папки с категориями
         self._create_subfolders()
 
+        # Добавляем общий путь к подборке
+        self.paths_to_folders['folder_path'] = str(category_folder)
+
         return self.paths_to_folders
 
     def _create_timestamped_folder(
