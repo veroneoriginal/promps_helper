@@ -3,10 +3,6 @@ import copy
 import hashlib
 
 import re
-import datetime
-
-
-from typing import Optional
 from openpyxl.worksheet.worksheet import Worksheet
 
 
@@ -31,37 +27,6 @@ def extract_text(
         return f"{data.get(main_key, '')}. {data.get(description_key, '')}".strip()
 
     return str(data)
-
-
-def find_target_row_for_today_and_full_best_product(
-        sheet: Worksheet,
-        today_data: str,
-        headers: dict,
-) -> Optional[int] | None:
-    """
-    Функция определяет строку для вставки средств по текущей дате
-    и свободной ячейке в столбце "Лучшее средство"
-
-    :param sheet: активный лист из excel-документа
-    :param headers: словарь с заголовками и нумерацией
-    :param today_data: текущая дата
-
-    :return: номер строки, в которую будет осуществляться запись
-    """
-
-    # Перебираем строки с конца
-    for row in range(sheet.max_row, 1, -1):
-        date_cell = sheet.cell(row=row, column=headers["Дата"]).value
-        best_product = sheet.cell(row=row, column=headers["Лучшее средство"]).value
-
-        if date_cell and best_product:
-            if isinstance(date_cell, datetime.datetime):
-                date_cell = date_cell.strftime("%d.%m.%Y")
-
-            if date_cell == today_data:
-                return row
-
-    raise ValueError("Нет строки с сегодняшней датой и заполненным 'Лучшее средство'.")
 
 
 def find_amount_funds(
@@ -209,7 +174,7 @@ def counting_hash(
 
     list_for_hash = []
     for key, value in data_copy.items():
-        if key not in ("Содержимое", "Лучший вариант", "Итог", "Хеш"):
+        if key not in ("Содержимое", "Лучший вариант", "Путь", "Хеш"):
             if isinstance(value, (list, tuple)):
                 list_for_hash.extend(value)  # Разворачиваем список или кортеж
             else:

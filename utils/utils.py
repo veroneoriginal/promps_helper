@@ -1,5 +1,6 @@
 import os
 import shutil
+import json
 from pathlib import Path
 
 
@@ -35,60 +36,65 @@ def copy_jpg_files(
         shutil.copy2(source_path, dest_path)
 
 
-def transforming_dict_from_json_file(
-        data: dict,
-) -> dict:
+def save_to_json_file(
+        path_to_file: str,
+        what_save: dict,
+) -> None:
     """
-    Функция для формирования нового словаря со средствами на основе json-фaйла,
-    где ключами будут названия средств.
+    Метод для сохранения json-файлов
 
-    :param data: словарь, сформированный из json-фaйла
-    :return: словарь, в котором ключами являются названия средств
-    """
-
-    # формирую словарь со средствами из json-a, чтобы его дальше дополнить
-    transformed_dict = {}
-    print('transforming_dict_from_json_file')
-    print(data)
-    print()
-
-    # проходим по значениям json-словаря
-    for product_info in data.values():
-        # Извлекаем заголовок (название продукта)
-        title = product_info['title']
-
-        # Создаем новый словарь без ключа 'title'
-        product_data = {}
-        for key, value in product_info.items():
-            # Пропускаем ключ 'title'
-            if key != 'title':
-                # Добавляем остальные данные
-                product_data[key] = value
-
-            # Добавляем в новый словарь с ключом-названием
-            transformed_dict[title] = product_data
-
-    return transformed_dict
-
-
-def add_keys_from_another_dict_to_one_dict(
-        base_dict: dict,
-        transform_dict: dict,
-        list_keys: list,
-) -> dict:
-    """
-    Функция для дополнения одного словаря ключами из другого
-
-    :param base_dict: базовый словарь, из которого берем значения по ключам
-    :param transform_dict: словарь, который дополняем
-    :param list_keys: список ключей, которыми нужно дополнить transform_dict
-    :return: дополненный словарь
+    :param path_to_file: путь к файлу внутри папки, куда идет сохранение
+    :param what_save: объект сохранения (что сохраняем)
+    :return None: ничего не возвращает, просто сохраняет и всё
     """
 
-    for product_title, product_data in transform_dict.items():
-        # Перебираем только нужные ключи
-        for key in list_keys:
-            # Добавляем только нужные данные
-            product_data[key] = base_dict[product_title][key]
+    # Сохраняем JSON
+    with open(path_to_file, 'w', encoding='utf-8') as file:
+        json.dump(what_save, file, ensure_ascii=False, indent=4)
 
-    return transform_dict
+
+def save_dif_extension_to_file(
+        path_to_file: str,
+        what_save: str,
+) -> None:
+    """
+    Метод для сохранения файлов разного расширения
+
+    :param path_to_file: путь к файлу внутри папки, куда идет сохранение
+    :param what_save: объект сохранения (что сохраняем)
+    :return None: ничего не возвращает, просто сохраняет и всё
+    """
+
+    with open(path_to_file, 'w', encoding='utf-8') as file:
+        file.write(what_save)
+
+
+def save_file_in_process_work(
+        what_save: dict | str,
+        path_to_folder: str,
+        file_name: str,
+        file_extension: str,
+) -> None:
+    """
+    Метод для сохранения json-схемы / промпта или чего-то еще
+
+    :param what_save: объект, который нужно сохранить
+    :param path_to_folder: путь к нужной папке из словаря с путями
+    :param file_name: название файла, в который сохраняем инфу
+    :param file_extension: расширение файла, в котором сохраняется информация
+    :return: None
+    """
+
+    # Создаём путь к файлу внутри этой папки
+    path_to_file = os.path.join(path_to_folder, f'{file_name}{file_extension}')
+
+    if file_extension == ".json":
+        save_to_json_file(
+            path_to_file=path_to_file,
+            what_save=what_save,
+        )
+    else:
+        save_dif_extension_to_file(
+            path_to_file=path_to_file,
+            what_save=what_save,
+        )

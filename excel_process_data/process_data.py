@@ -3,13 +3,7 @@
 и добавление данных из json в таблицу
 """
 
-import sys
 import ast
-
-from typing import (
-    Optional,
-    Any,
-)
 
 from openpyxl import load_workbook
 from openpyxl.utils import get_column_letter
@@ -249,20 +243,21 @@ class ExcelManager:
             ws_title: str = "Подборки",
     ) -> int:
         """
-        Метод для подсчитывания количества строк в таблице 'Подборки' с незаполненным полем 'Итог'.
+        Метод для подсчитывания количества строк в таблице 'Подборки'
+        с незаполненным полем 'Путь'.
 
         :param ws_title: название листа (по умолчанию "Подборки")
-        :return: количество строк с пустым полем 'Итог'
+        :return: количество строк с пустым полем 'Путь'
         """
         sheet = self.wb[ws_title]
         headers = self._create_dict_headers(sheet=sheet)
 
-        # Проверяем, есть ли столбец "Итог"
-        if "Итог" not in headers:
-            raise ValueError("В листе отсутствует столбец 'Итог'")
+        # Проверяем, есть ли столбец "Путь"
+        if "Путь" not in headers:
+            raise ValueError("В листе отсутствует столбец 'Путь'")
 
-        # Индекс столбца "Итог"
-        result_index = headers["Итог"]
+        # Индекс столбца "Путь"
+        result_index = headers["Путь"]
 
         # Счетчик пустых значений
         empty_count = 0
@@ -299,8 +294,8 @@ class ExcelManager:
         # Создание словаря заголовков
         headers = self._create_dict_headers(sheet=sheet)
 
-        # Индекс столбца "Итог"
-        result_index = headers["Итог"]
+        # Индекс столбца "Путь"
+        result_index = headers["Путь"]
 
         # Индекс столбца "Хеш"
         hash_column_index = headers["Хеш"]
@@ -352,10 +347,10 @@ class ExcelManager:
             result_index: int,
     ) -> int:
         """
-        Метод для поиска первой строки, где ячейка в столбце 'Итог' пустая.
+        Метод для поиска первой строки, где ячейка в столбце 'Путь' пустая.
 
         :param sheet: лист, с которого забирать информацию
-        :param result_index: индекс столбца итог
+        :param result_index: индекс столбца Путь
         :return: возвращаем индекс нужной строки
         """
         for row_index, row in enumerate(sheet.iter_rows(min_row=2, values_only=True), start=2):
@@ -363,7 +358,7 @@ class ExcelManager:
             # то not row[result_index] вернёт True
             if not row[result_index]:
                 return row_index
-        raise ValueError("Не найдена пустая ячейка в столбце 'Итог'")
+        raise ValueError("Не найдена пустая ячейка в столбце 'Путь'")
 
     def load_info_about_collection(
             self,
@@ -427,27 +422,20 @@ class ExcelManager:
             raise ValueError("Такая подборка уже существует.")
         return True  # то есть такой подборки еще нет
 
-    def update_excel_with_json(
+    def update_excel(
             self,
-            data: Optional[Any],
-            dict_with_hash: dict,
             file_path: str,
+            hash_current_collection: str,
+            file_path_current_collection: str,
     ) -> None:
         """
-        Метод для записи данных из json-файла с ответом OpenAI в
-        лист "Подборки" в итог текущей подборки
+        Метод для записи пути текущей подборки в лист "Подборки"
 
-        :param data: JSON-данные
-        :param dict_with_hash: словарь с текущей подборкой (для получения хеша)
         :param file_path: путь до документа Подборки.xlsx
+        :param hash_current_collection: хеш текущей подборки
+        :param file_path_current_collection: путь до папки с текущей подборкой
         :return: None
         """
-        print('зашли в update_excel_with_json')
-        print(f'{data=}')
-
-        if data is None:
-            print("⛔ Ошибка: JSON-файл пустой или некорректный. Останавливаю выполнение.")
-            sys.exit()
 
         # Загружаем существующий Excel-файл
         ws = self.wb["Подборки"]
@@ -456,22 +444,18 @@ class ExcelManager:
         headers = {cell.value: cell.column for cell in ws[1] if cell.value}
 
         # Определяем нужные столбцы
-        col_best_product = headers["Лучший вариант"]
-        col_recommendation = headers["Итог"]
+        col_recommendation = headers["Путь"]
         col_hash = headers["Хеш"]
-
-        # Берем хеш из словаря
-        hash_value = dict_with_hash["Хеш"]
 
         # Перебираем строки, начиная со 2-й (1-я — заголовки)
         for row in ws.iter_rows(min_row=2, max_row=ws.max_row, values_only=False):
-            cell_hash = row[col_hash - 1]  # -1, так как индексация с 0 в списке `row`
+            # -1, так как индексация с 0 в списке `row`
+            cell_hash = row[col_hash - 1]
 
-            if cell_hash.value == hash_value:
-                # print('строка по хешу найдена')
-                # Записываем "Лучший вариант" и "Итог" из JSON
-                row[col_best_product - 1].value = data.get("best_product", "")
-                row[col_recommendation - 1].value = data.get("result", "")
+            if cell_hash.value == hash_current_collection:
+
+                # Записываем путь до текущей подборки в ячейку столбца "ПУть"
+                row[col_recommendation - 1].value = file_path_current_collection
 
         # Сохраняем изменения
         self._save_wb(file_path=file_path)

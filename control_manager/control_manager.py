@@ -1,26 +1,23 @@
-
 """
 В этом модуле - класс, управляющий логикой всего проекта
 """
 
 import os
-from pathlib import Path
 
 from dotenv import load_dotenv
 from appeal_to_openai.main import main as appeal_to_openai_main
 from appeal_to_openai.utils import checking_file_with_response
 from dirs_structure_constructor.main import DirsConstructor
 from excel_process_data.process_data import ExcelManager
-from pdf.main import create_pdf
-from post_constructor.post_constructor import create_text_for_post
+
 from json_constructor.main import get_json_scheme
 from prompt_constructor.main import get_prompt
+from pdf.main import create_pdf
+from utils.utils import save_file_in_process_work
 
-# from utils.utils import (
-#     copy_jpg_files,
-#     transforming_dict_from_json_file,
-#     add_keys_from_another_dict_to_one_dict,
-# )
+
+# from post_constructor.post_constructor import create_text_for_post
+# from utils.utils import copy_jpg_files
 
 
 class ControlManager:
@@ -137,35 +134,31 @@ class ControlManager:
 
         return file_path_to_saving_json
 
-    def _reviewing_response_from_openai(
+    def save_path_current_collection_to_excel(
             self,
             file_path: str,
-            json_file_path: str,
-            dict_with_hash: dict,
+            file_path_current_collection: str,
+            hash_current_collection: str,
     ) -> None:
         """
-        Метод для разбора ответа от OpenAI.
+        Метод-обертка для сохранения пути до файлов текущей подборки
+        в excel-файл.
 
-        :param file_path: путь до документа Подборки.xlsx
-        :param json_file_path: путь до json-файла с анализом средств
-        :param dict_with_hash: словарь с текущей подборкой (для получения хеша)
+        :param file_path: путь до документа .xlsx, из которого мы работаем с подборками
+        :param file_path_current_collection: путь до папки с текущей подборкой
+        :param hash_current_collection: хеш текущей подборки
         :return: None
         """
 
-        # проверяю json-файл
-        data = checking_file_with_response(json_file_path=json_file_path)
-
-        # записываю в таблицу результат по анализу подборки
+        # записываю в таблицу путь до текущей подборки
         excel_manager = ExcelManager(file_path=file_path)
-        excel_manager.update_excel_with_json(
-            data=data,
-            dict_with_hash=dict_with_hash,
+        excel_manager.update_excel(
+            hash_current_collection=hash_current_collection,
             file_path=file_path,
+            file_path_current_collection=file_path_current_collection,
         )
-        print('Данные по анализу подборки записаны в excel')
 
-    # pylint: disable=R0913: too-many-arguments
-    # pylint: disable=R0917: too-many-positional-arguments
+    # pylint: disable=R0917 too-many-arguments
     def _create_pdf_jpg(
             self,
             collection_data: dict,
@@ -205,30 +198,30 @@ class ControlManager:
         #     where_copy_to=self.paths_to_folders['pinterest_jpg'],
         # )
 
-    def _forming_text_for_post(
-            self,
-            data: dict,
-            info_for_picture: dict,
-    ) -> None:
-        """
-        Метод для вызова функции по формированию текста для поста и его сохранение
-
-        :param data: словарь с данными о пользователе и косметических средствах
-        :param info_for_picture: словарь со средствами из подборки и итогом
-        :return: None
-        """
-
-        # формируем текст для поста из нужных данных
-        full_info = create_text_for_post(
-            data=data,
-            info_for_picture=info_for_picture
-        )
-
-        # Добавляем имя файла к пути
-        output_file = Path(self.paths_to_folders["telegram_text"]) / "text_for_post.md"
-
-        with open(output_file, "w", encoding="utf-8") as file:
-            file.write(full_info)
+    # def _forming_text_for_post(
+    #         self,
+    #         data: dict,
+    #         info_for_picture: dict,
+    # ) -> None:
+    #     """
+    #     Метод для вызова функции по формированию текста для поста и его сохранение
+    #
+    #     :param data: словарь с данными о пользователе и косметических средствах
+    #     :param info_for_picture: словарь со средствами из подборки и итогом
+    #     :return: None
+    #     """
+    #
+    #     # формируем текст для поста из нужных данных
+    #     full_info = create_text_for_post(
+    #         data=data,
+    #         info_for_picture=info_for_picture
+    #     )
+    #
+    #     # Добавляем имя файла к пути
+    #     output_file = Path(self.paths_to_folders["telegram_text"]) / "text_for_post.md"
+    #
+    #     with open(output_file, "w", encoding="utf-8") as file:
+    #         file.write(full_info)
 
     def create_collection(
             self,
@@ -249,68 +242,79 @@ class ControlManager:
         :return: None
         """
 
-        # забираю все данные из таблицы "Средства", "Тип", "Запрос" и т.д.
+        # Забираю все данные из таблицы "Средства", "Тип", "Запрос" и т.д.
         data_tools = self._take_data_from_table_tool(
             file_path_tools_table=file_path_tools,
         )
 
-        # захожу в "Подборки" и считаю сколько подборок не заполнено
+        # Захожу в "Подборки" и считаю сколько подборок не заполнено
         count_collection = self._get_count_collections(file_path_collection)
 
         for _ in range(count_collection):
-            # формирую словарь с подборкой
+            # Формирую словарь с подборкой
             data_collection = self._take_data_from_collection(
                 file_path_collection=file_path_collection,
                 checking_unique=checking_unique,
             )
 
-            # определяю json-схему
-            json_scheme = get_json_scheme(
-                data_collection=data_collection,
-                product_categories=self.param_dif_products_categories,
-            )
-
-            # формирую пути для сохранения данных и создаю нужные папки
+            # Формирую пути для сохранения данных и создаю нужные папки
             self.paths_to_folders = DirsConstructor(
                 base_output_folder_path=path_to_output_folder,
                 data_collection=data_collection,
             ).get_output_folders()
 
-            # cобираю промпт
+            # Определяю json-схему
+            json_scheme = get_json_scheme(
+                data_collection=data_collection,
+                product_categories=self.param_dif_products_categories,
+            )
+
+            # Сохраняем json-схему в папку
+            save_file_in_process_work(
+                what_save=json_scheme,
+                path_to_folder=self.paths_to_folders['00_source_00_json_scheme'],
+                file_name='json_scheme',
+                file_extension='.json',
+            )
+
+            # Собираю промпт
             prompt = get_prompt(
                 data_tools=data_tools,
                 data_collection=data_collection,
             )
 
-            print('Отправка запроса в OpenAI.')
-            # pylint: disable=W0612 unused-variable
-            file_path_to_saving_json = self._create_context_for_request_to_openai(
-                prompt_for_convert=prompt,
-                json_scheme=json_scheme,
-                folder_name=self.paths_to_folders["00_source_02_answer_gpt"],
+            # Сохраняем prompt в папку
+            save_file_in_process_work(
+                what_save=prompt,
+                path_to_folder=self.paths_to_folders['00_source_01_prompt'],
+                file_name='prompt',
+                file_extension='.json',
             )
-            print('Смотрите ответ от OPENAI\n')
 
+            # print('Отправка запроса в OpenAI.')
+            # self._create_context_for_request_to_openai(
+            #     prompt_for_convert=prompt,
+            #     json_scheme=json_scheme,
+            #     folder_name=self.paths_to_folders["00_source_02_answer_gpt"],
+            # )
 
-        # # file_path_to_saving_json будет содержать в себе
-        # # 00_base/00_info_for_post/01_03_25/1_Шампуни/answer_gpt/Анализ_средств.json
-        # print('Разбор ответа от OpenAI.')
-        # self._reviewing_response_from_openai(
-        #     file_path=file_path_collection,
-        #     json_file_path=file_path_to_saving_json,
-        #     dict_with_hash=data_collection,
-        # )
+            print('Сохранение пути до текущей подборки в таблицу Excel в ячейку столбца Путь')
+            self.save_path_current_collection_to_excel(
+                file_path=file_path_collection,
+                file_path_current_collection=self.paths_to_folders['folder_path'],
+                hash_current_collection=data_collection["Хеш"],
+            )
 
-        # print('Создание PDF и изображений со средствами для постов в соц.сети.')
-        # self._create_pdf_jpg(
-        #     collection_data=data_collection,
-        #     info_data=data_tools,
-        #     selection_result=checking_file_with_response(
-        #         json_file_path=self.paths_to_folders["00_source_02_answer_gpt"]
-        #     ),
-        #     path_to_output_folder_pdf_file=self.paths_to_folders["00_source_03_pdf"],
-        #     path_to_output_folder_jpg_file=self.paths_to_folders["00_source_04_jpg"],
-        # )
+            print('Создание PDF и изображений со средствами для постов в соц.сети.')
+            self._create_pdf_jpg(
+                collection_data=data_collection,
+                info_data=data_tools,
+                selection_result=checking_file_with_response(
+                    json_file_path=self.paths_to_folders["00_source_02_answer_gpt"]
+                ),
+                path_to_output_folder_pdf_file=self.paths_to_folders["00_source_03_pdf"],
+                path_to_output_folder_jpg_file=self.paths_to_folders["00_source_04_jpg"],
+            )
 
         # # print('Готовлю текстовое оформление поста.')
         # # self._forming_text_for_post(data=data, info_for_picture=info_for_picture)

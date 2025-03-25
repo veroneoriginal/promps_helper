@@ -1,8 +1,5 @@
 import unittest
-import json
 from excel_process_data.utils.utils import counting_hash
-
-best_product = ''
 
 
 class TestUtils(unittest.TestCase):
@@ -17,26 +14,29 @@ class TestUtils(unittest.TestCase):
             'Возраст': 32,
             'Задача': 'Лучший набор',
             'Запрос': 'ЗВ8, ЗВ12',
-            'Итог': None,
             'Категория': 'Шампуни',
-            'Лучший вариант': None,
             'Пол': 'женский',
+            'Путь': None,
             'Специалист': 'Т',
-            'Средства': json.dumps(
-                {
-                    'Пара_1': {'Средство_1': 'ALTEREGO ITALY Curego Hydraday',
-                               'Средство_2': 'ALTEREGO ITALY Curego Hydraday'},
-                    'Пара_2': {'Средство_1': 'ALTEREGO ITALY Curego Hydraday',
-                               'Средство_2': 'ALTEREGO ITALY Curego Hydraday'},
-                }
-            ),
+            'Средства': '{\n'
+                        '«Набор_1» : \n'
+                        '{\n'
+                        '«Средство_1» : «R+CO Dallas Biotin Thickening Shampoo»,\n'
+                        '«Средство_2» : «R+CO TELEVISION Perfect Hair Masque»\n'
+                        '},\n'
+                        '«Набор_2» : \n'
+                        '{\n'
+                        '«Средство_1» : «R+CO Atlantis Moisturizing B5 Shampoo»,\n'
+                        '«Средство_2» : «R+CO Television Perfect Hair Conditioner»\n'
+                        '},\n'
+                        '}',
             'Тип': 'В1, В10',
-            'Хеш': '1961938df56f42e4cd8a467ad1b87ab1b556f9bc3f022fb6a1a8919889cd5292',
+            'Хеш': 'cfc392bfd045eb548d8989bb96c1ac57385a16a804291d38f93415ac1ae340d1'
         }
+
         expected_hash = best_set['Хеш']
 
         result_hash = counting_hash(data=best_set)
-
         # Проверяем, что результат совпадает с ожидаемым значением
         self.assertEqual(result_hash, expected_hash, 'Хеши не равны')
 
@@ -47,20 +47,24 @@ class TestUtils(unittest.TestCase):
         """
 
         best_products = {
+            'Возраст': 32,
+            'Задача': 'Лучшее средство',
+            'Запрос': 'ЗВ8, ЗВ12',
             'Категория': 'Шампуни',
             'Пол': 'женский',
-            'Возраст': 32,
-            'Тип': 'В1, В10',
-            'Запрос': 'ЗВ8, ЗВ12',
-            'Задача': 'Лучшее средство',
+            'Путь': None,
             'Специалист': 'Т',
-            'Средства':
-                '{\n«Средство_1» : «ALTEREGO ITALY Curego Hydraday»,\n'
-                '«Средство_2» : «OUSHEN Curl & shine shampoo»,\n'
-                '«Средство_3» : «NATURA SIBERICA Oblepikha»\n}',
-            'Лучший вариант': None,
-            'Итог': None,
-            'Хеш': '9fc07df0fc52279925506b22111b9c7e7672184318fb2259d2e5e28220a682e3'}
+            'Средства': '{\n'
+                        '«Средство_1» : «ALTEREGO ITALY Curego Hydraday»,\n'
+                        '«Средство_2» : «OUSHEN Curl & shine shampoo»,\n'
+                        '«Средство_3» : «NATURA SIBERICA Oblepikha»,\n'
+                        '«Средство_4» : «WELEDA Millet Nourishing»,\n'
+                        '«Средство_5» : «PAYOT Shampoing doux biome-friendly»,\n'
+                        '«Средство_6» : «LADOR Keratin LPP»\n'
+                        '}',
+            'Тип': 'В1, В10',
+            'Хеш': '77be47509a12d0b36ec98f0097eaf7d89dbe01a88d502baf567cdd0eacee74c3',
+        }
         expected_hash = best_products['Хеш']
 
         result_hash = counting_hash(data=best_products)
