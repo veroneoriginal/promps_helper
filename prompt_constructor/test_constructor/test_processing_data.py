@@ -1,4 +1,5 @@
 import unittest
+
 from prompt_constructor.prompt_processing_data import PromptProcessingData
 from prompt_constructor.test_constructor.constants import (
     best_set_decryped,
@@ -23,22 +24,19 @@ class TestProcessingData(unittest.TestCase):
             'Возраст': 32,
             'Задача': 'Лучший набор',
             'Запрос': 'ЗВ8, ЗВ12',
-            'Итог': None,
             'Категория': 'Шампуни',
-            'Количество пар': 2,
-            'Лучший вариант': None,
+            'Количество наборов': 2,
+            'Количество средств в наборе': 2,
             'Пол': 'женский',
+            'Путь': None,
             'Специалист': 'Т',
-            'Средства': {
-                'Пара_1':
-                    {'Средство_1': 'R+CO Dallas Biotin Thickening Shampoo',
-                     'Средство_2': 'R+CO TELEVISION Perfect Hair Masque'},
-                'Пара_2':
-                    {'Средство_1': 'R+CO Atlantis Moisturizing B5 Shampoo',
-                     'Средство_2': 'R+CO Television Perfect Hair Conditioner'}
-            },
+            'Средства': {'Набор_1': {'Средство_1': 'R+CO Dallas Biotin Thickening Shampoo',
+                                     'Средство_2': 'R+CO TELEVISION Perfect Hair Masque'},
+                         'Набор_2': {'Средство_1': 'R+CO Atlantis Moisturizing B5 Shampoo',
+                                     'Средство_2': 'R+CO Television Perfect Hair '
+                                                   'Conditioner'}},
             'Тип': 'В1, В10',
-            'Хеш': '18f0117c05399c5e88d3fa97931d4f0ec183260f09c49a0e6aabe61489efd544'}
+            'Хеш': 'cfc392bfd045eb548d8989bb96c1ac57385a16a804291d38f93415ac1ae340d1'}
 
         prompt_proces_data = PromptProcessingData(
             data_tools=data_tools,
@@ -52,7 +50,7 @@ class TestProcessingData(unittest.TestCase):
             key_for_decrypted='Средства',
         )
 
-        self.assertEqual(decrypted_products.strip(), best_set_decryped.strip())
+        self.assertEqual(decrypted_products, best_set_decryped)
 
     def test_decryption_key_best_prod(self):
         """

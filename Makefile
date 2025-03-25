@@ -24,10 +24,6 @@ class_test_pdf_main_utils:
 	pytest -s pdf/tests/test_utils.py::TestUtils
 
 
-one_test:
-	pytest -s /home/veronika/00_projects/promps_helper/utils/tests/test_utils.py::TestUtils
-
-
 excel_test:
 	pytest -s /home/veronika/00_projects/promps_helper/excel_process_data/utils/test/test_utils.py::TestUtils
 

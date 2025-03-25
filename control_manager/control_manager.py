@@ -3,24 +3,20 @@
 """
 
 import os
-from pathlib import Path
-
-import json
 
 from dotenv import load_dotenv
 from appeal_to_openai.main import main as appeal_to_openai_main
-
+from appeal_to_openai.utils import checking_file_with_response
 from dirs_structure_constructor.main import DirsConstructor
 from excel_process_data.process_data import ExcelManager
 
-from post_constructor.post_constructor import create_text_for_post
 from json_constructor.main import get_json_scheme
 from prompt_constructor.main import get_prompt
+from pdf.main import create_pdf
+from utils.utils import save_file_in_process_work
 
 
-# from pprint import pprint
-# from appeal_to_openai.utils import checking_file_with_response
-# from pdf.main import create_pdf
+# from post_constructor.post_constructor import create_text_for_post
 # from utils.utils import copy_jpg_files
 
 
@@ -162,91 +158,70 @@ class ControlManager:
             file_path_current_collection=file_path_current_collection,
         )
 
-    # def _create_pdf_jpg(
+    # pylint: disable=R0917 too-many-arguments
+    def _create_pdf_jpg(
+            self,
+            collection_data: dict,
+            info_data: dict,
+            selection_result: dict,
+            path_to_output_folder_pdf_file: str,
+            path_to_output_folder_jpg_file: str,
+    ) -> None:
+        """
+        Готовит PDF и изображения
+
+        :param collection_data: данные подборки
+        :param info_data: данные с всеми средствами, врачами и т.д.
+        :param selection_result: данные с результатом нейронки по подборке
+        :param path_to_output_folder_pdf_file: путь к папке для сохранения PDF-файлов
+        :param path_to_output_folder_jpg_file: путь к папке для сохранения JPG-файлов
+        :return: None
+        """
+
+        create_pdf(
+            collection_data=collection_data,
+            info_data=info_data,
+            selection_result=selection_result,
+            path_to_output_folder_pdf_file=path_to_output_folder_pdf_file,
+            path_to_output_folder_jpg_file=path_to_output_folder_jpg_file,
+        )
+
+        # # копируем файлы из папки telegram jpg в instagram jpg
+        # copy_jpg_files(
+        #     where_copy_from=paths_by_task[task_name]['jpg'],
+        #     where_copy_to=self.paths_to_folders['instagram_jpg'],
+        # )
+        #
+        # # копируем файлы из папки telegram jpg в pinterest jpg
+        # copy_jpg_files(
+        #     where_copy_from=paths_by_task[task_name]['jpg'],
+        #     where_copy_to=self.paths_to_folders['pinterest_jpg'],
+        # )
+
+    # def _forming_text_for_post(
     #         self,
-    #         collection_data: dict,
-    #         info_data: dict,
-    #         selection_result: dict,
-    #         path_to_output_folder_pdf_file: str,
-    #         path_to_output_folder_jpg_file: str,
+    #         data: dict,
+    #         info_for_picture: dict,
     # ) -> None:
     #     """
-    #     Готовит PDF и изображения
+    #     Метод для вызова функции по формированию текста для поста и его сохранение
     #
-    #     :param collection_data: данные подборки
-    #     :param info_data: данные с всеми средствами, врачами и т.д.
-    #     :param selection_result: данные с результатом нейронки по подборке
-    #     :param path_to_output_folder_pdf_file: путь к папке для сохранения PDF-файлов
-    #     :param path_to_output_folder_jpg_file: путь к папке для сохранения JPG-файлов
+    #     :param data: словарь с данными о пользователе и косметических средствах
+    #     :param info_for_picture: словарь со средствами из подборки и итогом
     #     :return: None
     #     """
     #
-    #     create_pdf(
-    #         collection_data=collection_data,
-    #         info_data=info_data,
-    #         selection_result=selection_result,
-    #         path_to_output_folder_pdf_file=path_to_output_folder_pdf_file,
-    #         path_to_output_folder_jpg_file=path_to_output_folder_jpg_file,
+    #     # формируем текст для поста из нужных данных
+    #     full_info = create_text_for_post(
+    #         data=data,
+    #         info_for_picture=info_for_picture
     #     )
     #
-    #     # копируем файлы из папки telegram jpg в instagram jpg
-    #     copy_jpg_files(
-    #         where_copy_from=paths_by_task[task_name]['jpg'],
-    #         where_copy_to=self.paths_to_folders['instagram_jpg'],
-    #     )
+    #     # Добавляем имя файла к пути
+    #     output_file = Path(self.paths_to_folders["telegram_text"]) / "text_for_post.md"
     #
-    #     # копируем файлы из папки telegram jpg в pinterest jpg
-    #     copy_jpg_files(
-    #         where_copy_from=paths_by_task[task_name]['jpg'],
-    #         where_copy_to=self.paths_to_folders['pinterest_jpg'],
-    #     )
-
-    def _forming_text_for_post(
-            self,
-            data: dict,
-            info_for_picture: dict,
-    ) -> None:
-        """
-        Метод для вызова функции по формированию текста для поста и его сохранение
-
-        :param data: словарь с данными о пользователе и косметических средствах
-        :param info_for_picture: словарь со средствами из подборки и итогом
-        :return: None
-        """
-
-        # формируем текст для поста из нужных данных
-        full_info = create_text_for_post(
-            data=data,
-            info_for_picture=info_for_picture
-        )
-
-        # Добавляем имя файла к пути
-        output_file = Path(self.paths_to_folders["telegram_text"]) / "text_for_post.md"
-
-        with open(output_file, "w", encoding="utf-8") as file:
-            file.write(full_info)
-
-    def save_file_in_process_work(
-            self,
-            what_save: dict,
-            path_to_folder: str,
-            file_name: str,
-    ) -> None:
-        """
-        Метод для сохранения json-схемы / промпта или чего-то еще
-
-        :param what_save: объект, который нужно сохранить в виде словаря
-        :param path_to_folder: путь к нужной папке из словаря
-        :param file_name: название для файла, в который сохраняем инфу
-        :return: None
-        """
-
-        # 1. Создаём путь к файлу внутри этой папки
-        path_to_object_save = os.path.join(path_to_folder, f'{file_name}.json')
-
-        # 3. Сохраняем JSON-схему в файл
-        with open(path_to_object_save, 'w', encoding='utf-8') as f:
-            json.dump(what_save, f, ensure_ascii=False, indent=4)
+    #     with open(output_file, "w", encoding="utf-8") as file:
+    #         file.write(full_info)
 
     def create_collection(
             self,
@@ -295,10 +270,11 @@ class ControlManager:
             )
 
             # Сохраняем json-схему в папку
-            self.save_file_in_process_work(
+            save_file_in_process_work(
                 what_save=json_scheme,
                 path_to_folder=self.paths_to_folders['00_source_00_json_scheme'],
                 file_name='json_scheme',
+                file_extension='.json',
             )
 
             # Собираю промпт
@@ -308,10 +284,11 @@ class ControlManager:
             )
 
             # Сохраняем prompt в папку
-            self.save_file_in_process_work(
+            save_file_in_process_work(
                 what_save=prompt,
                 path_to_folder=self.paths_to_folders['00_source_01_prompt'],
                 file_name='prompt',
+                file_extension='.json',
             )
 
             # print('Отправка запроса в OpenAI.')
@@ -328,16 +305,16 @@ class ControlManager:
                 hash_current_collection=data_collection["Хеш"],
             )
 
-            # print('Создание PDF и изображений со средствами для постов в соц.сети.')
-            # self._create_pdf_jpg(
-            #     collection_data=data_collection,
-            #     info_data=data_tools,
-            #     selection_result=checking_file_with_response(
-            #         json_file_path=self.paths_to_folders["00_source_02_answer_gpt"]
-            #     ),
-            #     path_to_output_folder_pdf_file=self.paths_to_folders["00_source_03_pdf"],
-            #     path_to_output_folder_jpg_file=self.paths_to_folders["00_source_04_jpg"],
-            # )
+            print('Создание PDF и изображений со средствами для постов в соц.сети.')
+            self._create_pdf_jpg(
+                collection_data=data_collection,
+                info_data=data_tools,
+                selection_result=checking_file_with_response(
+                    json_file_path=self.paths_to_folders["00_source_02_answer_gpt"]
+                ),
+                path_to_output_folder_pdf_file=self.paths_to_folders["00_source_03_pdf"],
+                path_to_output_folder_jpg_file=self.paths_to_folders["00_source_04_jpg"],
+            )
 
         # # print('Готовлю текстовое оформление поста.')
         # # self._forming_text_for_post(data=data, info_for_picture=info_for_picture)
