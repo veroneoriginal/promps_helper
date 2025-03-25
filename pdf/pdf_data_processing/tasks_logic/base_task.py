@@ -75,16 +75,17 @@ def _get_base_info_by_product(
     :param path_to_output_folder_pdf_file: путь к папке для сохранения pdf-файлов
 
     """
+    list_name = 'Средства'
 
     return {
         # одинаково для всех средств:
         'Название средства': product_name,
 
         'Количество мера / цена': calc_base_price_ratio(
-            info_data[product_name]
+            info_data[list_name][product_name]
         ),
         'Путь к изображению средства': Path(
-            info_data[product_name]['Ссылка на изображение в базе']),
+            info_data[list_name][product_name]['Ссылка на изображение в базе']),
         'Размеры бренд-линии': get_brand_line_sizes(
             task=collection_data['Задача'],
             category=collection_data['Категория'],
@@ -105,5 +106,5 @@ def _get_base_info_by_product(
             task=collection_data['Задача'],
             category=collection_data['Категория'],
         ),
-        'Тип продукта': info_data[product_name]['Тип продукта'],
+        'Тип продукта': info_data[list_name][product_name]['Тип продукта'],
     }

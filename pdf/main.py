@@ -1,4 +1,5 @@
 # pylint: disable=E0611: no-name-in-module
+import copy
 from pdf.creator_logic.creator.document_creator import PDFConverterToImage
 from pdf.creator_logic.main import PDFCreator
 from pdf.pdf_data_processing.main import PDFDataProcessor
@@ -23,24 +24,26 @@ def create_pdf(
     :return: None
     """
 
+    copy_data_collection = copy.deepcopy(collection_data)
+
     pdf_data_processor = PDFDataProcessor(
-        collection_data=collection_data,
+        collection_data=copy_data_collection,
         info_data=info_data,
         selection_result=selection_result,
         path_to_output_folder_pdf_file=path_to_output_folder_pdf_file,
     )
-    collection_data = pdf_data_processor.process_data_with_task_code()
+    copy_data_collection = pdf_data_processor.process_data_with_task_code()
 
     # Генерируем pdf и сохраняем по указанному в данных пути
     pdf_creator = PDFCreator(
-        collection_data=collection_data,
+        collection_data=copy_data_collection,
     )
     pdf_creator.create_pdf()
 
     # Получаем пути всех PDF-файлов, размеры для конвертации в изображения и
     # пути для сохранения в JPEG
     pdf_file_paths = _get_pdf_file_paths(
-        input_data=collection_data['Данные'],
+        input_data=copy_data_collection['Данные'],
         path_to_output_folder_jpg_file=path_to_output_folder_jpg_file,
     )
     # Конвертируем pdf в изображения

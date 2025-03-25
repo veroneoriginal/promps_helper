@@ -23,13 +23,13 @@ def get_prompt(
     # расшифровка данных текущей подборки с помощью таблицы со всеми средствами
     prompt_proces_data = PromptProcessingData(
         data_tools=data_tools,
-        data_collection=data_collection,
+        data_collection=copy_data_collection,
     )
 
     # получение словаря с полностью расшифрованными данными
     decrypted_collection = prompt_proces_data.main_decryp_data_from_current_collection(
         data_tools=data_tools,
-        data_collection=data_collection,
+        data_collection=copy_data_collection,
     )
 
     prompt_constructor = PromptConstructor()
@@ -37,5 +37,5 @@ def get_prompt(
     # получение промпта для текущей подборки
     return prompt_constructor.main_constructor_prompt(
         data_decrypted=decrypted_collection,
-        task=copy_data_collection['Задача'],
+        task=data_collection['Задача'],
     )

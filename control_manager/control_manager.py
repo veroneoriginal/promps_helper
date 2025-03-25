@@ -291,12 +291,12 @@ class ControlManager:
                 file_extension='.json',
             )
 
-            # print('Отправка запроса в OpenAI.')
-            # self._create_context_for_request_to_openai(
-            #     prompt_for_convert=prompt,
-            #     json_scheme=json_scheme,
-            #     folder_name=self.paths_to_folders["00_source_02_answer_gpt"],
-            # )
+            print('Отправка запроса в OpenAI.')
+            self._create_context_for_request_to_openai(
+                prompt_for_convert=prompt,
+                json_scheme=json_scheme,
+                folder_name=self.paths_to_folders["00_source_02_answer_gpt"],
+            )
 
             print('Сохранение пути до текущей подборки в таблицу Excel в ячейку столбца Путь')
             self.save_path_current_collection_to_excel(

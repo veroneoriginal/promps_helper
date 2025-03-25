@@ -45,7 +45,6 @@ class PDFCreator:
             templates = page_templates_builder.create_doc_templates(
                 templates_data=data['Шаблоны страниц с фреймами']
             )
-            print(f'{templates=}')
 
             # добавление шаблона страницы в документ
             doc.addPageTemplates(templates)

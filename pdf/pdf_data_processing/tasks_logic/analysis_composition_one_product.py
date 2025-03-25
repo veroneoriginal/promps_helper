@@ -25,15 +25,15 @@ def analysis_composition_one_product_task_main(
 
     :return: словарь с специфичными данными по средству по задаче
     """
-
+    product_data = info_data['Средства'][product_name]
     data = {
         'Плюсы': rus_product_data_dict['Плюсы'],
         'Минусы': rus_product_data_dict['Минусы'],
         'Текстура': rus_product_data_dict['Текстура'],
         'Соотношение цены': calculate_price_per_standard_unit(
-            quantity=info_data[product_name]['Количество меры (число)'],
-            unit=info_data[product_name]['Юниты меры (мл/шт)'],
-            price_rub=info_data[product_name]['Стоимость руб'],
+            quantity=product_data['Количество меры (число)'],
+            unit=product_data['Юниты меры (мл/шт)'],
+            price_rub=product_data['Стоимость руб'],
         ),
         'Основные компоненты': rus_product_data_dict['Основные компоненты'],
         'Активные компоненты': rus_product_data_dict['Активные компоненты'],

@@ -113,8 +113,6 @@ def get_characteristics(
 
     return characteristics
 
-    # ТУТ ОСТАНОВИЛСЯ
-
 
 def get_item_title_description(
         soup: Tag | NavigableString,

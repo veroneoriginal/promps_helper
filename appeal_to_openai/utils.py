@@ -6,6 +6,7 @@
 import os
 import re
 import json
+from pathlib import Path
 from typing import Literal, Optional, Any
 from openai import OpenAI
 from openai.types.chat import ChatCompletion
@@ -137,6 +138,8 @@ def checking_file_with_response(
     :param json_file_path: путь до файла с ответом OpenAI
     :return: JSON-данные или None
     """
+
+    json_file_path = Path(json_file_path) / 'Анализ_средств.json'
 
     with open(json_file_path, "r", encoding="utf-8") as file:
         try:
