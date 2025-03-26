@@ -9,14 +9,13 @@ from appeal_to_openai.main import main as appeal_to_openai_main
 from appeal_to_openai.utils import checking_file_with_response
 from dirs_structure_constructor.main import DirsConstructor
 from excel_process_data.process_data import ExcelManager
-
 from json_constructor.main import get_json_scheme
+from post_constructor.main_post import forming_text_for_post
 from prompt_constructor.main import get_prompt
 from pdf.main import create_pdf
 from utils.utils import save_file_in_process_work
 
 
-# from post_constructor.post_constructor import create_text_for_post
 # from utils.utils import copy_jpg_files
 
 
@@ -198,30 +197,6 @@ class ControlManager:
         #     where_copy_to=self.paths_to_folders['pinterest_jpg'],
         # )
 
-    # def _forming_text_for_post(
-    #         self,
-    #         data: dict,
-    #         info_for_picture: dict,
-    # ) -> None:
-    #     """
-    #     Метод для вызова функции по формированию текста для поста и его сохранение
-    #
-    #     :param data: словарь с данными о пользователе и косметических средствах
-    #     :param info_for_picture: словарь со средствами из подборки и итогом
-    #     :return: None
-    #     """
-    #
-    #     # формируем текст для поста из нужных данных
-    #     full_info = create_text_for_post(
-    #         data=data,
-    #         info_for_picture=info_for_picture
-    #     )
-    #
-    #     # Добавляем имя файла к пути
-    #     output_file = Path(self.paths_to_folders["telegram_text"]) / "text_for_post.md"
-    #
-    #     with open(output_file, "w", encoding="utf-8") as file:
-    #         file.write(full_info)
 
     def create_collection(
             self,
@@ -261,7 +236,9 @@ class ControlManager:
             self.paths_to_folders = DirsConstructor(
                 base_output_folder_path=path_to_output_folder,
                 data_collection=data_collection,
-            ).get_output_folders()
+            ).get_output_folders(
+                prefix = data_collection['Группа'],
+            )
 
             # Определяю json-схему
             json_scheme = get_json_scheme(
@@ -316,5 +293,12 @@ class ControlManager:
                 path_to_output_folder_jpg_file=self.paths_to_folders["00_source_04_jpg"],
             )
 
-        # # print('Готовлю текстовое оформление поста.')
-        # # self._forming_text_for_post(data=data, info_for_picture=info_for_picture)
+            print('Готовлю текстовое оформление поста.')
+            forming_text_for_post(
+                data_tools=data_tools,
+                data=data_collection,
+                path_to_result_recommend=self.paths_to_folders["00_source_02_answer_gpt"],
+                path_for_save=self.paths_to_folders['00_source_05_text'],
+            )
+
+            print(f"Подборка по коду '{data_collection['Задача']}' готова.\n")

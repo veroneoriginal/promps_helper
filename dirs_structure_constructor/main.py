@@ -28,10 +28,13 @@ class DirsConstructor:
         # формируемый словарь с путями
         self.paths_to_folders = {}
 
-    def get_output_folders(self) -> dict:
+    def get_output_folders(
+            self,
+            prefix: str,
+    ) -> dict:
         """
         Метод для создания папки для сохранения файлов.
-
+        :param prefix: используется в формировании названия папки
         :return: dict с путями
         """
 
@@ -55,6 +58,7 @@ class DirsConstructor:
             base_output_folder=base_output_folder,
             new_folder_number=new_folder_number,
             category=self.data_collection['Категория'],
+            prefix=prefix,
         )
 
         # Наполняем self.paths_to_folders путями до каждой конкретной папки
@@ -135,6 +139,7 @@ class DirsConstructor:
             base_output_folder: Path,
             new_folder_number: int,
             category: str,
+            prefix: str,
     ) -> Path:
         """
         Создаёт папку категории с именем, состоящим из номера и названия категории,
@@ -143,9 +148,10 @@ class DirsConstructor:
         :param base_output_folder: Базовая выходная папка, где будет создана новая папка
         :param new_folder_number: Номер новой папки
         :param category: Название категории
+        :param prefix: префикс - платная группа или бесплатная
         :return: Путь к созданной папке категории
         """
-        category_folder_name = f"{new_folder_number}_{category}"
+        category_folder_name = f"{new_folder_number}_{category}_{prefix}"
         category_folder = base_output_folder / category_folder_name
         category_folder.mkdir(exist_ok=True)
         return category_folder
