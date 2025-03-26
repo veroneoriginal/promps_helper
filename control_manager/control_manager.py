@@ -3,8 +3,6 @@
 """
 
 import os
-from pprint import pprint
-
 from dotenv import load_dotenv
 from appeal_to_openai.main import main as appeal_to_openai_main
 from appeal_to_openai.utils import checking_file_with_response
@@ -218,10 +216,10 @@ class ControlManager:
         :return: None
         """
 
-        # # Забираю все данные из таблицы "Средства", "Тип", "Запрос" и т.д.
-        # data_tools = self._take_data_from_table_tool(
-        #     file_path_tools_table=file_path_tools,
-        # )
+        # Забираю все данные из таблицы "Средства", "Тип", "Запрос" и т.д.
+        data_tools = self._take_data_from_table_tool(
+            file_path_tools_table=file_path_tools,
+        )
 
         # Захожу в "Подборки" и считаю сколько подборок не заполнено
         count_collection = self._get_count_collections(file_path_collection)
@@ -233,28 +231,6 @@ class ControlManager:
                 checking_unique=checking_unique,
             )
 
-            pprint(data_collection)
-            # здесь словарь имеет вид
-            # {'Возраст': 32,
-            #  'Группа': 'бесплатная',
-            #  'Задача': 'Лучшее средство',
-            #  'Запрос': 'ЗВ8, ЗВ12',
-            #  'Категория': 'Шампуни',
-            #  'Пол': 'женский',
-            #  'Путь': None,
-            #  'Специалист': 'Т',
-            #  'Средства': {'Средство_1': 'ALTEREGO ITALY Curego Hydraday',
-            #               'Средство_2': 'OUSHEN Curl & shine shampoo',
-            #               'Средство_3': 'NATURA SIBERICA Oblepikha',
-            #               'Средство_4': 'WELEDA Millet Nourishing',
-            #               'Средство_5': 'PAYOT Shampoing doux biome-friendly',
-            #               'Средство_6': 'LADOR Keratin LPP'},
-            #  'Тип': 'В1, В10',
-            #  'Хеш': '283e6ae4f749e22fbd04c25a47b2c700266e2bf4460ead749bae849c6acb5cc6'}
-
-            prefix = data_collection['Группа']
-
-
             # Формирую пути для сохранения данных и создаю нужные папки
             self.paths_to_folders = DirsConstructor(
                 base_output_folder_path=path_to_output_folder,
@@ -263,67 +239,65 @@ class ControlManager:
                 prefix = data_collection['Группа'],
             )
 
-            pprint(self.paths_to_folders)
+            # Определяю json-схему
+            json_scheme = get_json_scheme(
+                data_collection=data_collection,
+                product_categories=self.param_dif_products_categories,
+            )
 
-            # # Определяю json-схему
-            # json_scheme = get_json_scheme(
-            #     data_collection=data_collection,
-            #     product_categories=self.param_dif_products_categories,
-            # )
-            #
-            # # Сохраняем json-схему в папку
-            # save_file_in_process_work(
-            #     what_save=json_scheme,
-            #     path_to_folder=self.paths_to_folders['00_source_00_json_scheme'],
-            #     file_name='json_scheme',
-            #     file_extension='.json',
-            # )
-            #
-            # # Собираю промпт
-            # prompt = get_prompt(
-            #     data_tools=data_tools,
-            #     data_collection=data_collection,
-            # )
-            #
-            # # Сохраняем prompt в папку
-            # save_file_in_process_work(
-            #     what_save=prompt,
-            #     path_to_folder=self.paths_to_folders['00_source_01_prompt'],
-            #     file_name='prompt',
-            #     file_extension='.json',
-            # )
-            #
-            # print('Отправка запроса в OpenAI.')
-            # self._create_context_for_request_to_openai(
-            #     prompt_for_convert=prompt,
-            #     json_scheme=json_scheme,
-            #     folder_name=self.paths_to_folders["00_source_02_answer_gpt"],
-            # )
-            #
-            # print('Сохранение пути до текущей подборки в таблицу Excel в ячейку столбца Путь')
-            # self.save_path_current_collection_to_excel(
-            #     file_path=file_path_collection,
-            #     file_path_current_collection=self.paths_to_folders['folder_path'],
-            #     hash_current_collection=data_collection["Хеш"],
-            # )
-            #
-            # print('Создание PDF и изображений со средствами для постов в соц.сети.')
-            # self._create_pdf_jpg(
-            #     collection_data=data_collection,
-            #     info_data=data_tools,
-            #     selection_result=checking_file_with_response(
-            #         json_file_path=self.paths_to_folders["00_source_02_answer_gpt"]
-            #     ),
-            #     path_to_output_folder_pdf_file=self.paths_to_folders["00_source_03_pdf"],
-            #     path_to_output_folder_jpg_file=self.paths_to_folders["00_source_04_jpg"],
-            # )
-            #
-            # print('Готовлю текстовое оформление поста.')
-            # forming_text_for_post(
-            #     data_tools=data_tools,
-            #     data=data_collection,
-            #     path_to_result_recommend=self.paths_to_folders["00_source_02_answer_gpt"],
-            #     path_for_save=self.paths_to_folders['00_source_05_text'],
-            # )
+            # Сохраняем json-схему в папку
+            save_file_in_process_work(
+                what_save=json_scheme,
+                path_to_folder=self.paths_to_folders['00_source_00_json_scheme'],
+                file_name='json_scheme',
+                file_extension='.json',
+            )
+
+            # Собираю промпт
+            prompt = get_prompt(
+                data_tools=data_tools,
+                data_collection=data_collection,
+            )
+
+            # Сохраняем prompt в папку
+            save_file_in_process_work(
+                what_save=prompt,
+                path_to_folder=self.paths_to_folders['00_source_01_prompt'],
+                file_name='prompt',
+                file_extension='.json',
+            )
+
+            print('Отправка запроса в OpenAI.')
+            self._create_context_for_request_to_openai(
+                prompt_for_convert=prompt,
+                json_scheme=json_scheme,
+                folder_name=self.paths_to_folders["00_source_02_answer_gpt"],
+            )
+
+            print('Сохранение пути до текущей подборки в таблицу Excel в ячейку столбца Путь')
+            self.save_path_current_collection_to_excel(
+                file_path=file_path_collection,
+                file_path_current_collection=self.paths_to_folders['folder_path'],
+                hash_current_collection=data_collection["Хеш"],
+            )
+
+            print('Создание PDF и изображений со средствами для постов в соц.сети.')
+            self._create_pdf_jpg(
+                collection_data=data_collection,
+                info_data=data_tools,
+                selection_result=checking_file_with_response(
+                    json_file_path=self.paths_to_folders["00_source_02_answer_gpt"]
+                ),
+                path_to_output_folder_pdf_file=self.paths_to_folders["00_source_03_pdf"],
+                path_to_output_folder_jpg_file=self.paths_to_folders["00_source_04_jpg"],
+            )
+
+            print('Готовлю текстовое оформление поста.')
+            forming_text_for_post(
+                data_tools=data_tools,
+                data=data_collection,
+                path_to_result_recommend=self.paths_to_folders["00_source_02_answer_gpt"],
+                path_for_save=self.paths_to_folders['00_source_05_text'],
+            )
 
             print(f"Подборка по коду '{data_collection['Задача']}' готова.\n")

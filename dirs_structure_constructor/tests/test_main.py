@@ -32,4 +32,4 @@ class TestDirsConstructor(unittest.TestCase):
             scheme_for_folders_name=SCHEME_FOR_FOLDERS_NAME,
             data_collection=data_collection
         )
-        dirs_constructor.get_output_folders()
+        dirs_constructor.get_output_folders(prefix=data_collection['Группа'])
