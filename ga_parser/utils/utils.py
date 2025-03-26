@@ -18,8 +18,11 @@ from PIL import Image, ImageDraw, ImageFont
 from ga_parser.utils.requests_funcs import get_image
 
 
-
-
+def leave_numbers(_str: str) -> str:
+    """
+    Удаляет всё, что не цифра, включая пробелы, буквы, знаки препинания и т.п.
+    """
+    return re.sub(r'\D', '', _str)
 
 
 def clean_text_2(raw_text: str) -> str:
@@ -144,7 +147,7 @@ def clean_product_name(
     """
 
     return re.sub(
-        pattern=r"[^a-zA-Z0-9]+",
+        pattern=r"[^a-zA-Zа-яА-ЯёЁ0-9]+",
         repl="_",
         string=product_title.strip().lower()
     )

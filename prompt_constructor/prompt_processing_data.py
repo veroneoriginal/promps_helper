@@ -1,3 +1,5 @@
+from pprint import pprint
+
 from dotenv.variables import Literal
 
 
@@ -134,6 +136,7 @@ class PromptProcessingData:
         for key, value in cosmetic_products.items():
             list_cosmetic_products.append(
                 f"{value['Номер']} - {key}. "
+                f"Артикул: {value['Артикул в Золотом Яблоке']}. "
                 f"Состав: {value['Состав']}. Тип продукта: {value['Тип продукта']}. ")
 
         # строка, которая объединяет инфо о всех сред-х в единый текст блок с переносами строк
@@ -143,6 +146,7 @@ class PromptProcessingData:
             self,
             data: dict,
             product_name: str,
+            product_article: str,
             list_name: Literal = 'Средства',
     ) -> dict:
         """
@@ -150,15 +154,17 @@ class PromptProcessingData:
 
         :param data: база данных
         :param product_name: название средства
+        :param product_article: артикул средства
         :param list_name: название листа из базы данных со средствами
 
         :return: словарь с расшифрованным средством
         """
 
-        product_data = data[list_name][product_name]
+        product_data = data[list_name][product_name][product_article]
 
         return {
             "Тип продукта": product_data.get("Тип продукта", "Не указан"),
+            "Артикул в Золотом Яблоке": product_data.get("Артикул в Золотом Яблоке"),
             "Состав": product_data.get("Состав", "Не указан"),
         }
 
@@ -178,11 +184,15 @@ class PromptProcessingData:
         # формируем словарь
         formated_products = {}
 
-        for product_key, product_name in products.items():
+        for product_key, product_name_article in products.items():
+            product_name = product_name_article[0]
+            product_article = product_name_article[1]
+
             # ищем данные по product_name в основном data словаре
             formated_products[product_name] = self.decryped_dict_with_one_product(
                 data=data,
                 product_name=product_name,
+                product_article=product_article,
             )
 
             formated_products[product_name]["Номер"] = product_key
@@ -215,47 +225,6 @@ class PromptProcessingData:
         # преобразование словаря со средствами в строку
         return self._conversion_products(cosmetic_products=formated_products)
 
-    def decrypting_origin_product_info(
-            self,
-            data: dict,
-            data_collection: dict,
-            key_for_decrypted: str,
-    ) -> str:
-        """
-        Метод для расшифровки данных по 'Исходному средству' из data_collection.
-
-        :param data: словарь со всеми данными (включая подробную инфу по продуктам)
-        :param data_collection: словарь с подборкой (где есть ключ 'Исходное средство')
-        :param key_for_decrypted: категория, с которой работаем
-        :return: строка с подробной информацией по исходному средству
-        """
-
-        # Получаем название исходного средства из data_collection
-        origin_product_name = data_collection.get("Исходное средство")
-
-        origin_product_data = data.get(key_for_decrypted, {}).get(origin_product_name, {})
-
-        # Формируем словарь с информацией о средстве
-        origin_product_full_info = {
-            origin_product_name: {
-                "Тип продукта": origin_product_data.get("Тип продукта", "Не указан"),
-                "Состав": origin_product_data.get("Состав", "Не указан")
-            }
-        }
-
-        # Возвращаем результат, преобразованный в строку
-
-        # Достаём значения
-        product_info = origin_product_full_info[origin_product_name]
-
-        result_string = (
-            f"Название средства: {origin_product_name}. "
-            f"Тип продукта: {product_info['Тип продукта']}. "
-            f"Состав: {product_info['Состав']}. "
-        )
-
-        return result_string
-
     def _format_set_for_prompt(
             self,
             product_set: dict,
@@ -274,6 +243,7 @@ class PromptProcessingData:
             for product_name, product_info in products.items():
                 lines.append(f"Продукт: {product_name}. "
                              f"Тип продукта: {product_info.get('Тип продукта', 'Не указан')}. "
+                             f"Артикул: {product_info['Артикул в Золотом Яблоке']}. "
                              f"Состав: {product_info.get('Состав', 'Не указан')}. ")
 
         return "\n".join(lines)
@@ -301,7 +271,6 @@ class PromptProcessingData:
 
         # Проходим по всем группам
         for product_group_name, product_dict in products.items():
-
             formated_products = self.decryption_product_current_collection(
                 data=data,
                 products=product_dict,

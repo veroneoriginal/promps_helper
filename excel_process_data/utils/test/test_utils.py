@@ -21,17 +21,17 @@ class TestUtils(unittest.TestCase):
             'Средства': '{\n'
                         '«Набор_1» : \n'
                         '{\n'
-                        '«Средство_1» : «R+CO Dallas Biotin Thickening Shampoo»,\n'
-                        '«Средство_2» : «R+CO TELEVISION Perfect Hair Masque»\n'
+                        '«Средство_1» : («R+CO Dallas Biotin Thickening Shampoo»,  «24320200017»),\n'
+                        '«Средство_2» : («R+CO TELEVISION Perfect Hair Masque»,  «19760310342»)\n'
                         '},\n'
                         '«Набор_2» : \n'
                         '{\n'
-                        '«Средство_1» : «R+CO Atlantis Moisturizing B5 Shampoo»,\n'
-                        '«Средство_2» : «R+CO Television Perfect Hair Conditioner»\n'
+                        '«Средство_1» : («R+CO Atlantis Moisturizing B5 Shampoo», «24320200015»),\n'
+                        '«Средство_2» : («R+CO Television Perfect Hair Conditioner», «24320100036»)\n'
                         '},\n'
                         '}',
             'Тип': 'В1, В10',
-            'Хеш': 'cfc392bfd045eb548d8989bb96c1ac57385a16a804291d38f93415ac1ae340d1'
+            'Хеш': 'de5353e9f505c2234028fd6fe6510f7f81e2ef13dd7d1dd6351887387219b832'
         }
 
         expected_hash = best_set['Хеш']
@@ -55,15 +55,15 @@ class TestUtils(unittest.TestCase):
             'Путь': None,
             'Специалист': 'Т',
             'Средства': '{\n'
-                        '«Средство_1» : «ALTEREGO ITALY Curego Hydraday»,\n'
-                        '«Средство_2» : «OUSHEN Curl & shine shampoo»,\n'
-                        '«Средство_3» : «NATURA SIBERICA Oblepikha»,\n'
-                        '«Средство_4» : «WELEDA Millet Nourishing»,\n'
-                        '«Средство_5» : «PAYOT Shampoing doux biome-friendly»,\n'
-                        '«Средство_6» : «LADOR Keratin LPP»\n'
+                        '«Средство_1» : («ALTEREGO ITALY Curego Hydraday», «19000222487»),\n'
+                        '«Средство_2» : («OUSHEN Curl & shine shampoo», «19000220056»),\n'
+                        '«Средство_3» : («NATURA SIBERICA Oblepikha», «19000141580»),\n'
+                        '«Средство_4» : («WELEDA Millet Nourishing»,«15180100004»),\n'
+                        '«Средство_5» : («PAYOT Shampoing doux biome-friendly», «19000153618»),\n'
+                        '«Средство_6» : («LADOR Keratin LPP», «19760200012»)\n'
                         '}',
             'Тип': 'В1, В10',
-            'Хеш': '77be47509a12d0b36ec98f0097eaf7d89dbe01a88d502baf567cdd0eacee74c3',
+            'Хеш': 'bae5152f3170fdc223884058b8e99fad22e4574b9dc71fd4fc544522f5401728',
         }
         expected_hash = best_products['Хеш']
 

@@ -1,8 +1,27 @@
+import re
 from pathlib import Path
 from types import MappingProxyType
 
 from source.pdf_structure_mapping import get_pdf_structure
 from source.structure_for_products import MAPPING_KEYS
+
+
+def capitalize_first_letter(text: str) -> str:
+    """
+    Сделать первую букву заглавной
+    """
+    for i, char in enumerate(text):
+        if char.isalpha():
+            return text[:i] + char.upper() + text[i + 1:]
+    return text  # если букв вообще нет
+
+
+def extract_product_name(title: str) -> str:
+    """
+    Удаляет из строки (артикул: 123456)
+    """
+    return re.sub(r"\s*\(артикул:.*?\)", "", title, flags=re.IGNORECASE).strip()
+
 
 def calc_base_price_ratio(
         product: dict,
@@ -19,26 +38,6 @@ def calc_base_price_ratio(
         f'{product.get("Количество меры (число)")} '
         f'{product.get("Юниты меры (мл/шт)")} / {product.get("Стоимость руб")} рублей'
     )
-
-
-def get_brand_line_path(
-        task: str,
-        category: str,
-        brand_line_color: str
-) -> str:
-    """
-    :param task: код задачи
-    :param category: категория подборки
-    :param brand_line_color: ключ цвета
-
-    Возвращает путь к файлу с нужной бренд-линией для нанесения
-    на PDF в зависимости от задачи
-    """
-    pdf_structure = get_pdf_structure(
-        task=task,
-        category=category,
-    )
-    return pdf_structure['Пути бренд-линий'][brand_line_color]
 
 
 def get_brand_line_sizes(
@@ -125,10 +124,12 @@ def format_product_filename(
 
     :return: полный путь к файлу PDF
     """
-
     output_folder_pdf = Path(path_to_output_folder_pdf_file)
-    safe_filename = product_title.replace(" ", "_").replace("/", "_").lower() + ".pdf"
 
+    # Удаляем всё, кроме букв (латиница, кириллица), цифр и подчёркиваний
+    safe_name = re.sub(r"[^a-zA-Zа-яА-ЯёЁ0-9]+", "_", product_title.strip().lower())
+
+    safe_filename = safe_name + ".pdf"
     return output_folder_pdf / safe_filename
 
 
@@ -155,9 +156,9 @@ def calculate_price_per_standard_unit(
         "л": ("мл", 1000),  # 1 л = 1000 мл
         "кг": ("гр", 1000),  # 1 кг = 1000 гр
         "мл": ("мл", 1),
-        "гр": ("гр", 1)
+        "гр": ("гр", 1),
+        "г": ("г", 1),
     }
-
 
     if unit in conversion_factors:
         base_unit, factor = conversion_factors[unit]
@@ -173,9 +174,9 @@ def calculate_price_per_standard_unit(
     return f'{standard_quantity} {base_unit} / {int(price_per_standard)} р.'
 
 
-def mapping_keys_to_rus(
+def translate_keys_to_rus(
         data: dict,
-        mapping:  MappingProxyType = MAPPING_KEYS,
+        mapping: MappingProxyType = MAPPING_KEYS,
 ) -> dict:
     """
     Заменяет ключи в словаре `data` на русские аналоги из `mapping`, если они есть.
@@ -184,4 +185,9 @@ def mapping_keys_to_rus(
     :param mapping: Словарь с соответствием новых ключей.
     :return: Новый словарь с изменёнными ключами.
     """
-    return {mapping.get(k, k): v for k, v in data.items()}
+    if isinstance(data, dict):
+        return {
+            mapping.get(key, key): translate_keys_to_rus(value, mapping)
+            for key, value in data.items()
+        }
+    return data

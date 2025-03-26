@@ -5,5 +5,5 @@ if __name__ == '__main__':
         table_path='./00_base/Средства.xlsx',
         ws_title='Средства',
         image_dir_path='00_base/products/00_img/',
-        base_delay=10,
+        base_delay=3,
     )

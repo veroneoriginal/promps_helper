@@ -2,11 +2,11 @@ import unittest
 
 from prompt_constructor.prompt_processing_data import PromptProcessingData
 from prompt_constructor.test_constructor.constants import (
-    best_set_decryped,
-    decrypt_best_prod,
-    decrypt_best_one_prod,
+    BEST_SET_DECRYPED,
+    DECRYPT_BEST_PROD,
+    DECRYPT_BEST_ONE_PROD,
 )
-from prompt_constructor.test_constructor.data_tools import data_tools
+from dev_helpers.data_tools_for_test import ALL_DATA_TOOLS_FOR_TEST
 
 
 class TestProcessingData(unittest.TestCase):
@@ -30,27 +30,27 @@ class TestProcessingData(unittest.TestCase):
             'Пол': 'женский',
             'Путь': None,
             'Специалист': 'Т',
-            'Средства': {'Набор_1': {'Средство_1': 'R+CO Dallas Biotin Thickening Shampoo',
-                                     'Средство_2': 'R+CO TELEVISION Perfect Hair Masque'},
-                         'Набор_2': {'Средство_1': 'R+CO Atlantis Moisturizing B5 Shampoo',
-                                     'Средство_2': 'R+CO Television Perfect Hair '
-                                                   'Conditioner'}},
+            'Средства': {'Набор_1': {'Средство_1': ('R+CO Dallas Biotin Thickening Shampoo', '24320200017'),
+                                     'Средство_2': ('R+CO TELEVISION Perfect Hair Masque', '19760310342')},
+                         'Набор_2': {'Средство_1': ('R+CO Atlantis Moisturizing B5 Shampoo', '24320200015'),
+                                     'Средство_2': ('R+CO Television Perfect Hair Conditioner', '24320100036')}},
             'Тип': 'В1, В10',
             'Хеш': 'cfc392bfd045eb548d8989bb96c1ac57385a16a804291d38f93415ac1ae340d1'}
 
         prompt_proces_data = PromptProcessingData(
-            data_tools=data_tools,
+            data_tools=ALL_DATA_TOOLS_FOR_TEST,
             data_collection=data_collection,
         )
 
         # текущая подборка (расшифрованная)
         decrypted_products = prompt_proces_data.decrypting_best_set(
-            data=data_tools,
+            data=ALL_DATA_TOOLS_FOR_TEST,
             data_collection=data_collection,
             key_for_decrypted='Средства',
         )
 
-        self.assertEqual(decrypted_products, best_set_decryped)
+        self.maxDiff = None
+        self.assertEqual(decrypted_products, BEST_SET_DECRYPED)
 
     def test_decryption_key_best_prod(self):
         """
@@ -71,25 +71,24 @@ class TestProcessingData(unittest.TestCase):
             'Лучший вариант': None,
             'Пол': 'женский',
             'Специалист': 'Т',
-            'Средства': {'Средство_1': 'OUSHEN Curl & shine shampoo',
-                         'Средство_2': 'NATURA SIBERICA Oblepikha',
-                         'Средство_3': 'ALTEREGO ITALY Curego Hydraday'},
+            'Средства': {'Средство_1': ('OUSHEN Curl & shine shampoo', '19000220056'),
+                         'Средство_2': ('NATURA SIBERICA Oblepikha', '19000141580'),
+                         'Средство_3': ('ALTEREGO ITALY Curego Hydraday', '19000222487')},
             'Тип': 'В1, В10',
             'Хеш': 'cdd6f7ca257e7f4fc9fa309bce83f7a0c3527b94d576daa29e0f1fac523b6259'}
 
         prompt_proces_data = PromptProcessingData(
-            data_tools=data_tools,
+            data_tools=ALL_DATA_TOOLS_FOR_TEST,
             data_collection=data_collection,
         )
 
         # текущая подборка (расшифрованная)
         decrypted_products = prompt_proces_data.decrypting_info_code_best_product(
-            data=data_tools,
+            data=ALL_DATA_TOOLS_FOR_TEST,
             data_collection=data_collection,
             key_for_decrypted='Средства',
         )
-
-        self.assertEqual(decrypted_products.strip(), decrypt_best_prod.strip())
+        self.assertEqual(decrypted_products.strip(), DECRYPT_BEST_PROD.strip())
 
     def test_decryption_key_one_prod(self):
         """
@@ -109,20 +108,20 @@ class TestProcessingData(unittest.TestCase):
             'Лучший вариант': None,
             'Пол': 'женский',
             'Специалист': 'Т',
-            'Средства': {'Средство_1': 'ALTEREGO ITALY Curego Hydraday'},
+            'Средства': {'Средство_1': ('ALTEREGO ITALY Curego Hydraday', '19000222487')},
             'Тип': 'В1, В10',
             'Хеш': 'cdd6f7ca257e7f4fc9fa309bce83f7a0c3527b94d576daa29e0f1fac523b6259'}
 
         prompt_proces_data = PromptProcessingData(
-            data_tools=data_tools,
+            data_tools=ALL_DATA_TOOLS_FOR_TEST,
             data_collection=data_collection,
         )
 
         # текущая подборка (расшифрованная)
         decrypted_products = prompt_proces_data.decrypting_info_code_best_product(
-            data=data_tools,
+            data=ALL_DATA_TOOLS_FOR_TEST,
             data_collection=data_collection,
             key_for_decrypted='Средства',
         )
 
-        self.assertEqual(decrypted_products.strip(), decrypt_best_one_prod.strip())
+        self.assertEqual(decrypted_products.strip(), DECRYPT_BEST_ONE_PROD.strip())

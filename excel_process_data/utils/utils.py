@@ -119,6 +119,9 @@ def get_values(
     - Функция проходит по каждому элементу словаря.
     - Если значение элемента является ещё одним словарём (dict),
     функция вызывает сама себя (рекурсия) и продолжает обход на более глубоком уровне.
+    - Если значение элемента является кортежем (tuple) - превращаем в список, идём по элементам
+    и если элемент словарь - снова вызываем рекурсию, если нет - добавляем в общий список,
+    функция вызывает сама себя (рекурсия) и продолжает обход на более глубоком уровне.
     - Если значение не является словарём (например, строка, число и т.д.),
     оно добавляется в результирующий список.
 
@@ -132,12 +135,20 @@ def get_values(
     if list_with_product is None:
         list_with_product = []
 
-    for _, value in data.items():
+    for value in data.values():
         if isinstance(value, dict):
-            # Рекурсивно спускаемся на уровень ниже
             get_values(value, list_with_product)
+        elif isinstance(value, tuple):
+            for item in value:
+                if isinstance(item, dict):
+                    get_values(item, list_with_product)
+                elif isinstance(item, str):
+                    list_with_product.append(item.lower())
+                else:
+                    list_with_product.append(item)
+        elif isinstance(value, str):
+            list_with_product.append(value.lower())
         else:
-            # Добавляем найденное значение в список
             list_with_product.append(value)
 
     return list_with_product
@@ -178,7 +189,7 @@ def counting_hash(
             if isinstance(value, (list, tuple)):
                 list_for_hash.extend(value)  # Разворачиваем список или кортеж
             else:
-                list_for_hash.append(value)
+                list_for_hash.append(value.lower())
 
     # Сортируем список для консистентности хеша
     final_list = sorted(list_for_hash)

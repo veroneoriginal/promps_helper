@@ -32,18 +32,18 @@ def create_pdf(
         selection_result=selection_result,
         path_to_output_folder_pdf_file=path_to_output_folder_pdf_file,
     )
-    copy_data_collection = pdf_data_processor.process_data_with_task_code()
+    data_for_pdf = pdf_data_processor.process_data_with_task_code()
 
     # Генерируем pdf и сохраняем по указанному в данных пути
     pdf_creator = PDFCreator(
-        collection_data=copy_data_collection,
+        data_for_pdf=data_for_pdf,
     )
     pdf_creator.create_pdf()
 
     # Получаем пути всех PDF-файлов, размеры для конвертации в изображения и
     # пути для сохранения в JPEG
     pdf_file_paths = _get_pdf_file_paths(
-        input_data=copy_data_collection['Данные'],
+        input_data=data_for_pdf,
         path_to_output_folder_jpg_file=path_to_output_folder_jpg_file,
     )
     # Конвертируем pdf в изображения

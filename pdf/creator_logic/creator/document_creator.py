@@ -11,9 +11,13 @@ from reportlab.platypus import (
     Paragraph,
     Frame,
     PageTemplate,
-    Flowable, PageBreak, FrameBreak, NextPageTemplate,
+    Flowable,
+    PageBreak,
+    FrameBreak,
+    NextPageTemplate,
 )
 
+from pdf.creator_logic.creator.custom_flowables import FreeImage, FreeRect, FreeText
 from pdf.creator_logic.creator.fonts_and_styles.styles import PDF_STYLE
 
 
@@ -137,11 +141,11 @@ class PDFFlowablesCreator:
 
     def __init__(
             self,
-            data,
+            data: dict,
 
     ):
         self.data = data
-        self.flowables = []
+        self.flowables: list[Flowable] = []
 
     def create_flowables(self) -> list[Flowable]:
         """
@@ -182,6 +186,44 @@ class PDFFlowablesCreator:
                     self.flowables.append(PageBreak())
                 case 'FrameBreak':
                     self.flowables.append(FrameBreak())
+                case 'FreeImage':
+                    self.flowables.append(
+                        FreeImage(
+                            path=self.data[flowable_data.get('Ключ в подборке')],
+                            x=flowable_data.get('x'),
+                            y=flowable_data.get('y'),
+                            width=flowable_data.get('width'),
+                            height=flowable_data.get('height'),
+                            preserve_aspect_ratio=flowable_data.get('preserve_aspect_ratio'),
+                        )
+                    )
+                case 'FreeRect':
+                    self.flowables.append(
+                        FreeRect(
+                            x=flowable_data.get('x'),
+                            y=flowable_data.get('y'),
+                            width=flowable_data.get('width'),
+                            height=flowable_data.get('height'),
+                            fill_color=flowable_data.get('fill_color'),
+                        )
+                    )
+                case 'FreeText':
+                    text = (
+                            flowable_data.get('Текст', None)
+                            or self.data[flowable_data['Ключ в подборке']]
+                    )
+                    self.flowables.append(
+                        FreeText(
+                            text=text,
+                            x=flowable_data.get('x'),
+                            y=flowable_data.get('y'),
+                            font_name=flowable_data.get('font_name'),
+                            font_size=flowable_data.get('font_size'),
+                            font_color=flowable_data.get('font_color'),
+                            bold=flowable_data.get('bold'),
+                            align=flowable_data.get('align'),
+                        )
+                    )
 
         return self.flowables
 
@@ -338,3 +380,8 @@ class PDFBaseDocTemplateWithBrandLine(BaseDocTemplate):
         """
 
         self._add_brandline(self.canv, self)
+
+
+TEMPLATE_CLASS = {
+    'PDFBaseDocTemplateWithBrandLine': PDFBaseDocTemplateWithBrandLine,
+}

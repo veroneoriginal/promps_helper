@@ -1,7 +1,7 @@
 # pylint: disable=C0301:: line-too-long
 # pylint: disable=E0611: no-name-in-module
 """
-Создание PDF-документов для задачи 'Лучшее средство'
+Создание PDF-документов для задачи 'Лучшее средство без канцерогенов'
 """
 from pathlib import Path
 
@@ -25,19 +25,23 @@ PDF_STRUCTURE = {
                  {'Текст': 'Правообладатель изображения: https://goldapple.ru/', 'x': -30, 'y': 40,
                   'font_name': 'DejaVuSans',
                   'font_size': 10, 'font_color': "#1E1F2280", 'bold': False, 'align': 'left'}),
-                ('Paragraph', {'Ключ в подборке': 'Тип продукта', 'Стиль': 'BP_normal_2', 'Заглавными': True}),
+                ('Paragraph', {'Ключ в подборке': 'Тип продукта', 'Стиль': 'BPWC_normal_2', 'Заглавными': True}),
                 ('Spacer', {'width': 1, 'height': 20}),
-                ('Paragraph', {'Ключ в подборке': 'Название средства', 'Стиль': 'BP_title_1'}),
-                ('Spacer', {'width': 1, 'height': 30}),
-                ('Paragraph', {'Ключ в подборке': 'Количество мера / цена', 'Стиль': 'BP_base_price_1'}),
+                ('Paragraph', {'Ключ в подборке': 'Название средства', 'Стиль': 'BPWC_title_1'}),
                 ('Spacer', {'width': 1, 'height': 20}),
-                ('Paragraph', {'Текст': '<b>Плюсы:</b>', 'Стиль': 'BP_bold_1'}),
+                ('Paragraph', {'Ключ в подборке': 'Количество мера / цена', 'Стиль': 'BPWC_base_price_1'}),
+                ('Spacer', {'width': 1, 'height': 20}),
+                ('Paragraph', {'Текст': '<b>Плюсы:</b>', 'Стиль': 'BPWC_bold_1'}),
                 ('Spacer', {'width': 1, 'height': 15}),
-                ('Paragraph', {'Ключ в подборке': 'Плюсы', 'Стиль': 'BP_normal_1'}),
-                ('Spacer', {'width': 1, 'height': 20}),
-                ('Paragraph', {'Текст': '<b>Минусы:</b>', 'Стиль': 'BP_bold_1'}),
+                ('Paragraph', {'Ключ в подборке': 'Плюсы', 'Стиль': 'BPWC_normal_1'}),
+                ('Spacer', {'width': 1, 'height': 10}),
+                ('Paragraph', {'Текст': '<b>Минусы:</b>', 'Стиль': 'BPWC_bold_1'}),
                 ('Spacer', {'width': 1, 'height': 15}),
-                ('Paragraph', {'Ключ в подборке': 'Минусы', 'Стиль': 'BP_normal_1'}),
+                ('Paragraph', {'Ключ в подборке': 'Минусы', 'Стиль': 'BPWC_normal_1'}),
+                ('Spacer', {'width': 1, 'height': 10}),
+                ('Paragraph', {'Текст': '<b>Канцерогены:</b>', 'Стиль': 'BPWC_bold_1'}),
+                ('Spacer', {'width': 1, 'height': 15}),
+                ('Paragraph', {'Ключ в подборке': 'Канцерогены', 'Стиль': 'BPWC_normal_1'}),
             ],
             'Шаблоны страниц с фреймами': {
                 'template_1':
@@ -45,13 +49,14 @@ PDF_STRUCTURE = {
                         (0, (100, 0), (596, 966)),  # Номер, Координаты левого нижнего угла, ширина и высота фрейма
                     )
             },
+
         },
 }
 
 
-class BestProductPDFTemplateCreator:
+class BestProductWithOutConcerogensPDFTemplateCreator:
     """
-    Готовит данные для PDF-документов по задаче "Лучшее средство"
+    Готовит данные для PDF-документов по задаче "Лучшее средство без канцерогенов"
     """
 
     def __init__(
@@ -112,6 +117,7 @@ class BestProductPDFTemplateCreator:
                 product_title=product_name,
                 path_to_output_folder_pdf_file=self.path_to_output_folder_pdf_file,
             ),
+            'Канцерогены': one_product_data['Канцерогены']
         }
 
         base_product_data = get_base_info_by_product(

@@ -1,7 +1,6 @@
 """
 В этом модуле - класс, управляющий логикой всего проекта
 """
-
 import os
 
 from dotenv import load_dotenv
@@ -14,6 +13,7 @@ from post_constructor.main_post import forming_text_for_post
 from prompt_constructor.main import get_prompt
 from pdf.main import create_pdf
 from utils.utils import save_file_in_process_work
+
 
 # from utils.utils import copy_jpg_files
 

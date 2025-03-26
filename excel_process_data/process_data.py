@@ -85,6 +85,7 @@ class ExcelManager:
 
         sheet = self.wb[ws_title]
         headers = self._create_dict_headers(sheet=sheet)
+
         data = {}
 
         # Проверяем, есть ли ключевой столбец, значения в котором будут ключами в словаре
@@ -122,21 +123,55 @@ class ExcelManager:
     ) -> dict:
         """
         Метод для загрузки данных из таблицы Средства.xlsx -> лист "Средства",
-        Из этих данных формируется словарь вида
+        Из этих данных формируется словарь с учётом артикулов средств
 
         {
-            название средства: {
+            название средства:  {
+            '11111': {
                 "Состав": "содержимое ячейки",
                 "Тип продукта": "содержимое ячейки",
                 и вся остальная информация в зависимости от кол-ва столбцов
             },
+            '2222': {
+                "Состав": "содержимое ячейки",
+                "Тип продукта": "содержимое ячейки",
+                и вся остальная информация в зависимости от кол-ва столбцов
+            },
+        }
         }
 
         :param ws_title: название листа, с которого забирать информацию
         :return: словарь с информацией о продуктах (название является ключом)
         """
 
-        return self._load_data(ws_title=ws_title, column_name='Название')
+        sheet = self.wb[ws_title]
+        headers = self._create_dict_headers(sheet=sheet)
+
+        data = {}
+
+        # Индексы нужных колонок
+        product_name_idx = headers["Название"]
+        product_article_idx = headers["Артикул в Золотом Яблоке"]
+
+        # Обработка строк
+        for row in sheet.iter_rows(min_row=2, values_only=True):
+            name = row[product_name_idx]
+            article = str(row[product_article_idx]).strip()
+
+            # Создаем словарь данных по текущей строке
+            entry = {}
+            for header, index in headers.items():
+                # Пропускаем сам ключевой столбец, так как он уже ключ
+                if header and header != product_name_idx:
+                    entry[header] = row[index]
+
+            # Строим структуру
+            if name not in data:
+                data[name] = {}
+
+            data[name][article] = entry
+
+        return data
 
     def _save_wb(
             self,
@@ -453,7 +488,6 @@ class ExcelManager:
             cell_hash = row[col_hash - 1]
 
             if cell_hash.value == hash_current_collection:
-
                 # Записываем путь до текущей подборки в ячейку столбца "ПУть"
                 row[col_recommendation - 1].value = file_path_current_collection
 

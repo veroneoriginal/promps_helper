@@ -9,10 +9,10 @@ class_test_pdf_all_process:
 	pytest -s pdf/tests/test_main.py::TestCreatePdf::test_analysis_composition_one_product
 
 class_test_pdf_processing:
-	pytest -s pdf/pdf_data_processing/tasks_logic/tests/test_tasks_logic_process.py::TestTasksDataProcessing::test_analysis_composition_one_product_shampoo
+	pytest -s pdf/pdf_data_processing/tasks_logic/tests/test_tasks_logic_process.py::TestTasksDataProcessing::test_best_combination
 
 class_test_pdf_creator:
-	pytest -s pdf/creator_logic/tests/test_main.py::TestPDFCreator
+	pytest -s pdf/creator_logic/tests/test_main.py::TestPDFCreator::test_create_pdf
 
 class_test_pdf_converter:
 	pytest -s pdf/creator_logic/creator/tests/test_pdf_converter_to_image.py::TestPDFConverterToImage
@@ -27,25 +27,25 @@ class_test_pdf_tasks_utils:
 	pytest -s pdf/pdf_data_processing/tests/test_task_utils.py::TestTasksUtils
 
 excel_test:
-	pytest -s /home/veronika/00_projects/promps_helper/excel_process_data/utils/test/test_utils.py::TestUtils
+	pytest -s excel_process_data/utils/test/test_utils.py::TestUtils::test_counting_hash_best_product
 
 jsontest:
-	pytest -s /home/veronika/00_projects/promps_helper/json_constructor/test/test_json_scheme.py::TestJsonScheme
+	pytest -s json_constructor/test/test_json_scheme.py::TestJsonScheme::test_get_json_scheme_for_best_product
 
 
 prompt_test:
-	pytest -s /home/veronika/00_projects/promps_helper/prompt_constructor/test_constructor/test_constructor.py::TestPromptConstructor
+	pytest -s prompt_constructor/test_constructor/test_constructor.py::TestPromptConstructor
 
 proc_test:
-	pytest -s /home/veronika/00_projects/promps_helper/prompt_constructor/test_constructor/test_processing_data.py::TestProcessingData
+	pytest -s prompt_constructor/test_constructor/test_processing_data.py::TestProcessingData::test_decryption_key_best_set
 
 post_test:
-	pytest -s /home/veronika/00_projects/promps_helper/post_constructor/test/test_post.py
+	pytest -s post_constructor/test/test_post.py
 
 
 veron_test:
-	pytest -s /home/veronika/00_projects/promps_helper/excel_process_data/utils/test/test_utils.py::TestUtils
-	pytest -s /home/veronika/00_projects/promps_helper/excel_process_data/utils/test/test_utils.py::TestUtils
-	pytest -s /home/veronika/00_projects/promps_helper/prompt_constructor/test_constructor/test_processing_data.py::TestProcessingData
-	pytest -s /home/veronika/00_projects/promps_helper/json_constructor/test/test_json_scheme.py::TestJsonScheme
+	pytest -s excel_process_data/utils/test/test_utils.py::TestUtils
+	pytest -s excel_process_data/utils/test/test_utils.py::TestUtils
+	pytest -s prompt_constructor/test_constructor/test_processing_data.py::TestProcessingData
+	pytest -s json_constructor/test/test_json_scheme.py::TestJsonScheme
 

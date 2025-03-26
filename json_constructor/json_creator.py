@@ -87,13 +87,13 @@ class JsonCreator:
                         "description": "Объяснение, почему выбрали или не выбрали это средство."
                     },
 
-                    "best_combination": {
+                    "best_product": {
                         "type": "boolean",
                         "description": "Если это средство попало в сочетание с исходным,"
                                        " поставь здесь True, иначе False"
                     }
                 },
-                "required": ["title", "result", "best_combination"],
+                "required": ["title", "result", "best_product"],
                 "additionalProperties": False
             }
 
@@ -144,6 +144,10 @@ class JsonCreator:
                         "type": "string",
                         "description": f"Название {i}-го средства"
                     },
+                    "article": {
+                        "type": "string",
+                        "description": f"Артикул {i}-го средства, только цифры."
+                    },
                     "plus": {
                         "type": "string",
                         "description": f"Описание плюсов {i}-го средства (без названия средства)"
@@ -158,7 +162,7 @@ class JsonCreator:
                                        " если нет, то False"
                     }
                 },
-                "required": ["title", "plus", "minus", "best_product"],
+                "required": ["title", "article", "plus", "minus", "best_product"],
                 "additionalProperties": False
             }
 

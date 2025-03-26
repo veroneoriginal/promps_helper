@@ -5,8 +5,6 @@
 """
 import json
 import re
-import uuid
-from datetime import datetime
 from pathlib import Path
 
 from bs4 import (
@@ -18,6 +16,7 @@ from bs4 import (
 from ga_parser.utils.utils import (
     clean_product_name,
     clean_text_2,
+    leave_numbers,
 )
 
 
@@ -35,6 +34,7 @@ def get_product_data_dict(
 
     soup = BeautifulSoup(html, 'html.parser')
 
+    detailed_product_type = get_detailed_product_type(soup=soup)
     (
         product_id,
         product_name,
@@ -57,12 +57,17 @@ def get_product_data_dict(
         measure_quantity
     ) = get_measure(characteristics=characteristics)
     img_link = get_img_link(soup=soup)
-    img_link_in_base = get_img_link_in_base(product_name, image_dir_path)
+    img_link_in_base = get_img_link_in_base(
+        product_title=product_name,
+        product_id=product_id,
+        image_dir_path=image_dir_path
+    )
     additional_info = get_additional_info(soup=soup)
 
     return {
         'Название': product_name,
         'Тип продукта': characteristics.get('тип продукта', None),
+        'Тип продукта подробно': detailed_product_type,
         'Для кого': characteristics.get('для кого', None),
         'Назначение': characteristics.get('назначение', None),
         'Тип волос': characteristics.get('тип волос', None),
@@ -85,6 +90,31 @@ def get_product_data_dict(
         'Дополнительная информация': additional_info,
         'Заполнено': 'да',
     }
+
+
+def get_detailed_product_type(
+        soup: Tag | NavigableString,
+) -> str:
+    """
+    Для получения: Верхнее описание ,
+
+    :param soup: суп из HTML-контента
+    :return: str
+    """
+
+    h1 = soup.find("h1")
+    if h1:
+        parent = h1.parent
+        # Ищем первый <div> с текстом
+        target_div = parent.find("div")
+        if target_div:
+            upper_description = clean_text_2(target_div.get_text(strip=True))
+        else:
+            upper_description = None
+    else:
+        upper_description = None
+
+    return upper_description
 
 
 def get_characteristics(
@@ -151,7 +181,7 @@ def get_item_title_description(
         ) if product_description_div else None
 
         return (
-            clean_text_2(product_id.split(':')[1]),
+            leave_numbers(clean_text_2(product_id.split(':')[1])),
             clean_text_2(product_name),
             clean_text_2(product_description)
         )
@@ -161,6 +191,7 @@ def get_item_title_description(
 
 def get_img_link_in_base(
         product_title: str,
+        product_id: str,
         image_dir_path: str,
         img_format: str = 'jpg',
 ) -> str:
@@ -168,21 +199,13 @@ def get_img_link_in_base(
     Для получения Ссылка на изображение в базе
 
     :param product_title: исходное имя продукта
+    :param product_id: str: артикул продукта
     :param image_dir_path: папка для сохранения изображения
-    :param img_format: форат изображения
+    :param img_format: формат изображения
     :return: путь до изображения
     """
-    time_now = datetime.now().strftime('%d%m%Y%H%M%S')
-    random_hash = uuid.uuid4().hex[:8]
     cleaned_product_title = clean_product_name(product_title)
-    image_path = (
-            Path(image_dir_path)
-            / (
-                f'{cleaned_product_title}'
-                f'_{time_now}'
-                f'_{random_hash}.{img_format}'
-            )
-    )
+    image_path = (Path(image_dir_path) / f'{cleaned_product_title}_{product_id}.{img_format}')
     return str(image_path)
 
 

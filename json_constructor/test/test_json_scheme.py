@@ -3,11 +3,12 @@
 """
 
 import unittest
+from pprint import pprint
 
 from json_constructor.json_creator import JsonCreator
 from json_constructor.json_processing_data import JsonProcessingData
 from json_constructor.test.constants import (
-    expected_schema_for_best_product,
+    EXPECTED_SCHEMA_FOR_BEST_PRODUCT,
     expected_schema_for_one_product,
     expected_schema_for_best_prod_carcinogen,
     best_combination_json,
@@ -36,12 +37,12 @@ class TestJsonScheme(unittest.TestCase):
             'Пол': 'женский',
             'Категория': 'Шампуни',
             'Специалист': 'Т',
-            'Средства': {'Средство_1': 'ALTEREGO ITALY Curego Hydraday',
-                         'Средство_2': 'OUSHEN Curl & shine shampoo',
-                         'Средство_3': 'NATURA SIBERICA Oblepikha',
-                         'Средство_4': 'WELEDA Millet Nourishing',
-                         'Средство_5': 'PAYOT Shampoing doux biome-friendly',
-                         'Средство_6': 'LADOR Keratin LPP'},
+            'Средства': {'Средство_1': ('ALTEREGO ITALY Curego Hydraday', '19000222487'),
+                         'Средство_2': ('OUSHEN Curl & shine shampoo', '19000220056'),
+                         'Средство_3': ('NATURA SIBERICA Oblepikha', '19000141580'),
+                         'Средство_4': ('WELEDA Millet Nourishing', '15180100004'),
+                         'Средство_5': ('PAYOT Shampoing doux biome-friendly', '19000153618'),
+                         'Средство_6': ('LADOR Keratin LPP', '19760200012')},
             'Тип': 'В1, В10',
             'Хеш': '6157254f8a165e4f6baa6a45ee2ca32042b8de1d6a19680d11879ab43c7a5cd1'}
 
@@ -63,14 +64,12 @@ class TestJsonScheme(unittest.TestCase):
             'Пол': 'женский',
             'Категория': 'Шампуни',
             'Специалист': 'Т',
-            'Средства': {
-                'Средство_1': 'ALTEREGO ITALY Curego Hydraday',
-                'Средство_2': 'OUSHEN Curl & shine shampoo',
-                'Средство_3': 'NATURA SIBERICA Oblepikha',
-                'Средство_4': 'WELEDA Millet Nourishing',
-                'Средство_5': 'PAYOT Shampoing doux biome-friendly',
-                'Средство_6': 'LADOR Keratin LPP'
-            },
+            'Средства': {'Средство_1': ('ALTEREGO ITALY Curego Hydraday', '19000222487'),
+                         'Средство_2': ('OUSHEN Curl & shine shampoo', '19000220056'),
+                         'Средство_3': ('NATURA SIBERICA Oblepikha', '19000141580'),
+                         'Средство_4': ('WELEDA Millet Nourishing', '15180100004'),
+                         'Средство_5': ('PAYOT Shampoing doux biome-friendly', '19000153618'),
+                         'Средство_6': ('LADOR Keratin LPP', '19760200012')},
             'Тип': 'В1, В10',
             'Хеш': '6157254f8a165e4f6baa6a45ee2ca32042b8de1d6a19680d11879ab43c7a5cd1',
             'Количество средств': 6
@@ -107,14 +106,12 @@ class TestJsonScheme(unittest.TestCase):
             'Пол': 'женский',
             'Категория': 'Шампуни',
             'Специалист': 'Т',
-            'Средства': {
-                'Средство_1': 'ALTEREGO ITALY Curego Hydraday',
-                'Средство_2': 'OUSHEN Curl & shine shampoo',
-                'Средство_3': 'NATURA SIBERICA Oblepikha',
-                'Средство_4': 'WELEDA Millet Nourishing',
-                'Средство_5': 'PAYOT Shampoing doux biome-friendly',
-                'Средство_6': 'LADOR Keratin LPP'
-            },
+            'Средства': {'Средство_1': ('ALTEREGO ITALY Curego Hydraday', '19000222487'),
+                         'Средство_2': ('OUSHEN Curl & shine shampoo', '19000220056'),
+                         'Средство_3': ('NATURA SIBERICA Oblepikha', '19000141580'),
+                         'Средство_4': ('WELEDA Millet Nourishing', '15180100004'),
+                         'Средство_5': ('PAYOT Shampoing doux biome-friendly', '19000153618'),
+                         'Средство_6': ('LADOR Keratin LPP', '19760200012')},
             'Тип': 'В1, В10',
             'Хеш': '6157254f8a165e4f6baa6a45ee2ca32042b8de1d6a19680d11879ab43c7a5cd1',
             'Количество средств': 6
@@ -130,11 +127,11 @@ class TestJsonScheme(unittest.TestCase):
         )
 
         actual_schema = json_creator.get_json_scheme_for_distribution_on_task()
-
+        pprint(actual_schema)
         # Проверка, что схема совпадает с ожидаемой
         self.assertEqual(
             actual_schema,
-            expected_schema_for_best_product,
+            EXPECTED_SCHEMA_FOR_BEST_PRODUCT,
             msg="Схема не совпадает с ожидаемой",
         )
 
@@ -170,7 +167,7 @@ class TestJsonScheme(unittest.TestCase):
         )
 
         actual_schema = json_creator.get_json_scheme_for_distribution_on_task()
-
+        # self.maxDiff = None
         # Проверка результата
         self.assertEqual(
             actual_schema,
@@ -251,9 +248,9 @@ class TestJsonScheme(unittest.TestCase):
         )
 
         actual_schema = json_creator.get_json_scheme_for_distribution_on_task()
-
         # Проверка, что схема совпадает с ожидаемой
-        self.assertEqual(
+        # self.maxDiff = None
+        self.assertDictEqual(
             actual_schema,
             best_combination_json,
             msg="Схема не совпадает с ожидаемой",

@@ -17,7 +17,7 @@ from prompt_constructor.test_constructor.constants import (
     expected_prompt_for_best_prod_carcinogen,
     best_combination_decryped,
     best_combination_prompt,
-    best_set_decryped,
+    BEST_SET_DECRYPED,
     best_set_prompt,
 )
 
@@ -220,7 +220,7 @@ class TestPromptConstructor(unittest.TestCase):
         )
 
         # проверяем результат расшифровки по текущей подборке
-        self.assertEqual(decrypted_collection, best_set_decryped)
+        self.assertEqual(decrypted_collection, BEST_SET_DECRYPED)
 
         prompt_constructor = PromptConstructor()
 

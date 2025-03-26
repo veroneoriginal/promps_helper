@@ -1,9 +1,15 @@
 # pylint: disable=E0611: no-name-in-module
+from copy import deepcopy
+
 from pdf.pdf_data_processing.tasks_logic.analysis_composition_one_product import (
-    analysis_composition_one_product_task_main,
+    AnalisisCompositionProductPDFTemplateCreator,
 )
-from pdf.pdf_data_processing.tasks_logic.base_task import process_products_common
-from pdf.pdf_data_processing.tasks_logic.best_product import best_product_task_main
+from pdf.pdf_data_processing.tasks_logic.best_combination import BestCombinationProductPDFTemplateCreator
+from pdf.pdf_data_processing.tasks_logic.best_product import BestProductPDFTemplateCreator
+from pdf.pdf_data_processing.tasks_logic.best_product_without_carcinogens import (
+    BestProductWithOutConcerogensPDFTemplateCreator,
+)
+from pdf.pdf_data_processing.tasks_utils import translate_keys_to_rus
 
 
 class PDFDataProcessor:
@@ -45,25 +51,28 @@ class PDFDataProcessor:
             'Наименее похож': self._least_similar,
         }
 
-    def process_data_with_task_code(self) -> dict:
+    def process_data_with_task_code(self) -> list:
         """
         Вызывает нужную логику в зависимости от кода задачи
         Возвращает словарь с готовой полной информацией по подборке,
         для передачи в PDFCreator для создания PDF и изображений
 
-        :return: dict
+        :return: список с итоговыми данными для создания PDF. Каждый элемент списка -
+        словарь с данными для создания документа.
         """
 
         task = self.collection_data['Задача']
-        all_products_data, build_product_data_func = self.method_for_task_code[task]()
 
-        return process_products_common(
+        rus_selection_result = translate_keys_to_rus(data=deepcopy(self.selection_result))
+
+        pdf_data_creator_class = self.method_for_task_code[task]()
+        pdf_data_creator = pdf_data_creator_class(
             collection_data=self.collection_data,
             info_data=self.info_data,
-            all_products_data=all_products_data,
+            rus_selection_result=rus_selection_result,
             path_to_output_folder_pdf_file=self.path_to_output_folder_pdf_file,
-            build_product_data_func=build_product_data_func
         )
+        return pdf_data_creator.get_data_for_pdf_docs()
 
     def _least_similar(self):
         """ Задача "Наименее похож" """
@@ -80,31 +89,24 @@ class PDFDataProcessor:
     def _best_combination(self):
         """ Задача "Лучшее сочетание" """
 
+        return BestCombinationProductPDFTemplateCreator
+
     def _best_para(self):
         """ Задача "Лучшая пара" """
 
-    def _analysis_composition_one_product(self) -> tuple[list, callable]:
+    def _analysis_composition_one_product(self) -> callable:
         """
         Задача "Разбор состава одного средства"
         """
-        # Готовим список с словарями данных по каждому средству
-        # в соответствии с json-схемой задачи
-        all_products_data: list[dict] = [self.selection_result, ]
 
-        return all_products_data, analysis_composition_one_product_task_main
+        return AnalisisCompositionProductPDFTemplateCreator
 
-    def _best_product_without_carcinogens(self):
+    def _best_product_without_carcinogens(self) -> callable:
         """ Задача "Лучшее средство без канцерогенов" """
 
-    def _best_product(self):
+        return BestProductWithOutConcerogensPDFTemplateCreator
+
+    def _best_product(self) -> callable:
         """ Задача "Лучшее средство" """
 
-        # Готовим список с словарями данных по каждому средству
-        # в соответствии с json-схемой задачи
-        all_products_data: list[dict] = []
-
-        for key, value in self.selection_result.items():
-            if key.startswith('product_'):
-                all_products_data.append(value)
-
-        return all_products_data, best_product_task_main
+        return BestProductPDFTemplateCreator

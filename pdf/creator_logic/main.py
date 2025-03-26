@@ -1,7 +1,7 @@
 from pdf.creator_logic.creator.document_creator import (
     PDFBaseDocTemplateWithBrandLine,
     PDFFlowablesCreator,
-    PDFPageTemplateandFrameBuilder,
+    PDFPageTemplateandFrameBuilder, TEMPLATE_CLASS,
 )
 
 
@@ -10,20 +10,22 @@ class PDFCreator:
     Создаёт PDF-документ и изображения из них
     """
 
-    def __init__(self, collection_data: dict):
+    def __init__(self, data_for_pdf: list):
         """
-        :param collection_data: Словарь с данными по всей подборке
+        :param data_for_pdf: список с данными для генерации PDF
         """
-        self.collection_data = collection_data
+        self.data_for_pdf = data_for_pdf
 
     def create_pdf(self):
         """
         Создаёт PDF-документ из входящих данных
         """
 
-        for data in self.collection_data['Данные']:
+        for data in self.data_for_pdf:
+            template_class = TEMPLATE_CLASS[data['Класс шаблона']]
+
             # Создаём документ
-            doc = PDFBaseDocTemplateWithBrandLine(
+            doc = template_class(
                 filename=str(data['Путь для сохранения pdf-файла']),
                 path_to_brandline_file=data['Путь к изображению бренд-линии'],
                 doc_width_height=(

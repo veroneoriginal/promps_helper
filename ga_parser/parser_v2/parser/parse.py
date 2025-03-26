@@ -7,7 +7,6 @@ from ga_parser.parser_v2.parser.generation_product_data import get_product_data_
 from ga_parser.utils.requests_funcs import get_page_v2
 from ga_parser.utils.utils import (
     download_image,
-    add_text_to_image,
 )
 
 
@@ -59,10 +58,6 @@ def parse_product(
     download_image(
         url=product_data_dict['Ссылка на изображение'],
         file_save_path=product_data_dict['Ссылка на изображение в базе'],
-    )
-    add_text_to_image(
-        open_full_path=product_data_dict['Ссылка на изображение в базе'],
-        text=url,
     )
 
     return product_data_dict
