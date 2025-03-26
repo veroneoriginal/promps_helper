@@ -1,7 +1,7 @@
 """
 В этом модуле - класс, управляющий логикой всего проекта
 """
-
+import copy
 import os
 from pathlib import Path
 from pprint import pprint
@@ -13,11 +13,12 @@ from dirs_structure_constructor.main import DirsConstructor
 from excel_process_data.process_data import ExcelManager
 
 from json_constructor.main import get_json_scheme
+from post_constructor.post_constructor import PostConstructor
 from prompt_constructor.main import get_prompt
+from prompt_constructor.prompt_processing_data import PromptProcessingData
 from pdf.main import create_pdf
 from utils.utils import save_file_in_process_work
 
-from post_constructor.post_constructor import PostConstructor
 
 
 # from utils.utils import copy_jpg_files
@@ -203,12 +204,14 @@ class ControlManager:
 
     def _forming_text_for_post(
             self,
+            data_tools: dict,
             data: dict,
             path_to_result_recommend: str,
     ) -> None:
         """
         Метод для вызова функции по формированию текста для поста и его сохранение
 
+        :param data_tools: словарь со всеми данными по средствам
         :param data: нерасшифрованный словарь с данными о пользователе и косметических средствах
         :param path_to_result_recommend: путь до json-файла, в котором находится
         итоговая рекомендация по подборке
@@ -216,16 +219,34 @@ class ControlManager:
         :return: None
         """
 
-
-        # 1 сначала расшифровываем данные из словаря по нужным ключам
-
+        # т.к. из исходного словаря мне нужно расшифровать только запрос и тип
 
 
+        # расшифровка данных текущей подборки с помощью таблицы со всеми средствами
+        prompt_proces_data = PromptProcessingData(
+            data_tools=data_tools,
+            data_collection=data,
+        )
 
-        # 2 передаем расшифрованный словарь в PostConstructor и готовим пост
+        # расшифровываем ключ тип
+        data['Тип'] = prompt_proces_data.decrypting_data_from_cell(
+            data=data_tools,
+            data_collection=data,
+            key_for_decrypted="Тип",
+        )
+
+        # расшифровываем ключ запрос
+        data['Запрос'] = prompt_proces_data.decrypting_data_from_cell(
+            data=data_tools,
+            data_collection=data,
+            key_for_decrypted="Запрос",
+        )
+
+        # print('Расшифровка словаря перед передачей в пост конструктор')
+        # pprint(data)
 
         # формируем текст для поста из нужных данных
-        post_constructor = PostConstructor(data['Задача'])
+        post_constructor = PostConstructor(task=data['Задача'])
 
         info_for_post = post_constructor.create_text_for_post(
             data=data,
@@ -309,12 +330,12 @@ class ControlManager:
                 file_extension='.json',
             )
 
-            # print('Отправка запроса в OpenAI.')
-            # self._create_context_for_request_to_openai(
-            #     prompt_for_convert=prompt,
-            #     json_scheme=json_scheme,
-            #     folder_name=self.paths_to_folders["00_source_02_answer_gpt"],
-            # )
+            print('Отправка запроса в OpenAI.')
+            self._create_context_for_request_to_openai(
+                prompt_for_convert=prompt,
+                json_scheme=json_scheme,
+                folder_name=self.paths_to_folders["00_source_02_answer_gpt"],
+            )
 
             print('Сохранение пути до текущей подборки в таблицу Excel в ячейку столбца Путь')
             self.save_path_current_collection_to_excel(
@@ -323,22 +344,24 @@ class ControlManager:
                 hash_current_collection=data_collection["Хеш"],
             )
 
-            # print('Создание PDF и изображений со средствами для постов в соц.сети.')
-            # self._create_pdf_jpg(
-            #     collection_data=data_collection,
-            #     info_data=data_tools,
-            #     selection_result=checking_file_with_response(
-            #         json_file_path=self.paths_to_folders["00_source_02_answer_gpt"]
-            #     ),
-            #     path_to_output_folder_pdf_file=self.paths_to_folders["00_source_03_pdf"],
-            #     path_to_output_folder_jpg_file=self.paths_to_folders["00_source_04_jpg"],
-            # )
+            print('Создание PDF и изображений со средствами для постов в соц.сети.')
+            self._create_pdf_jpg(
+                collection_data=data_collection,
+                info_data=data_tools,
+                selection_result=checking_file_with_response(
+                    json_file_path=self.paths_to_folders["00_source_02_answer_gpt"]
+                ),
+                path_to_output_folder_pdf_file=self.paths_to_folders["00_source_03_pdf"],
+                path_to_output_folder_jpg_file=self.paths_to_folders["00_source_04_jpg"],
+            )
 
-            # pprint(self.paths_to_folders)
-            # print()
 
             print('Готовлю текстовое оформление поста.')
+
             self._forming_text_for_post(
+                data_tools=data_tools,
                 data=data_collection,
                 path_to_result_recommend=self.paths_to_folders["00_source_02_answer_gpt"],
             )
+
+            print()

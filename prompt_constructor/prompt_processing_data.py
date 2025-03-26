@@ -56,7 +56,7 @@ class PromptProcessingData:
         # Если символа нет, возвращаем список с одним очищенным значением
         return [type_need.strip()]
 
-    def _decrypting_data_from_cell(
+    def decrypting_data_from_cell(
             self,
             data: dict,
             data_collection: dict,
@@ -334,14 +334,14 @@ class PromptProcessingData:
         )
 
         # расшифровка данных по ключу Тип
-        data_collection['Тип'] = self._decrypting_data_from_cell(
+        data_collection['Тип'] = self.decrypting_data_from_cell(
             data=data_tools,
             data_collection=data_collection,
             key_for_decrypted="Тип",
         )
 
         # расшифровка данных по ключу Запрос
-        data_collection["Запрос"] = self._decrypting_data_from_cell(
+        data_collection["Запрос"] = self.decrypting_data_from_cell(
             data=data_tools,
             data_collection=data_collection,
             key_for_decrypted="Запрос",
