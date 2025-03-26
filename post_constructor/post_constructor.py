@@ -125,13 +125,10 @@ class PostConstructor:
         Если ключ отсутствует — вернёт пустую строку.
         """
 
-        # Преобразуем строку в Path
-        result_dir = Path(result_dir)
+        path_to_file = Path(result_dir) / "Анализ_средств.json"
 
-        path_to_file = result_dir / "Анализ_средств.json"
-
-        with path_to_file.open('r', encoding='utf-8') as f:
-            answer_gpt = json.load(f)
+        with path_to_file.open('r', encoding='utf-8') as file:
+            answer_gpt = json.load(file)
 
         return answer_gpt.get('result', '')
 
