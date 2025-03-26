@@ -49,11 +49,12 @@ def forming_text_for_post(
     # на этом этапе в исходном словаре обновилось 2 ключа
 
     # формируем текст для поста из нужных данных
-    post_constructor = PostConstructor(task=data['Задача'])
+    post_constructor = PostConstructor()
 
     info_for_post = post_constructor.create_text_for_post(
         data=data,
         path_to_result_recommend=path_to_result_recommend,
+        task=data['Задача'],
     )
 
     # сохраняем результат

@@ -1,5 +1,6 @@
-import os
 import json
+from pathlib import Path
+from typing import Union
 
 
 class PostConstructor:
@@ -9,16 +10,14 @@ class PostConstructor:
 
     def __init__(
             self,
-            task: str,
     ):
-        self.task = task
         self.post_for_task = {
             'Лучшее средство': self.create_text_for_post_code_best_product,
             'Лучшее средство без канцерогенов':
                 self.create_text_for_post_code_best_product_canc_free,
             'Разбор состава одного средства': self.create_text_for_post_code_one_product,
             'Лучший набор': self.create_text_for_post_code_best_set,
-            'Лучшее сочетание': None,
+            'Лучшее сочетание': self.create_text_for_post_code_best_combination,
             'Лучшая компоновка': None,
             'Аналог': None,
             'Наиболее похож': None,
@@ -114,10 +113,33 @@ class PostConstructor:
     и комплексного решения следующих задач:** {data["Запрос"]}.
     """
 
+    def load_result_recommendation(
+            self,
+            result_dir: Union[str, Path],
+    ) -> str:
+        """
+        Загружает результат итоговой рекомендации от OPENAI из JSON-файла.
+
+        :param result_dir: Путь до файла 'Анализ_средств.json'.
+        :return: значение по ключу 'result' из JSON-файла.
+        Если ключ отсутствует — вернёт пустую строку.
+        """
+
+        # Преобразуем строку в Path
+        result_dir = Path(result_dir)
+
+        path_to_file = result_dir / "Анализ_средств.json"
+
+        with path_to_file.open('r', encoding='utf-8') as f:
+            answer_gpt = json.load(f)
+
+        return answer_gpt.get('result', '')
+
     def create_text_for_post(
             self,
             data: dict,
             path_to_result_recommend: str,
+            task: str,
     ) -> str:
         """
         Метод с общей информацией для поста:
@@ -127,22 +149,18 @@ class PostConstructor:
         :param data: словарь с данными о пользователе и косметических средствах
         :param path_to_result_recommend: путь до json-файла, в котором находится
         ответ от GPT по подборке
+        :param task: код задачи по текущей подборке
 
         :return: строка с данными о пользователе, его потребностях, итог.рекомендацией
         """
 
-        # 1. Собираем путь до файла
-        path_to_file = os.path.join(path_to_result_recommend, "Анализ_средств.json")
+        # Забираем ключ 'result'
+        result_recommend = self.load_result_recommendation(result_dir=path_to_result_recommend)
 
-        # 2. Читаем JSON-файл
-        with open(path_to_file, 'r', encoding='utf-8') as f:
-            answer_gpt = json.load(f)
-
-        # 3. Забираем ключ 'result'
-        result_recommend = answer_gpt.get('result', '')
+        # формируем содержимое пользовательского запроса
+        user_request = self.post_for_task[task](data=data)
 
         # 4. Формируем содержимое поста
-
         return f"""
         
     **📌 Сегодня у нас подборка средств для клиента**:
@@ -150,7 +168,7 @@ class PostConstructor:
     **👤 Пол:** {data["Пол"]}  
     **🎂 Возраст:** {data["Возраст"]} года/лет
     **💇‍♀️ Клиент имеет следующие особенности:** {data["Тип"]} 
-    {self.post_for_task[self.task](data=data)}
+    {user_request}
     **🏆 Итоговая рекомендация по текущей подборке**:
     {result_recommend}
     """
