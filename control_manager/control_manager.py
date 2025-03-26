@@ -1,24 +1,19 @@
 """
 В этом модуле - класс, управляющий логикой всего проекта
 """
-import copy
+
 import os
-from pathlib import Path
-from pprint import pprint
 
 from dotenv import load_dotenv
 from appeal_to_openai.main import main as appeal_to_openai_main
 from appeal_to_openai.utils import checking_file_with_response
 from dirs_structure_constructor.main import DirsConstructor
 from excel_process_data.process_data import ExcelManager
-
 from json_constructor.main import get_json_scheme
-from post_constructor.post_constructor import PostConstructor
+from post_constructor.main_post import forming_text_for_post
 from prompt_constructor.main import get_prompt
-from prompt_constructor.prompt_processing_data import PromptProcessingData
 from pdf.main import create_pdf
 from utils.utils import save_file_in_process_work
-
 
 
 # from utils.utils import copy_jpg_files
@@ -202,65 +197,6 @@ class ControlManager:
         #     where_copy_to=self.paths_to_folders['pinterest_jpg'],
         # )
 
-    def _forming_text_for_post(
-            self,
-            data_tools: dict,
-            data: dict,
-            path_to_result_recommend: str,
-    ) -> None:
-        """
-        Метод для вызова функции по формированию текста для поста и его сохранение
-
-        :param data_tools: словарь со всеми данными по средствам
-        :param data: нерасшифрованный словарь с данными о пользователе и косметических средствах
-        :param path_to_result_recommend: путь до json-файла, в котором находится
-        итоговая рекомендация по подборке
-
-        :return: None
-        """
-
-        # т.к. из исходного словаря мне нужно расшифровать только запрос и тип
-
-
-        # расшифровка данных текущей подборки с помощью таблицы со всеми средствами
-        prompt_proces_data = PromptProcessingData(
-            data_tools=data_tools,
-            data_collection=data,
-        )
-
-        # расшифровываем ключ тип
-        data['Тип'] = prompt_proces_data.decrypting_data_from_cell(
-            data=data_tools,
-            data_collection=data,
-            key_for_decrypted="Тип",
-        )
-
-        # расшифровываем ключ запрос
-        data['Запрос'] = prompt_proces_data.decrypting_data_from_cell(
-            data=data_tools,
-            data_collection=data,
-            key_for_decrypted="Запрос",
-        )
-
-        # print('Расшифровка словаря перед передачей в пост конструктор')
-        # pprint(data)
-
-        # формируем текст для поста из нужных данных
-        post_constructor = PostConstructor(task=data['Задача'])
-
-        info_for_post = post_constructor.create_text_for_post(
-            data=data,
-            path_to_result_recommend=path_to_result_recommend,
-        )
-
-        # сохраняем результат
-        save_file_in_process_work(
-            what_save=info_for_post,
-            path_to_folder=self.paths_to_folders['00_source_05_text'],
-            file_name='text_for_post',
-            file_extension='.md',
-        )
-
 
     def create_collection(
             self,
@@ -355,13 +291,12 @@ class ControlManager:
                 path_to_output_folder_jpg_file=self.paths_to_folders["00_source_04_jpg"],
             )
 
-
             print('Готовлю текстовое оформление поста.')
-
-            self._forming_text_for_post(
+            forming_text_for_post(
                 data_tools=data_tools,
                 data=data_collection,
                 path_to_result_recommend=self.paths_to_folders["00_source_02_answer_gpt"],
+                path_for_save=self.paths_to_folders['00_source_05_text'],
             )
 
-            print()
+            print(f"Подборка по коду '{data_collection['Задача']}' готова.\n")
