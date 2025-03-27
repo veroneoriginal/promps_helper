@@ -225,7 +225,8 @@ class ControlManager:
         # Захожу в "Подборки" и считаю сколько подборок не заполнено
         count_collection = self._get_count_collections(file_path_collection)
 
-        for _ in range(count_collection):
+        for number in range(count_collection):
+            print(f'Готовим подборку №{number+1}.')
             # Формирую словарь с подборкой
             data_collection = self._take_data_from_collection(
                 file_path_collection=file_path_collection,

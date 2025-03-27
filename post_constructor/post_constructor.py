@@ -168,4 +168,6 @@ class PostConstructor:
     {user_request}
     **🏆 Итоговая рекомендация по текущей подборке**:
     {result_recommend}
+    
+    {data['Хештег']}
     """
