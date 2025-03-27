@@ -21,12 +21,6 @@ data_collection = {
     'Хеш': '6ad4852cc0e04bc512762ced9022afec34afbc2c35e129503c1448e4f0b88578',
 }
 
-# ответ от gpt
-path_to_result_recommend = '00_base/00_info_for_post/27_03_25/1_Шампуни_бесплатная/00_source/02_answer_gpt'
-
-# куда сохранять
-path_for_save = '00_base/00_info_for_post/27_03_25/1_Шампуни_бесплатная/00_source/05_text'
-
 
 def test_create_hashtag():
     """
