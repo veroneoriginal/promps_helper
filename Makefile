@@ -39,6 +39,9 @@ prompt_test:
 proc_test:
 	pytest -s /home/veronika/00_projects/promps_helper/prompt_constructor/test_constructor/test_processing_data.py::TestProcessingData
 
+post_test:
+	pytest -s /home/veronika/00_projects/promps_helper/post_constructor/test/test_post.py
+
 
 veron_test:
 	pytest -s /home/veronika/00_projects/promps_helper/excel_process_data/utils/test/test_utils.py::TestUtils

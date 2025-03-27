@@ -15,7 +15,6 @@ from prompt_constructor.main import get_prompt
 from pdf.main import create_pdf
 from utils.utils import save_file_in_process_work
 
-
 # from utils.utils import copy_jpg_files
 
 
@@ -197,7 +196,6 @@ class ControlManager:
         #     where_copy_to=self.paths_to_folders['pinterest_jpg'],
         # )
 
-
     def create_collection(
             self,
             file_path_tools: str,
@@ -225,7 +223,8 @@ class ControlManager:
         # Захожу в "Подборки" и считаю сколько подборок не заполнено
         count_collection = self._get_count_collections(file_path_collection)
 
-        for _ in range(count_collection):
+        for number in range(count_collection):
+            print(f'Готовим подборку №{number + 1}.')
             # Формирую словарь с подборкой
             data_collection = self._take_data_from_collection(
                 file_path_collection=file_path_collection,
@@ -237,7 +236,7 @@ class ControlManager:
                 base_output_folder_path=path_to_output_folder,
                 data_collection=data_collection,
             ).get_output_folders(
-                prefix = data_collection['Группа'],
+                prefix=data_collection['Группа'],
             )
 
             # Определяю json-схему

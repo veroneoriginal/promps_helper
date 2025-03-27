@@ -6,11 +6,66 @@ from prompt_constructor.prompt_processing_data import PromptProcessingData
 from post_constructor.post_constructor import PostConstructor
 from utils.utils import save_file_in_process_work
 
+
+def get_products_list(
+        products_dict: dict,
+) -> list:
+    """
+    Функция для получения средств из текущей подборки
+
+    :param products_dict: словарь со средствами из текущей подборки
+    :return: список с названиями средств из текущей подборки
+    """
+    products_list = []
+
+    # Получаем все значения первого уровня
+    for value in products_dict.values():
+        # Если значение само является словарем (для кода задачи с наборами)
+        if isinstance(value, dict):
+            products_list.extend(value.values())
+        # Если значение - строка (для всех остальных)
+        else:
+            products_list.append(value)
+
+    return products_list
+
+
+def create_hashtag(
+        data_tools: dict,
+        data: dict,
+) -> str:
+    """
+    Функция, с помощью которого получаем названия брендов и превращаем их в хештеги
+
+    :param data_tools: словарь со всеми данными по средствам
+    :param data: нерасшифрованный словарь с текущей подборкой
+
+    :return: возвращает строку с хештегами брендов по теукущей подборке
+    """
+
+    # получаем список средств из текущей подборки
+    products = get_products_list(data['Средства'])
+
+    # список, в котором будут хештеги
+    hashtag = []
+
+    for product in products:
+        brand = data_tools['Средства'][product]['Бренд']
+        if brand:
+            brand_no_space = ''.join(brand.split())
+            hashtag.append(f"#{brand_no_space}")
+        else:
+            brand_no_space = 'БРЕНД_ОТСУТСТВУЕТ'
+            hashtag.append(f"#{brand_no_space}")
+
+    return ' '.join(hashtag)
+
+
 def forming_text_for_post(
         data_tools: dict,
         data: dict,
         path_to_result_recommend: str,
-        path_for_save:str,
+        path_for_save: str,
 ) -> None:
     """
     Метод, в котором:
@@ -46,7 +101,12 @@ def forming_text_for_post(
         data_collection=data,
         key_for_decrypted="Запрос",
     )
-    # на этом этапе в исходном словаре обновилось 2 ключа
+
+    # добавляем хештег
+    data['Хештег'] = create_hashtag(
+        data=data,
+        data_tools=data_tools,
+    )
 
     # формируем текст для поста из нужных данных
     post_constructor = PostConstructor()
