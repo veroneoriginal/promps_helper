@@ -1,3 +1,8 @@
+# pylint: disable=R0917 too-many-positional-arguments
+# pylint: disable=R0913 too-many-arguments
+# pylint: disable=R0902 too-many-instance-attributes
+# pylint: disable=C0301 line-too-long
+
 from reportlab.lib.utils import ImageReader
 from reportlab.platypus import Flowable
 from reportlab.lib.colors import (

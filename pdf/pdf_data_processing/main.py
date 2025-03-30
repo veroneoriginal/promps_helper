@@ -4,7 +4,9 @@ from copy import deepcopy
 from pdf.pdf_data_processing.tasks_logic.analysis_composition_one_product import (
     AnalisisCompositionProductPDFTemplateCreator,
 )
-from pdf.pdf_data_processing.tasks_logic.best_combination import BestCombinationProductPDFTemplateCreator
+from pdf.pdf_data_processing.tasks_logic.best_combination import (
+    BestCombinationProductPDFTemplateCreator,
+)
 from pdf.pdf_data_processing.tasks_logic.best_product import BestProductPDFTemplateCreator
 from pdf.pdf_data_processing.tasks_logic.best_product_without_carcinogens import (
     BestProductWithOutConcerogensPDFTemplateCreator,

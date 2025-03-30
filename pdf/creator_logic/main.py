@@ -1,7 +1,7 @@
 from pdf.creator_logic.creator.document_creator import (
-    PDFBaseDocTemplateWithBrandLine,
     PDFFlowablesCreator,
-    PDFPageTemplateandFrameBuilder, TEMPLATE_CLASS,
+    PDFPageTemplateandFrameBuilder,
+    TEMPLATE_CLASS,
 )
 
 

@@ -1,3 +1,5 @@
+# pylint: disable=C0301 line-too-long
+
 class JsonCreator:
     """
     Класс, внутри которого создается json-схема для
@@ -52,48 +54,89 @@ class JsonCreator:
                 "type": "object",
                 "properties": {
                     "origin_product": {
-                        "type": "string",
-                        "description": "Исходное средство, к которому подбирается сочетание"
-                    },
-                    "best_combination": {
-                        "type": "string",
-                        "description":
-                            "Название одного средства из списка,"
-                            " которое лучше всего сочетается с исходным."
+                        "type": "object",
+                        "properties": {
+                            "title":
+                                {
+                                    "type": "string",
+                                    "description": "Название исходного средства"
+                                },
+                            "article":
+                                {
+                                    "type": "string",
+                                    "description": "Артикул исходного средства, только цифры."
+                                },
+                            "plus":
+                                {
+                                    "type": "string",
+                                    "description": "Описание плюсов исходного средства (без названия средства)"
+                                },
+                            "minus":
+                                {
+                                    "type": "string",
+                                    "description": "Описание минусов исходного средства (без названия средства)"
+                                },
+                        },
+                        "required": [
+                            "title",
+                            "article",
+                            "plus",
+                            "minus"
+                        ],
+                        "additionalProperties": False,
+
                     },
                     "result": {
                         "type": "string",
                         "description": "Итоговая рекомендация, вывод"
                     }
                 },
-                "required": ["origin_product", "best_combination", "result"],
+                "required": ["origin_product", "result"],
                 "additionalProperties": False
             }
         }
 
         # Добавляем продукты динамически
         products = {}
-        for i in range(1, self.data_collection["Количество средств"] + 1):
+        for i in range(1, self.data_collection["Количество средств"]):
             product_key = f"product_{i}"
             products[product_key] = {
                 "type": "object",
-                "properties": {
-                    "title": {
-                        "type": "string",
-                        "description": f"Название {i}-го средства"
-                    },
-                    "result": {
-                        "type": "string",
-                        "description": "Объяснение, почему выбрали или не выбрали это средство."
-                    },
+                "properties":
+                    {
+                        "title":
+                            {
+                                "type": "string",
+                                "description": f"Название {i}-го средства"
+                            },
+                        "article":
+                            {
+                                "type": "string",
+                                "description": "Артикул средства, только цифры."
+                            },
+                        "plus":
+                            {
+                                "type": "string",
+                                "description": "Описание плюсов средства"
+                            },
+                        "minus":
+                            {
+                                "type": "string",
+                                "description": "Описание минусов средства"
+                            },
+                        "result":
+                            {
+                                "type": "string",
+                                "description": "Объяснение, почему выбрали или не выбрали это средство."
+                            },
 
-                    "best_product": {
-                        "type": "boolean",
-                        "description": "Если это средство попало в сочетание с исходным,"
-                                       " поставь здесь True, иначе False"
-                    }
-                },
-                "required": ["title", "result", "best_product"],
+                        "best_product":
+                            {
+                                "type": "boolean",
+                                "description": "Если это средство попало в сочетание с исходным, поставь здесь True, иначе False"
+                            }
+                    },
+                "required": ["title", "article", "plus", "minus", "result", "best_product"],
                 "additionalProperties": False
             }
 
@@ -119,16 +162,12 @@ class JsonCreator:
             "schema": {
                 "type": "object",
                 "properties": {
-                    "best_product": {
-                        "type": "string",
-                        "description": "Лучшее средство"
-                    },
                     "result": {
                         "type": "string",
                         "description": "Итоговая рекомендация, вывод"
                     }
                 },
-                "required": ["best_product", "result"],
+                "required": ["result"],
                 "additionalProperties": False
             }
         }
@@ -188,16 +227,12 @@ class JsonCreator:
             "schema": {
                 "type": "object",
                 "properties": {
-                    "best_product": {
-                        "type": "string",
-                        "description": "Лучшее средство"
-                    },
                     "result": {
                         "type": "string",
                         "description": "Итоговая рекомендация, вывод"
                     }
                 },
-                "required": ["best_product", "result"],
+                "required": ["result"],
                 "additionalProperties": False
             }
         }
@@ -212,6 +247,10 @@ class JsonCreator:
                     "title": {
                         "type": "string",
                         "description": f"Название {i}-го средства"
+                    },
+                    "article": {
+                        "type": "string",
+                        "description": f"Артикул {i}-го средства, только цифры."
                     },
                     "plus": {
                         "type": "string",
@@ -232,7 +271,7 @@ class JsonCreator:
                                        " если нет, то False"
                     }
                 },
-                "required": ["title", "plus", "minus", "best_product", "carcinogen"],
+                "required": ["title", "article", "plus", "minus", "best_product", "carcinogen"],
                 "additionalProperties": False
             }
 

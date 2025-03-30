@@ -10,25 +10,30 @@ TEST_BEST_PRODUCT_PATH_JPG_FILE = '01_test_base/00_info_for_post/22_22_2222/100_
 FILE_PATH_TOOLS = '01_test_base/Средства для тестов.xlsx'
 
 TEST_BEST_PRODUCT_SELECTION_RESULT = {
-    "best_product": "LOREAL PROFESSIONNEL Serioxyl Advanced (артикул: 19000146259)",
-    "product_1": {
-        "title": "ALTEREGO ITALY Scalpego Balancing (артикул: 19000222491)",
-        "plus": "Содержит сок алоэ и масло макадамии, которые могут способствовать увлажнению и питанию волос.",
-        "minus": "Содержит сульфаты и консерванты, которые могут сушить волосы и вызывать раздражение кожи головы.",
-        "best_product": False
-    },
-    "product_2": {
-        "title": "LOREAL PROFESSIONNEL Serioxyl Advanced (артикул: 19000146259)",
-        "plus": "Содержит органические экстракты и масла, которые могут успокаивать кожу головы и укреплять волосы.",
-        "minus": "Содержит сульфаты, которые могут сушить волосы и вызывать раздражение кожи головы.",
-        "best_product": True
-    },
-    "product_3": {
-        "title": "NATURA SIBERICA Oblepikha (артикул: 19000141580)",
-        "plus": "Содержит гидролизованный кератин, шелк и масла, которые глубоко питают и увлажняют волосы, укрепляют их структуру.",
-        "minus": "Может быть более дорогим по сравнению с другими средствами.",
-        "best_product": False
-    },
+    "product_1":
+        {
+            "title": "ALTEREGO ITALY Scalpego Balancing",
+            "article": "19000222491",
+            "plus": "Содержит сок алоэ и масло макадамии, которые могут способствовать увлажнению и питанию волос.",
+            "minus": "Содержит сульфаты и консерванты, которые могут сушить волосы и вызывать раздражение кожи головы.",
+            "best_product": False
+        },
+    "product_2":
+        {
+            "title": "LOREAL PROFESSIONNEL Serioxyl Advanced",
+            "article": "19000146259",
+            "plus": "Содержит органические экстракты и масла, которые могут успокаивать кожу головы и укреплять волосы.",
+            "minus": "Содержит сульфаты, которые могут сушить волосы и вызывать раздражение кожи головы.",
+            "best_product": True
+        },
+    "product_3":
+        {
+            "title": "NATURA SIBERICA Oblepikha",
+            "article": "19000141580",
+            "plus": "Содержит гидролизованный кератин, шелк и масла, которые глубоко питают и увлажняют волосы, укрепляют их структуру.",
+            "minus": "Может быть более дорогим по сравнению с другими средствами.",
+            "best_product": False
+        },
     "result": "Лучшим средством является LOREAL PROFESSIONNEL Serioxyl Advanced. Это средство содержит гидролизованный кератин, шелк и различные масла, которые обеспечивают глубокое питание и увлажнение волос, что соответствует запросу пользователя. Оно помогает восстановить водный баланс, укрепить структуру волос и защитить их от внешних воздействий, что делает волосы мягкими, гладкими и здоровыми. В отличие от других средств, оно не содержит агрессивных сульфатов, что делает его более подходящим для сухих и ломких волос."
 }
 
@@ -51,9 +56,7 @@ elem = [
     ('Paragraph', {'Ключ в подборке': 'Тип продукта', 'Стиль': 'BP_normal_2', 'Заглавными': True}),
     ('Spacer', {'width': 1, 'height': 20}),
     ('Paragraph', {'Ключ в подборке': 'Название средства', 'Стиль': 'BP_title_1'}),
-    ('Spacer', {'width': 1, 'height': 10}),
-
-    ('Spacer', {'width': 1, 'height': 20}),
+    ('Spacer', {'width': 1, 'height': 30}),
     ('Paragraph', {'Ключ в подборке': 'Количество мера / цена', 'Стиль': 'BP_base_price_1'}),
     ('Spacer', {'width': 1, 'height': 20}),
     ('Paragraph', {'Текст': '<b>Плюсы:</b>', 'Стиль': 'BP_bold_1'}),
@@ -81,7 +84,7 @@ TEST_BEST_PRODUCT_EXPECTED_RESULT = [
      'Плюсы': 'Содержит сок алоэ и масло макадамии, которые могут способствовать '
               'увлажнению и питанию волос.',
      'Путь для сохранения pdf-файла': Path(
-         '01_test_base/00_info_for_post/22_22_2222/100_Шампуни/00_source/03_pdf/alterego_italy_scalpego_balancing_артикул_19000222491_.pdf'),
+         '01_test_base/00_info_for_post/22_22_2222/100_Шампуни/00_source/03_pdf/alterego_italy_scalpego_balancing_19000222491.pdf'),
      'Путь к изображению бренд-линии': Path('00_base/source/imagine_border/border_fiolet.jpg'),
      'Путь к изображению средства': Path(
          '00_base/products/00_img/alterego_italy_scalpego_balancing_19000222491.jpg'),
@@ -99,7 +102,7 @@ TEST_BEST_PRODUCT_EXPECTED_RESULT = [
      'Плюсы': 'Содержит органические экстракты и масла, которые могут успокаивать '
               'кожу головы и укреплять волосы.',
      'Путь для сохранения pdf-файла': Path(
-         '01_test_base/00_info_for_post/22_22_2222/100_Шампуни/00_source/03_pdf/loreal_professionnel_serioxyl_advanced_артикул_19000146259_.pdf'),
+         '01_test_base/00_info_for_post/22_22_2222/100_Шампуни/00_source/03_pdf/loreal_professionnel_serioxyl_advanced_19000146259.pdf'),
      'Путь к изображению бренд-линии': Path('00_base/source/imagine_border/border_green.jpg'),
      'Путь к изображению средства': Path(
          '00_base/products/00_img/loreal_professionnel_serioxyl_advanced_19000146259.jpg'),
@@ -116,7 +119,7 @@ TEST_BEST_PRODUCT_EXPECTED_RESULT = [
      'Плюсы': 'Содержит гидролизованный кератин, шелк и масла, которые глубоко '
               'питают и увлажняют волосы, укрепляют их структуру.',
      'Путь для сохранения pdf-файла': Path(
-         '01_test_base/00_info_for_post/22_22_2222/100_Шампуни/00_source/03_pdf/natura_siberica_oblepikha_артикул_19000141580_.pdf'),
+         '01_test_base/00_info_for_post/22_22_2222/100_Шампуни/00_source/03_pdf/natura_siberica_oblepikha_19000141580.pdf'),
      'Путь к изображению бренд-линии': Path('00_base/source/imagine_border/border_fiolet.jpg'),
      'Путь к изображению средства': Path('00_base/products/00_img/natura_siberica_oblepikha_19000141580.jpg'),
      'Класс шаблона': 'PDFBaseDocTemplateWithBrandLine',

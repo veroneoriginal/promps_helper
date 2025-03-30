@@ -205,7 +205,7 @@ def get_img_link_in_base(
     :return: путь до изображения
     """
     cleaned_product_title = clean_product_name(product_title)
-    image_path = (Path(image_dir_path) / f'{cleaned_product_title}_{product_id}.{img_format}')
+    image_path = Path(image_dir_path) / f'{cleaned_product_title}_{product_id}.{img_format}'
     return str(image_path)
 
 

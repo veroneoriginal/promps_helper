@@ -9,7 +9,7 @@ class_test_pdf_all_process:
 	pytest -s pdf/tests/test_main.py::TestCreatePdf::test_analysis_composition_one_product
 
 class_test_pdf_processing:
-	pytest -s pdf/pdf_data_processing/tasks_logic/tests/test_tasks_logic_process.py::TestTasksDataProcessing::test_best_combination
+	pytest -s pdf/pdf_data_processing/tasks_logic/tests/test_tasks_logic_process.py::TestTasksDataProcessing
 
 class_test_pdf_creator:
 	pytest -s pdf/creator_logic/tests/test_main.py::TestPDFCreator::test_create_pdf
@@ -30,7 +30,7 @@ excel_test:
 	pytest -s excel_process_data/utils/test/test_utils.py::TestUtils::test_counting_hash_best_product
 
 jsontest:
-	pytest -s json_constructor/test/test_json_scheme.py::TestJsonScheme::test_get_json_scheme_for_best_product
+	pytest -s json_constructor/test/test_json_scheme.py::TestJsonScheme
 
 
 prompt_test:
@@ -40,7 +40,7 @@ proc_test:
 	pytest -s prompt_constructor/test_constructor/test_processing_data.py::TestProcessingData::test_decryption_key_best_set
 
 post_test:
-	pytest -s post_constructor/test/test_post.py
+	pytest -s post_constructor/test/test_post.py::TestPostConstructor::test_create_hashtag_2
 
 
 veron_test:
