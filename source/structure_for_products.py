@@ -11,6 +11,7 @@ from types import MappingProxyType
 # Это базовые параметры, которые актуальны для всех категорий продуктов
 base_properties = {
     "title": ("string", "Название средства"),
+    "article": ("string", "Артикул средства"),
     "main_components": ("string", "Подробно поясни суть основных компонентов"),
     "active_ingredients": ("string", "Подробно поясни суть активных компонентов"),
     "moisturizing_and_care":
@@ -71,6 +72,7 @@ perfumery = {
 # словарь для маппинга названий с английского на русский
 _MAPPING_KEYS = {
     "title": "Название средства",
+    "article": "Артикул в Золотом Яблоке",
     "main_components": "Основные компоненты",
     "active_ingredients": "Активные компоненты",
     "moisturizing_and_care": "Увлажняющие и ухаживающие компоненты",

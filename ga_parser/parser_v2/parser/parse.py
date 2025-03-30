@@ -1,41 +1,10 @@
 """ Логика парсера второй версии"""
 
-import json
-import re
-
 from ga_parser.parser_v2.parser.generation_product_data import get_product_data_dict
 from ga_parser.utils.requests_funcs import get_page_v2
 from ga_parser.utils.utils import (
     download_image,
 )
-
-
-def get_product_card(html_text: str) -> dict | None:
-    """
-    Забирает блок с информацией о средстве,
-    преобразует строку JSON в словарь Python.
-
-    :param html_text: строка с html-содержимым страницы
-    :return: str
-    """
-
-    match = re.search(
-        r"window\.serverCache\['productCard']\s*=\s*({.*?});",
-        html_text,
-        re.DOTALL
-    )
-
-    if match:
-        product_card_data = match.group(1)  # Выделяем содержимое объекта
-        try:
-            print("Получили карточку средства")
-            return json.loads(product_card_data)['data']
-        except json.JSONDecodeError as e:
-            print("Ошибка при получении карточки средства:", e)
-            return None
-    else:
-        print("Карточка средства не найдена")
-        return None
 
 
 def parse_product(

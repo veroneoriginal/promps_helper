@@ -1,3 +1,4 @@
+# pylint: disable=W0212 protected-access
 import json
 
 from control_manager.control_manager import ControlManager

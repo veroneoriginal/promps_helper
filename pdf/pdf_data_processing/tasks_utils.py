@@ -2,7 +2,6 @@ import re
 from pathlib import Path
 from types import MappingProxyType
 
-from source.pdf_structure_mapping import get_pdf_structure
 from source.structure_for_products import MAPPING_KEYS
 
 
@@ -40,87 +39,17 @@ def calc_base_price_ratio(
     )
 
 
-def get_brand_line_sizes(
-        task: str,
-        category: str,
-) -> str:
-    """
-    :param task: код задачи
-    :param category: категория подборки
-
-    Возвращает размеры бренд-линии для нанесения
-    на PDF в зависимости от задачи
-    """
-
-    pdf_structure = get_pdf_structure(
-        task=task,
-        category=category,
-    )
-    return pdf_structure['Размеры бренд-линии']
-
-
-def get_pdf_flowables(
-        task: str,
-        category: str,
-) -> dict:
-    """
-    :param task: код задачи
-    :param category: категория подборки
-
-    Возвращает словарь с flowables-элементами pdf-документа
-    """
-    pdf_structure = get_pdf_structure(
-        task=task,
-        category=category,
-    )
-    return pdf_structure['Элементы и стили']
-
-
-def get_pdf_doc_sizes(
-        task: str,
-        category: str,
-) -> tuple:
-    """
-    :param task: код задачи
-    :param category: категория подборки
-
-    Возвращает кортеж с размерами pdf-документа
-    """
-
-    pdf_structure = get_pdf_structure(
-        task=task,
-        category=category,
-    )
-    return pdf_structure['Размеры документа']
-
-
-def get_pdf_page_templates(
-        task: str,
-        category: str,
-) -> dict:
-    """
-    :param task: код задачи
-    :param category: категория подборки
-
-    Возвращает dict с данными по шаблонами страниц с фреймами
-    """
-
-    pdf_structure = get_pdf_structure(
-        task=task,
-        category=category,
-    )
-    return pdf_structure['Шаблоны страниц с фреймами']
-
-
-def format_product_filename(
+def get_path_for_save_pdf(
         product_title: str,
         path_to_output_folder_pdf_file: str,
+        product_article: str,
 ) -> Path:
     """
     Возвращает полный путь для сохранения файла .pdf
 
     :param path_to_output_folder_pdf_file: путь (Path) к папке для сохранения PDF.
     :param product_title: наименование средства
+    :param product_article: Артикул средства в Золотом Яблоке
 
     :return: полный путь к файлу PDF
     """
@@ -129,7 +58,7 @@ def format_product_filename(
     # Удаляем всё, кроме букв (латиница, кириллица), цифр и подчёркиваний
     safe_name = re.sub(r"[^a-zA-Zа-яА-ЯёЁ0-9]+", "_", product_title.strip().lower())
 
-    safe_filename = safe_name + ".pdf"
+    safe_filename = f'{safe_name}_{product_article}.pdf'
     return output_folder_pdf / safe_filename
 
 

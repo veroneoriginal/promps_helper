@@ -7,7 +7,6 @@ PDF-документов в соответствии с задачами
 import unittest
 from pprint import pprint
 
-from control_manager.control_manager import ControlManager
 from dev_helpers.data_tools_for_test import ALL_DATA_TOOLS_FOR_TEST
 from pdf.pdf_data_processing.main import PDFDataProcessor
 from pdf.tests.tests_best_combination.data_example import (
@@ -22,7 +21,6 @@ from pdf.tests.tests_best_product.data_example import (
     TEST_BEST_PRODUCT_SELECTION_RESULT,
     TEST_BEST_PRODUCT_EXPECTED_RESULT,
     TEST_BEST_PRODUCT_PATH_PDF_FILE,
-    FILE_PATH_TOOLS,
 )
 from pdf.tests.tests_analysis_composition_one_product.with_out_category_data_example import (
     TEST_ANALYSIS_COMPOSITION_ONE_PRODUCT_WITHOUT_CATEGORY_COLLECTION_DATA,
@@ -36,28 +34,7 @@ from pdf.tests.test_best_product_without_carcinogens.data_example import (
     TEST_BEST_PRODUCT_WITHOUT_CARCINOGENS_SELECTION_RESULT,
     TEST_BEST_PRODUCT_WITHOUT_CARCINOGENS_EXPECTED_RESULT,
     TEST_BEST_PRODUCT_WITHOUT_CARCINOGENS_PATH_PDF_FILE,
-    FILE_PATH_TOOLS,
 )
-
-from source.structure_for_products import PARAMETERS_DIF_PRODUCT_CATEGORIES
-
-
-def get_one_product_dict(product_title: str) -> dict:
-    """
-    Возвращает словарь с данными по обному средству
-    """
-    control_manager = ControlManager(
-        param_dif_products_categories=PARAMETERS_DIF_PRODUCT_CATEGORIES,
-    )
-    data_tools = control_manager._take_data_from_table_tool(
-        file_path_tools_table=FILE_PATH_TOOLS,
-    )
-    return data_tools['Средства'][product_title]
-
-
-# print(get_one_product_dict(
-#     product_title='NATURA SIBERICA Oblepikha'
-# ))
 
 
 class TestTasksDataProcessing(unittest.TestCase):
@@ -118,6 +95,5 @@ class TestTasksDataProcessing(unittest.TestCase):
             path_to_output_folder_pdf_file=TEST_BEST_COMBINATION_PATH_PDF_FILE,
         )
         result = data_processor.process_data_with_task_code()
-        print(f'{result=}')
         self.maxDiff = None
         self.assertListEqual(result, TEST_BEST_COMBINATION_EXPECTED_RESULT)

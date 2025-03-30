@@ -1,3 +1,4 @@
+# pylint: disable=C0301 line-too-long
 import unittest
 from excel_process_data.utils.utils import counting_hash
 

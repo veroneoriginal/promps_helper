@@ -1,3 +1,4 @@
+# pylint: disable=C0301: line-too-long
 import unittest
 
 from prompt_constructor.prompt_processing_data import PromptProcessingData
@@ -6,6 +7,7 @@ from prompt_constructor.test_constructor.constants import (
     DECRYPT_BEST_PROD,
     DECRYPT_BEST_ONE_PROD,
 )
+# pylint: disable=E0611: no-name-in-module
 from dev_helpers.data_tools_for_test import ALL_DATA_TOOLS_FOR_TEST
 
 

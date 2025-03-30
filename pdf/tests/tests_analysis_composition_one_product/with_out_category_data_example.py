@@ -10,7 +10,8 @@ TEST_ANALYSIS_COMPOSITION_ONE_PRODUCT_WITHOUT_CATEGORY_PATH_JPG_FILE = '01_test_
 FILE_PATH_TOOLS = '01_test_base/Средства для тестов.xlsx'
 
 TEST_ANALYSIS_COMPOSITION_ONE_PRODUCT_WITHOUT_CATEGORY_SELECTION_RESULT = {
-    'title': 'NATURA SIBERICA Oblepikha (артикул: 19000141580)',
+    'title': 'NATURA SIBERICA Oblepikha',
+    "article": "19000141580",
     'main_components': 'Основные компоненты включают в себя воду (Aqua), глицерин (Glycerin), масло семян лимнантеса альбы (Meadowfoam Seed Oil), гидрогенизированные кокоглицериды (Hydrogenated Coco-Glycerides) и пентаэритритил тетраизостеарат (Pentaerythrityl Tetraisostearate). Эти компоненты обеспечивают основу для увлажнения и питания кожи, создавая барьер для удержания влаги.',
     'active_ingredients': 'Активные компоненты включают мед (Mel), маточное молочко (Royal Jelly), экстракт листьев центеллы азиатской (Centella Asiatica Leaf Extract) и гиалуроновую кислоту (Hyaluronic Acid). Эти ингредиенты известны своими антивозрастными и восстанавливающими свойствами, способствуют регенерации кожи и улучшению её текстуры.',
     'moisturizing_and_care': 'Увлажняющие и ухаживающие компоненты включают глицерин, масло семян лимнантеса альбы, гидрогенизированные кокоглицериды, диметикон (Dimethicone), натриевую гиалуронат (Sodium Hyaluronate) и пантенол (Panthenol). Эти ингредиенты обеспечивают глубокое увлажнение, смягчение и питание кожи, улучшая её эластичность и упругость.',
@@ -91,7 +92,7 @@ TEST_ANALYSIS_COMPOSITION_ONE_PRODUCT_WITHOUT_CATEGORY_EXPECTED_RESULT = [
         'Соотношение цены': '100 мл / 126 р.',
         'Путь к изображению бренд-линии': Path('00_base/source/imagine_border/border_green.jpg'),
         'Путь для сохранения pdf-файла': Path(
-            '01_test_base/00_info_for_post/22_22_2222/100_Шампуни/00_source/03_pdf/natura_siberica_oblepikha_артикул_19000141580_.pdf'),
+            '01_test_base/00_info_for_post/22_22_2222/100_Шампуни/00_source/03_pdf/natura_siberica_oblepikha_19000141580.pdf'),
         'Основные компоненты': 'Основные компоненты включают в себя воду (Aqua), глицерин (Glycerin), масло семян лимнантеса альбы (Meadowfoam Seed Oil), гидрогенизированные кокоглицериды (Hydrogenated Coco-Glycerides) и пентаэритритил тетраизостеарат (Pentaerythrityl Tetraisostearate). Эти компоненты обеспечивают основу для увлажнения и питания кожи, создавая барьер для удержания влаги.',
         'Активные компоненты': 'Активные компоненты включают мед (Mel), маточное молочко (Royal Jelly), экстракт листьев центеллы азиатской (Centella Asiatica Leaf Extract) и гиалуроновую кислоту (Hyaluronic Acid). Эти ингредиенты известны своими антивозрастными и восстанавливающими свойствами, способствуют регенерации кожи и улучшению её текстуры.',
         'Увлажняющие и ухаживающие компоненты': 'Увлажняющие и ухаживающие компоненты включают глицерин, масло семян лимнантеса альбы, гидрогенизированные кокоглицериды, диметикон (Dimethicone), натриевую гиалуронат (Sodium Hyaluronate) и пантенол (Panthenol). Эти ингредиенты обеспечивают глубокое увлажнение, смягчение и питание кожи, улучшая её эластичность и упругость.',

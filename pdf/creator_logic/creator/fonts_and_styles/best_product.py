@@ -1,7 +1,7 @@
 from reportlab.lib.enums import (
     TA_CENTER,
     TA_RIGHT,
-    TA_LEFT,
+    TA_LEFT, TA_JUSTIFY,
 )
 from reportlab.lib.styles import ParagraphStyle
 
@@ -12,13 +12,6 @@ BEST_PRODUCT_STYLES = {
         fontSize=25,
         alignment=TA_CENTER,
         leading=35,
-    ),
-    'BP_title_2': ParagraphStyle(
-        'BP_title_2',
-        fontName="DejaVuSans",
-        fontSize=25,
-        alignment=TA_CENTER,
-        leading=15,
     ),
     'BP_base_price_1': ParagraphStyle(
         'BP_base_price_1',
@@ -38,6 +31,7 @@ BEST_PRODUCT_STYLES = {
         fontName="DejaVuSans",
         fontSize=16,
         leading=20,
+        alignment=TA_JUSTIFY,
     ),
 
     'BP_normal_2': ParagraphStyle(

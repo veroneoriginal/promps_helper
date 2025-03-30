@@ -6,7 +6,7 @@ from pdf.pdf_data_processing.tasks_utils import (
     calculate_price_per_standard_unit,
     calc_base_price_ratio,
 )
-from pdf.tests.tests_best_product.data_example import TEST_BEST_PRODUCT_INFO_DATA
+from dev_helpers.data_tools_for_test import ALL_DATA_TOOLS_FOR_TEST
 
 
 class TestTasksUtils(unittest.TestCase):
@@ -54,5 +54,5 @@ class TestTasksUtils(unittest.TestCase):
         Готовит строку 'Количество мера / цена'
         Например: '190 мл / 1612 р.'
         """
-        result = calc_base_price_ratio(product=TEST_BEST_PRODUCT_INFO_DATA['ALTEREGO ITALY Scalpego Balancing'])
+        result = calc_base_price_ratio(product=ALL_DATA_TOOLS_FOR_TEST['ALTEREGO ITALY Scalpego Balancing']['19000222491'])
         self.assertEqual('300 мл / 3500 рублей', result)

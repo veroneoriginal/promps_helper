@@ -37,7 +37,7 @@ class ExcelProcess:
         df = pd.read_excel(
             io=self.excel_file_path,
             sheet_name=self.ws.title,
-            usecols=[0, 1]
+            usecols=["Ссылка в Золотом Яблоке", "Артикул в Золотом Яблоке"]
         )
 
         # Получаем названия колонок

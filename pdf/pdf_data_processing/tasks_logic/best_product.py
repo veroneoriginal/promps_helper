@@ -6,7 +6,7 @@
 from pathlib import Path
 
 from pdf.pdf_data_processing.tasks_logic.base_task import get_base_info_by_product
-from pdf.pdf_data_processing.tasks_utils import format_product_filename
+from pdf.pdf_data_processing.tasks_utils import get_path_for_save_pdf
 
 PDF_STRUCTURE = {
     'Базовая категория':
@@ -99,6 +99,7 @@ class BestProductPDFTemplateCreator:
         """
 
         product_name = one_product_data['Название средства']
+        product_article = one_product_data['Артикул в Золотом Яблоке']
 
         template_data = {  # отличается:
             'Плюсы': one_product_data['Плюсы'],
@@ -108,15 +109,17 @@ class BestProductPDFTemplateCreator:
             )
             ),
 
-            'Путь для сохранения pdf-файла': format_product_filename(
+            'Путь для сохранения pdf-файла': get_path_for_save_pdf(
                 product_title=product_name,
                 path_to_output_folder_pdf_file=self.path_to_output_folder_pdf_file,
+                product_article=product_article,
             ),
         }
 
         base_product_data = get_base_info_by_product(
             info_data=self.info_data,
             product_name=product_name,
+            product_article=product_article,
         )
 
         template_data.update(base_product_data)

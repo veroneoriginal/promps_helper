@@ -7,7 +7,7 @@ from pathlib import Path
 
 from pdf.pdf_data_processing.tasks_logic.base_task import get_base_info_by_product
 from pdf.pdf_data_processing.tasks_utils import (
-    format_product_filename,
+    get_path_for_save_pdf,
 )
 
 PDF_STRUCTURE = {
@@ -148,66 +148,102 @@ class BestCombinationProductPDFTemplateCreator:
         :return: Возвращает список с данными для создания документов
         """
 
-        source_product_template = self.get_source_product_template()
+        source_product_template = self.get_source_product_template(
+            one_product_data=self.rus_selection_result['Исходное средство']
+        )
         self.pdf_docs_data.append(source_product_template)
-        best_combination_product_template = self.get_best_combination_product_template()
-        self.pdf_docs_data.append(best_combination_product_template)
-        unselected_combination_product_template = self.get_unselected_combination_product_template()
-        self.pdf_docs_data.extend(unselected_combination_product_template)
-        print(f'{len(self.pdf_docs_data)=}')
+
+        other_templates = self.get_other_templates(all_data=self.rus_selection_result)
+
+        self.pdf_docs_data.extend(other_templates)
+
         return self.pdf_docs_data
 
-    def get_unselected_combination_product_template(self):
+    def get_other_templates(
+            self,
+            all_data: dict
+    ) -> list:
         """
-        Наполняет шаблон с невыбранным средством PDF
-        с учётом категории
+        Наполняет шаблоны с выбранным средством и невыбранными средствами.
+        :param all_data: данные со всеми средствами
+        :return: список с шаблонами
         """
-        products = []
-        for key, data in self.rus_selection_result.items():
+        templates = []
+
+        for key, data in all_data.items():
             if key.startswith('product_'):
-                product_name = data['Название средства']
+                if data['Лучшее средство']:
+                    best_combination_product_template = self.get_best_combination_product_template(
+                        one_product_data=data
+                    )
+                    templates.append(best_combination_product_template)
+                else:
+                    unselected_combination_product_template = self.get_unselected_combination_product_template(
+                        one_product_data=data
+                    )
+                    templates.append(unselected_combination_product_template)
+        return templates
 
-                unselected_combination_product_data = get_base_info_by_product(
-                    info_data=self.info_data,
-                    product_name=product_name,
-                )
-
-                template_data = {
-                    # исходное средство
-                    'Вывод': data['Вывод'],
-                    'Путь к изображению бренд-линии': Path("00_base/source/imagine_border/border_fiolet.jpg"),
-                    'Путь для сохранения pdf-файла': format_product_filename(
-                        product_title=product_name,
-                        path_to_output_folder_pdf_file=self.path_to_output_folder_pdf_file,
-                    ),
-                }
-
-                template_data.update(PDF_STRUCTURE['Невыбранное средство'])
-                template_data.update(unselected_combination_product_data)
-                products.append(template_data)
-
-        return products
-
-    def get_best_combination_product_template(self):
+    def get_unselected_combination_product_template(
+            self,
+            one_product_data: dict,
+    ) -> dict:
         """
-        Наполняет шаблон с лучшим средством PDF
-        с учётом категории
+        Наполняет шаблон с невыбранным средством
+        :param one_product_data: данные одного средства
+        :return: шаблон
         """
-        data = self.rus_selection_result['Подобранное средство']
-        product_name = data['Название средства']
 
-        best_combination_product_data = get_base_info_by_product(
+        product_name = one_product_data['Название средства']
+        product_article = one_product_data['Артикул в Золотом Яблоке']
+
+        unselected_combination_product_data = get_base_info_by_product(
             info_data=self.info_data,
             product_name=product_name,
+            product_article=product_article,
         )
 
         template_data = {
             # исходное средство
-            'Вывод': data['Вывод'],
-            'Путь к изображению бренд-линии': Path("00_base/source/imagine_border/border_green.jpg"),
-            'Путь для сохранения pdf-файла': format_product_filename(
+            'Вывод': one_product_data['Вывод'],
+            'Путь к изображению бренд-линии': Path("00_base/source/imagine_border/border_fiolet.jpg"),
+            'Путь для сохранения pdf-файла': get_path_for_save_pdf(
                 product_title=product_name,
                 path_to_output_folder_pdf_file=self.path_to_output_folder_pdf_file,
+                product_article=product_article,
+            ),
+        }
+
+        template_data.update(PDF_STRUCTURE['Невыбранное средство'])
+        template_data.update(unselected_combination_product_data)
+
+        return template_data
+
+    def get_best_combination_product_template(
+            self,
+            one_product_data: dict,
+    ) -> dict:
+        """
+        Наполняет шаблон с лучшим средством PDF
+        """
+
+        product_name = one_product_data['Название средства']
+        product_article = one_product_data['Артикул в Золотом Яблоке']
+
+        best_combination_product_data = get_base_info_by_product(
+            info_data=self.info_data,
+            product_name=product_name,
+            product_article=product_article,
+        )
+
+        template_data = {
+            # исходное средство
+            'Вывод': one_product_data['Вывод'],
+            'Путь к изображению бренд-линии': Path("00_base/source/imagine_border/border_green.jpg"),
+            'Путь для сохранения pdf-файла': get_path_for_save_pdf(
+                product_title=product_name,
+                path_to_output_folder_pdf_file=self.path_to_output_folder_pdf_file,
+                product_article=product_article,
             ),
         }
 
@@ -216,28 +252,34 @@ class BestCombinationProductPDFTemplateCreator:
 
         return template_data
 
-    def get_source_product_template(self) -> dict:
+    def get_source_product_template(
+            self,
+            one_product_data: dict,
+    ) -> dict:
         """
         Наполняет шаблон PDF для исходного средства
+        :param one_product_data: данные одного средства
         :return: словарь с информацией для создания PDF-документа
         """
 
-        data = self.rus_selection_result['Исходное средство']
-        source_product_name = data['Название средства']
+        product_name = one_product_data['Название средства']
+        product_article = one_product_data['Артикул в Золотом Яблоке']
 
         base_source_product_data = get_base_info_by_product(
             info_data=self.info_data,
-            product_name=source_product_name,
+            product_name=product_name,
+            product_article=product_article,
         )
 
         template_data = {
             # исходное средство
-            'Плюсы': data['Плюсы'],
-            'Минусы': data['Минусы'],
+            'Плюсы': one_product_data['Плюсы'],
+            'Минусы': one_product_data['Минусы'],
             'Путь к изображению бренд-линии': Path("00_base/source/imagine_border/border_green.jpg"),
-            'Путь для сохранения pdf-файла': format_product_filename(
-                product_title=source_product_name,
+            'Путь для сохранения pdf-файла': get_path_for_save_pdf(
+                product_title=product_name,
                 path_to_output_folder_pdf_file=self.path_to_output_folder_pdf_file,
+                product_article=product_article,
             ),
         }
 

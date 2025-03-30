@@ -1,10 +1,11 @@
 """В этом модуле тестируем работу пост констурктора"""
-
-from post_constructor.main_post import get_products_list
-from post_constructor.test.data_tools import data_tools
+import unittest
+# pylint: disable=E0611: no-name-in-module
+from dev_helpers.data_tools_for_test import ALL_DATA_TOOLS_FOR_TEST
+from post_constructor.main_post import get_products_list, create_hashtag
 
 # текущая подборка
-data_collection = {
+BASE_COLLECTION = {
     'Возраст': 32,
     'Группа': 'бесплатная',
     'Задача': 'Лучшее средство',
@@ -14,46 +15,76 @@ data_collection = {
     'Пол': 'женский',
     'Путь': None,
     'Специалист': 'Т',
-    'Средства': {'Средство_1': 'ALTEREGO ITALY Curego Hydraday',
-                 'Средство_2': 'OUSHEN Curl & shine shampoo',
-                 'Средство_3': 'NATURA SIBERICA Oblepikha'},
+    'Средства': None,
     'Тип': 'В1, В10',
     'Хеш': '6ad4852cc0e04bc512762ced9022afec34afbc2c35e129503c1448e4f0b88578',
 }
 
+PRODUCTS_SET_1 = {
+    'Средства': {
+        'Средство_1': ('ALTEREGO ITALY Curego Hydraday', '19000222487'),
+        'Средство_2': ('OUSHEN Curl & shine shampoo', '19000220056'),
+        'Средство_3': ('NATURA SIBERICA Oblepikha', '19000141580'),
+    },
+}
 
-def test_create_hashtag():
-    """
-    Тестируем функцию create_hashtag
-    """
-    # 1. Получаем список средств из текущей подборки и проверяем, что это список
-    products = get_products_list(data_collection['Средства'])
-    assert isinstance(products, list), "products должен быть списком"
+PRODUCTS_SET_2 = {
+    'Набор_1':
+        {
+            'Средство_1': ('R+CO Dallas Biotin Thickening Shampoo', '24320200017'),
+            'Средство_2': ('OUSHEN Curl & shine shampoo', '19000220056'),
+        },
+    'Набор_2':
+        {
+            'Средство_1': ('R+CO Atlantis Moisturizing B5 Shampoo', '24320200015'),
+            'Средство_2': ('R+CO Television Perfect Hair Conditioner', '24320100036'),
+        }
+}
 
-    # 2. Ожидаем получить такой список
-    expected_list = ['ALTEREGO ITALY Curego Hydraday',
-                     'OUSHEN Curl & shine shampoo',
-                     'NATURA SIBERICA Oblepikha']
 
-    assert products == expected_list, f"Ожидалось {expected_list}, но получили {products}"
+class TestPostConstructor(unittest.TestCase):
+    """ Тесты пост-конструктора """
 
-    # 3. Проверяем, что будет содержаться в переменной brand
+    def test_get_products_list(self):
+        """
+        Тестируем функцию get_products_list
+        """
 
-    # 3.1 первая часть запроса - словарь, не пустой
-    for product in products:
-        brand = data_tools.get('Средства', {})
-        assert isinstance(brand, dict), "brand должен быть словарём"
-        assert brand, "brand не должен быть пустым"
+        products = get_products_list(products_dict=PRODUCTS_SET_1)
 
-    # 3.2 вторая часть запроса - тоже словарь, не пустой
-    for product in products:
-        brand = data_tools.get('Средства', {}).get(product, {})
-        assert isinstance(brand, dict), "brand должен быть словарём"
-        assert brand, "brand не должен быть пустым"
+        self.assertTrue(all((isinstance(elem, tuple) for elem in products)))
 
-    # 3.3 третья часть запроса - тоже словарь, не пустой
-    # если в таблице в ячейке бренда пусто, то когда мы забираем словарь параметр 'Бренд': None
-    for product in products:
-        brand = data_tools.get('Средства', {}).get(product, {}).get('Бренд')
-        if brand is None:
-            assert brand is None, f"Ожидался brand == None, но получили: {brand}"
+    def test_get_products_list_2(self):
+        """
+        Тестируем функцию get_products_list
+        """
+
+        products = get_products_list(products_dict=PRODUCTS_SET_2)
+
+        self.assertTrue(all((isinstance(elem, str) for elem in products)))
+
+    def test_create_hashtag_1(self):
+        """
+        Тестируем функцию create_hashtag
+        """
+        BASE_COLLECTION['Средства'] = PRODUCTS_SET_1
+
+        result = create_hashtag(
+            data_tools=ALL_DATA_TOOLS_FOR_TEST,
+            data=BASE_COLLECTION,
+        )
+
+        self.assertEqual(3, result.count('#'))
+
+    def test_create_hashtag_2(self):
+        """
+        Тестируем функцию create_hashtag
+        """
+        BASE_COLLECTION['Средства'] = PRODUCTS_SET_2
+
+        result = create_hashtag(
+            data_tools=ALL_DATA_TOOLS_FOR_TEST,
+            data=BASE_COLLECTION,
+        )
+        print(result)
+        self.assertEqual(2, result.count('#'))

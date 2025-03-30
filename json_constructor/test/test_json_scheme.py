@@ -3,15 +3,14 @@
 """
 
 import unittest
-from pprint import pprint
 
 from json_constructor.json_creator import JsonCreator
 from json_constructor.json_processing_data import JsonProcessingData
 from json_constructor.test.constants import (
     EXPECTED_SCHEMA_FOR_BEST_PRODUCT,
-    expected_schema_for_one_product,
-    expected_schema_for_best_prod_carcinogen,
-    best_combination_json,
+    EXPECTED_SCHEMA_FOR_ONE_PRODUCT,
+    EXPECTED_SCHEMA_FOR_BEST_PROD_CARCINOGEN,
+    BEST_COMBINATION_JSON,
     best_set_json,
 )
 from source.structure_for_products import PARAMETERS_DIF_PRODUCT_CATEGORIES
@@ -37,12 +36,14 @@ class TestJsonScheme(unittest.TestCase):
             'Пол': 'женский',
             'Категория': 'Шампуни',
             'Специалист': 'Т',
-            'Средства': {'Средство_1': ('ALTEREGO ITALY Curego Hydraday', '19000222487'),
-                         'Средство_2': ('OUSHEN Curl & shine shampoo', '19000220056'),
-                         'Средство_3': ('NATURA SIBERICA Oblepikha', '19000141580'),
-                         'Средство_4': ('WELEDA Millet Nourishing', '15180100004'),
-                         'Средство_5': ('PAYOT Shampoing doux biome-friendly', '19000153618'),
-                         'Средство_6': ('LADOR Keratin LPP', '19760200012')},
+            'Средства': {
+                'Средство_1': ('ALTEREGO ITALY Curego Hydraday', '19000222487'),
+                'Средство_2': ('OUSHEN Curl & shine shampoo', '19000220056'),
+                'Средство_3': ('NATURA SIBERICA Oblepikha', '19000141580'),
+                'Средство_4': ('WELEDA Millet Nourishing', '15180100004'),
+                'Средство_5': ('PAYOT Shampoing doux biome-friendly', '19000153618'),
+                'Средство_6': ('LADOR Keratin LPP', '19760200012')
+            },
             'Тип': 'В1, В10',
             'Хеш': '6157254f8a165e4f6baa6a45ee2ca32042b8de1d6a19680d11879ab43c7a5cd1'}
 
@@ -106,12 +107,14 @@ class TestJsonScheme(unittest.TestCase):
             'Пол': 'женский',
             'Категория': 'Шампуни',
             'Специалист': 'Т',
-            'Средства': {'Средство_1': ('ALTEREGO ITALY Curego Hydraday', '19000222487'),
-                         'Средство_2': ('OUSHEN Curl & shine shampoo', '19000220056'),
-                         'Средство_3': ('NATURA SIBERICA Oblepikha', '19000141580'),
-                         'Средство_4': ('WELEDA Millet Nourishing', '15180100004'),
-                         'Средство_5': ('PAYOT Shampoing doux biome-friendly', '19000153618'),
-                         'Средство_6': ('LADOR Keratin LPP', '19760200012')},
+            'Средства': {
+                'Средство_1': ('ALTEREGO ITALY Curego Hydraday', '19000222487'),
+                'Средство_2': ('OUSHEN Curl & shine shampoo', '19000220056'),
+                'Средство_3': ('NATURA SIBERICA Oblepikha', '19000141580'),
+                'Средство_4': ('WELEDA Millet Nourishing', '15180100004'),
+                'Средство_5': ('PAYOT Shampoing doux biome-friendly', '19000153618'),
+                'Средство_6': ('LADOR Keratin LPP', '19760200012')
+            },
             'Тип': 'В1, В10',
             'Хеш': '6157254f8a165e4f6baa6a45ee2ca32042b8de1d6a19680d11879ab43c7a5cd1',
             'Количество средств': 6
@@ -127,9 +130,9 @@ class TestJsonScheme(unittest.TestCase):
         )
 
         actual_schema = json_creator.get_json_scheme_for_distribution_on_task()
-        pprint(actual_schema)
+        # pprint(actual_schema)
         # Проверка, что схема совпадает с ожидаемой
-        self.assertEqual(
+        self.assertDictEqual(
             actual_schema,
             EXPECTED_SCHEMA_FOR_BEST_PRODUCT,
             msg="Схема не совпадает с ожидаемой",
@@ -151,7 +154,9 @@ class TestJsonScheme(unittest.TestCase):
             'Пол': 'женский',
             'Категория': 'Уход за кожей лица',
             'Специалист': 'Т',
-            'Средства': {'Средство_1': 'ALTEREGO ITALY Curego Hydraday'},
+            'Средства': {
+                'Средство_1': ('ALTEREGO ITALY Curego Hydraday', '19000222487'),
+            },
             'Тип': 'КЛ1',
             'Хеш': '1cf5f44310b2ea42c5b498aef5a314dcea315cf69f4a6d97c96101ea8e517229'
         }
@@ -167,11 +172,12 @@ class TestJsonScheme(unittest.TestCase):
         )
 
         actual_schema = json_creator.get_json_scheme_for_distribution_on_task()
-        # self.maxDiff = None
+
+        self.maxDiff = None
         # Проверка результата
-        self.assertEqual(
+        self.assertDictEqual(
             actual_schema,
-            expected_schema_for_one_product,
+            EXPECTED_SCHEMA_FOR_ONE_PRODUCT,
             msg="Схема не совпадает с ожидаемой",
         )
 
@@ -191,10 +197,12 @@ class TestJsonScheme(unittest.TestCase):
             'Лучший вариант': None,
             'Пол': 'женский',
             'Специалист': 'Т',
-            'Средства': {'Средство_1': 'R+CO Dallas Biotin Thickening Shampoo',
-                         'Средство_2': 'R+CO LABYRINTH 3-in-1',
-                         'Средство_3': 'R+CO Atlantis Moisturizing B5 Shampoo',
-                         'Средство_4': 'LADOR Keratin LPP'},
+            'Средства': {
+                'Средство_1': ('ALTEREGO ITALY Curego Hydraday', '19000222487'),
+                'Средство_2': ('OUSHEN Curl & shine shampoo', '19000220056'),
+                'Средство_3': ('NATURA SIBERICA Oblepikha', '19000141580'),
+                'Средство_4': ('WELEDA Millet Nourishing', '15180100004'),
+            },
             'Тип': 'В1, В10',
             'Хеш': '15ef9afdd97761bce2a300aa4bd11b74b2117c8dfe15b0f5e92c62af1cbeaf54',
         }
@@ -208,11 +216,10 @@ class TestJsonScheme(unittest.TestCase):
         )
 
         actual_schema = json_creator.get_json_scheme_for_distribution_on_task()
-
         # Проверка, что схема совпадает с ожидаемой
-        self.assertEqual(
+        self.assertDictEqual(
             actual_schema,
-            expected_schema_for_best_prod_carcinogen,
+            EXPECTED_SCHEMA_FOR_BEST_PROD_CARCINOGEN,
             msg="Схема не совпадает с ожидаемой",
         )
 
@@ -232,9 +239,11 @@ class TestJsonScheme(unittest.TestCase):
             'Лучший вариант': None,
             'Пол': 'женский',
             'Специалист': 'Т',
-            'Средства': {'Средство_1': 'R+CO Television Perfect Hair Conditioner',
-                         'Средство_2': 'R+CO Atlantis Moisturizing B5 Conditioner',
-                         'Средство_3': 'R+CO TELEVISION Perfect Hair Masque'},
+            'Средства': {
+                'Исходное средство': ('R+CO Television Perfect Hair Conditioner', '24320100036'),
+                'Средство_2': ('R+CO Atlantis Moisturizing B5 Conditioner', '24320200016'),
+                'Средство_3': ('R+CO TELEVISION Perfect Hair Masque', '19760310342'),
+            },
             'Тип': 'В1, В10',
             'Хеш': '2d2918a9e091164a303dd3c652d052b2b2bcc3bb88dd7c075a4c8b31aed75b6d',
         }
@@ -249,10 +258,10 @@ class TestJsonScheme(unittest.TestCase):
 
         actual_schema = json_creator.get_json_scheme_for_distribution_on_task()
         # Проверка, что схема совпадает с ожидаемой
-        # self.maxDiff = None
+        self.maxDiff = None
         self.assertDictEqual(
             actual_schema,
-            best_combination_json,
+            BEST_COMBINATION_JSON,
             msg="Схема не совпадает с ожидаемой",
         )
 
@@ -272,11 +281,18 @@ class TestJsonScheme(unittest.TestCase):
             'Лучший вариант': 'не работает, ошибка в json схеме',
             'Пол': 'женский',
             'Специалист': 'Т',
-            'Средства': {'Набор_1': {'Средство_1': 'R+CO Dallas Biotin Thickening Shampoo',
-                                     'Средство_2': 'R+CO TELEVISION Perfect Hair Masque'},
-                         'Набор_2': {'Средство_1': 'R+CO Atlantis Moisturizing B5 Shampoo',
-                                     'Средство_2': 'R+CO Television Perfect Hair '
-                                                   'Conditioner'}},
+            'Средства': {
+                'Набор_1':
+                    {
+                        'Средство_1': ('R+CO Dallas Biotin Thickening Shampoo', '24320200017'),
+                        'Средство_2': ('OUSHEN Curl & shine shampoo', '19000220056'),
+                    },
+                'Набор_2':
+                    {
+                        'Средство_1': ('R+CO Atlantis Moisturizing B5 Shampoo', '24320200015'),
+                        'Средство_2': ('R+CO TELEVISION Perfect Hair Conditioner', '24320100036'),
+                    }
+            },
             'Тип': 'В1, В10',
             'Хеш': 'cfc392bfd045eb548d8989bb96c1ac57385a16a804291d38f93415ac1ae340d1'}
 
@@ -290,8 +306,6 @@ class TestJsonScheme(unittest.TestCase):
         )
 
         actual_schema = json_creator.get_json_scheme_for_distribution_on_task()
-        # print('работаем из теста')
-        # pprint(actual_schema)
 
         # Проверка, что схема совпадает с ожидаемой
         self.assertEqual(

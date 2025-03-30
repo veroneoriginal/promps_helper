@@ -9,27 +9,31 @@ from pdf.pdf_data_processing.tasks_utils import (
 def get_base_info_by_product(
         info_data: dict,
         product_name: str,
+        product_article: str,
 ) -> dict:
     """
     Получает базовые данные по средству
 
     :param info_data: данные с всеми средствами, врачами и т.д.
     :param product_name: название средства
+    :param product_article: Артикул средства в Золотом Яблоке
 
     """
     list_name = 'Средства'
-    product_description = info_data[list_name][product_name]['Тип продукта']
-    delailed_product_description = info_data[list_name][product_name]['Тип продукта подробно']
+    product_data = info_data[list_name][product_name][product_article]
 
     return {
         # одинаково для всех средств:
         'Название средства': extract_product_name(product_name),
 
         'Количество мера / цена': calc_base_price_ratio(
-            info_data[list_name][product_name]
+            product_data
         ),
         'Путь к изображению средства': Path(
-            info_data[list_name][product_name]['Ссылка на изображение в базе']),
-        'Тип продукта': capitalize_first_letter(delailed_product_description or product_description),
-        'Артикул': f'артикул: {info_data[list_name][product_name]["Артикул в Золотом Яблоке"]}'
+            product_data['Ссылка на изображение в базе']),
+        'Тип продукта': capitalize_first_letter(
+            product_data['Тип продукта подробно']
+            or product_data['Тип продукта']
+        ),
+        'Артикул': f'артикул: {product_data["Артикул в Золотом Яблоке"]}'
     }

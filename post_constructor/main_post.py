@@ -43,14 +43,14 @@ def create_hashtag(
     :return: возвращает строку с хештегами брендов по теукущей подборке
     """
 
-    # получаем список средств из текущей подборки
+    # получаем список из кортежей с названием средства и артикулом из текущей подборки
     products = get_products_list(data['Средства'])
 
     # список, в котором будут хештеги
     hashtag = []
 
-    for product in products:
-        brand = data_tools['Средства'][product]['Бренд']
+    for product_title, product_article in products:
+        brand = data_tools['Средства'][product_title][product_article]['Бренд']
         if brand:
             brand_no_space = ''.join(brand.split())
             hashtag.append(f"#{brand_no_space}")
@@ -58,7 +58,7 @@ def create_hashtag(
             brand_no_space = 'БРЕНД_ОТСУТСТВУЕТ'
             hashtag.append(f"#{brand_no_space}")
 
-    return ' '.join(hashtag)
+    return ' '.join(set(hashtag))
 
 
 def forming_text_for_post(

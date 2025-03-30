@@ -6,7 +6,7 @@
 from pathlib import Path
 
 from pdf.pdf_data_processing.tasks_logic.base_task import get_base_info_by_product
-from pdf.pdf_data_processing.tasks_utils import format_product_filename, calculate_price_per_standard_unit
+from pdf.pdf_data_processing.tasks_utils import get_path_for_save_pdf, calculate_price_per_standard_unit
 
 ADDITIONAL_ELEMENTS_BY_PRODUCT_CATEGORY = {
     "Уход за кожей лица": [
@@ -201,15 +201,19 @@ class AnalisisCompositionProductPDFTemplateCreator:
         :return: Возвращает список с данными для создания документов
         """
 
-        template = self.get_base_template()
+        template = self.get_base_template(one_product_data=self.rus_selection_result)
         self.pdf_docs_data.append(template)
 
         return self.pdf_docs_data
 
-    def get_additional_product_data_by_category(self) -> dict | None:
+    def get_additional_product_data_by_category(
+            self,
+            category_name: str,
+    ) -> dict | None:
         """
         Возвращает дополнительную информацию в зависимости от
         категории подборки ("Стайлинг волос", "Макияж" и т.д.)
+        :param category_name: категория подборки
         """
 
         CATEGORY_WITH_ADDITIONAL_DATA = {
@@ -221,56 +225,67 @@ class AnalisisCompositionProductPDFTemplateCreator:
         }
 
         additional_data_func = CATEGORY_WITH_ADDITIONAL_DATA.get(
-            self.collection_data['Категория'], None
+            category_name, None
         )
 
         if additional_data_func:
             return additional_data_func()
         return None
 
-    def get_base_template(self) -> dict:
+    def get_base_template(
+            self,
+            one_product_data: dict,
+    ) -> dict:
         """
         Наполняет базовый шаблон PDF
+        :param one_product_data: данные одного средства из ответа нейронки
         :return: словарь с информацией для создания PDF-документа
         """
 
         product_name = self.rus_selection_result['Название средства']
-        product_data = self.info_data['Средства'][product_name]
+        product_article = one_product_data['Артикул в Золотом Яблоке']
+
+        product_data_in_data_tools = self.info_data['Средства'][product_name][product_article]
 
         template_data = {  # отличается:
-            'Плюсы': self.rus_selection_result['Плюсы'],
-            'Минусы': self.rus_selection_result['Минусы'],
-            'Текстура': self.rus_selection_result['Текстура'],
+            'Плюсы': one_product_data['Плюсы'],
+            'Минусы': one_product_data['Минусы'],
+            'Текстура': one_product_data['Текстура'],
             'Соотношение цены': calculate_price_per_standard_unit(
-                quantity=product_data['Количество меры (число)'],
-                unit=product_data['Юниты меры (мл/шт)'],
-                price_rub=product_data['Стоимость руб'],
+                quantity=product_data_in_data_tools['Количество меры (число)'],
+                unit=product_data_in_data_tools['Юниты меры (мл/шт)'],
+                price_rub=product_data_in_data_tools['Стоимость руб'],
             ),
             'Путь к изображению бренд-линии': Path("00_base/source/imagine_border/border_green.jpg"),
-            'Путь для сохранения pdf-файла': Path(format_product_filename(
+            'Путь для сохранения pdf-файла': Path(get_path_for_save_pdf(
                 product_title=product_name,
-                path_to_output_folder_pdf_file=self.path_to_output_folder_pdf_file),
+                path_to_output_folder_pdf_file=self.path_to_output_folder_pdf_file,
+                product_article=product_article,
+            )
             ),
-            'Основные компоненты': self.rus_selection_result['Основные компоненты'],
-            'Активные компоненты': self.rus_selection_result['Активные компоненты'],
-            'Увлажняющие и ухаживающие компоненты': self.rus_selection_result['Увлажняющие и ухаживающие компоненты'],
-            'Консерванты и регуляторы pH': self.rus_selection_result['Консерванты и регуляторы pH'],
-            'Дополнительные компоненты': self.rus_selection_result['Дополнительные компоненты'],
-            'Запрещенные или нежелательные компоненты': self.rus_selection_result[
+            'Основные компоненты': one_product_data['Основные компоненты'],
+            'Активные компоненты': one_product_data['Активные компоненты'],
+            'Увлажняющие и ухаживающие компоненты': one_product_data['Увлажняющие и ухаживающие компоненты'],
+            'Консерванты и регуляторы pH': one_product_data['Консерванты и регуляторы pH'],
+            'Дополнительные компоненты': one_product_data['Дополнительные компоненты'],
+            'Запрещенные или нежелательные компоненты': one_product_data[
                 'Запрещенные или нежелательные компоненты'],
-            'Вывод': self.rus_selection_result['Вывод'],
+            'Вывод': one_product_data['Вывод'],
         }
 
         base_product_data = get_base_info_by_product(
             info_data=self.info_data,
             product_name=product_name,
+            product_article=product_article,
         )
 
         template_data.update(base_product_data)
         template_data.update(PDF_STRUCTURE['Базовая категория'])
 
         # Добавляем дополнительные данные по категории
-        additional_data = self.get_additional_product_data_by_category()
+        additional_data = self.get_additional_product_data_by_category(
+            category_name=self.collection_data['Категория']
+        )
         if additional_data:
             template_data.update(additional_data)
             # Добавляем в структуру шаблона дополнительные блоки
@@ -283,78 +298,83 @@ class AnalisisCompositionProductPDFTemplateCreator:
 
         return template_data
 
-    def _category_hair_styling(self) -> dict:
+    def _category_hair_styling(self, one_product_data: dict) -> dict:
         """
         Задача "Разбор состава одного средства"
         дополнительные данные для категории "Стайлинг волос"
 
+        :param one_product_data: данные одного средства из ответа нейронки
         :return: словарь с специфичными данными
         """
 
         return {
-            'Степень фиксации': self.rus_selection_result['Степень фиксации'],
-            'Ощущение на волосах': self.rus_selection_result['Ощущение на волосах'],
+            'Степень фиксации': one_product_data['Степень фиксации'],
+            'Ощущение на волосах': one_product_data['Ощущение на волосах'],
         }
 
-    def _category_makeup(self) -> dict:
+    def _category_makeup(self, one_product_data: dict) -> dict:
         """
         Задача "Разбор состава одного средства"
         дополнительные данные для категории "Макияж"
 
+        :param one_product_data: данные одного средства из ответа нейронки
         :return: словарь с специфичными данными
         """
 
         return {
-            'Стойкость': self.rus_selection_result['Стойкость'],
-            'Финиш': self.rus_selection_result['Финиш'],
-            'Пигментация': self.rus_selection_result['Пигментация'],
-            'Покрытие': self.rus_selection_result['Покрытие'],
-            'Водостойкость': self.rus_selection_result['Водостойкость'],
-            'Уровень SPF': self.rus_selection_result['Уровень SPF'],
+            'Стойкость': one_product_data['Стойкость'],
+            'Финиш': one_product_data['Финиш'],
+            'Пигментация': one_product_data['Пигментация'],
+            'Покрытие': one_product_data['Покрытие'],
+            'Водостойкость': one_product_data['Водостойкость'],
+            'Уровень SPF': one_product_data['Уровень SPF'],
         }
 
-    def _category_body_care(self) -> dict:
+    def _category_body_care(self, one_product_data: dict) -> dict:
         """
         Задача "Разбор состава одного средства"
         дополнительные данные для категории "Уход за телом"
 
+        :param one_product_data: данные одного средства из ответа нейронки
         :return: словарь с специфичными данными
         """
 
         return {
-            'Влияние на тип кожи': self.rus_selection_result['Влияние на тип кожи'],
-            'Интенсивность пилинга': self.rus_selection_result['Интенсивность пилинга'],
-            'Длительность защиты': self.rus_selection_result['Длительность защиты'],
-            'Пенообразование': self.rus_selection_result['Пенообразование'],
+            'Влияние на тип кожи': one_product_data['Влияние на тип кожи'],
+            'Интенсивность пилинга': one_product_data['Интенсивность пилинга'],
+            'Длительность защиты': one_product_data['Длительность защиты'],
+            'Пенообразование': one_product_data['Пенообразование'],
         }
 
-    def _category_facial_skin_care(self) -> dict:
+    def _category_facial_skin_care(self, one_product_data: dict) -> dict:
         """
         Задача "Разбор состава одного средства"
         дополнительные данные для категории "Уход за кожей лица"
 
+        :param one_product_data: данные одного средства из ответа нейронки
         :return: словарь с специфичными данными
         """
 
         return {
-            'Влияние на тип кожи': self.rus_selection_result['Влияние на тип кожи'],
-            'Уровень SPF': self.rus_selection_result['Уровень SPF'],
-            'Время нанесения': self.rus_selection_result['Время нанесения'],
-            'Уровень pH': self.rus_selection_result['Уровень pH'],
-            'Интенсивность пилинга': self.rus_selection_result['Интенсивность пилинга'],
-            'Эффект на область глаз': self.rus_selection_result['Эффект на область глаз'],
+            'Влияние на тип кожи': one_product_data['Влияние на тип кожи'],
+            'Уровень SPF': one_product_data['Уровень SPF'],
+            'Время нанесения': one_product_data['Время нанесения'],
+            'Уровень pH': one_product_data['Уровень pH'],
+            'Интенсивность пилинга': one_product_data['Интенсивность пилинга'],
+            'Эффект на область глаз': one_product_data['Эффект на область глаз'],
         }
 
-    def _category_perfumery(self) -> dict:
+    def _category_perfumery(self, one_product_data: dict) -> dict:
         """
         Задача "Разбор состава одного средства"
         дополнительные данные для категории "Парфюмерия"
 
+        :param one_product_data: данные одного средства из ответа нейронки
         :return: словарь с специфичными данными
         """
 
         return {
-            'Основные ноты': self.rus_selection_result['Основные ноты'],
-            'Стойкость': self.rus_selection_result['Стойкость'],
-            'Раскрытие аромата': self.rus_selection_result['Раскрытие аромата'],
+            'Основные ноты': one_product_data['Основные ноты'],
+            'Стойкость': one_product_data['Стойкость'],
+            'Раскрытие аромата': one_product_data['Раскрытие аромата'],
         }
