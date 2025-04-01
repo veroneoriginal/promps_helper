@@ -35,7 +35,7 @@ def calc_base_price_ratio(
 
     return (
         f'{product.get("Количество меры (число)")} '
-        f'{product.get("Юниты меры (мл/шт)")} / {product.get("Стоимость руб")} рублей'
+        f'{product.get("Юниты меры (мл/шт)")} / {product.get("Стоимость руб")} руб'
     )
 
 

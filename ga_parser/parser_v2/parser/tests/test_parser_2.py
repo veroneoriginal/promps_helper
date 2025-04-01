@@ -12,7 +12,7 @@ from ga_parser.parser_v2.parser.generation_product_data import (
     get_price_in_stock,
     get_measure,
     get_img_link,
-    get_additional_info,
+    get_additional_info, get_detailed_product_type,
 )
 
 
@@ -34,6 +34,14 @@ class ParserTestCase(unittest.TestCase):
         Для получения:  Артикул, Название, Описание
         """
         result = get_item_title_description(soup=self.soup)
+        print('test_get_item_title_description:')
+        print(result)
+
+    def test_get_detailed_product_type(self):
+        """
+        Для получения:  Подробное описание
+        """
+        result = get_detailed_product_type(soup=self.soup)
         print('test_get_item_title_description:')
         print(result)
 

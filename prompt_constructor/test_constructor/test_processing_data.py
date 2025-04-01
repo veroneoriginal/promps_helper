@@ -16,15 +16,15 @@ class TestProcessingData(unittest.TestCase):
     Тесты на проверку работы первого этапа / ProcessingData
     """
 
-    def test_decryption_key_best_set(self):
+    def test_decryption_key_best_couple(self):
         """
-        Тест для расшифровки ключа средства для кода задачи 'Лучший набор'.
+        Тест для расшифровки ключа средства для кода задачи 'Лучшая пара'.
         Проверка работы функции - decrypting_best_set.
         """
         # текущая подборка
         data_collection = {
             'Возраст': 32,
-            'Задача': 'Лучший набор',
+            'Задача': 'Лучшая пара',
             'Запрос': 'ЗВ8, ЗВ12',
             'Категория': 'Шампуни',
             'Количество наборов': 2,
@@ -45,7 +45,7 @@ class TestProcessingData(unittest.TestCase):
         )
 
         # текущая подборка (расшифрованная)
-        decrypted_products = prompt_proces_data.decrypting_best_set(
+        decrypted_products = prompt_proces_data.decrypting_best_couple(
             data=ALL_DATA_TOOLS_FOR_TEST,
             data_collection=data_collection,
             key_for_decrypted='Средства',

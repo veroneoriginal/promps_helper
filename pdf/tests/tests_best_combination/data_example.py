@@ -50,89 +50,89 @@ TEST_BEST_COMBINATION_COLLECTION_DATA = {
 
 elem_source_product = [
     ('Image', {'Ключ в подборке': 'Путь к изображению средства', 'width': 1024, 'height': 1280}),
-    ('Spacer', {'width': 1, 'height': 10}),
+    ('Spacer', {'width': 1, 'height': 13}),
     ('FreeText',
-     {'Ключ в подборке': 'Артикул', 'x': 450, 'y': 500,
-      'font_name': 'DejaVuSans',
+     {'Ключ в подборке': 'Артикул', 'x': 600, 'y': 666,
+      'font_name': 'Montserrat-Regular',
       'font_size': 14, 'font_color': "#000000FF", 'bold': False, 'align': 'left'}),
     ('FreeText',
-     {'Текст': 'Правообладатель изображения: https://goldapple.ru/', 'x': -30, 'y': 40,
-      'font_name': 'DejaVuSans',
+     {'Текст': 'Правообладатель изображения: https://goldapple.ru/', 'x': -40, 'y': 54,
+      'font_name': 'Montserrat-Regular',
       'font_size': 10, 'font_color': "#1E1F2280", 'bold': False, 'align': 'left'}),
     ('Paragraph', {'Ключ в подборке': 'Тип продукта', 'Стиль': 'BC_normal_2'}),
-    ('Spacer', {'width': 1, 'height': 20}),
+    ('Spacer', {'width': 1, 'height': 26}),
     ('Paragraph', {'Ключ в подборке': 'Название средства', 'Стиль': 'BC_title_1'}),
-    ('Spacer', {'width': 1, 'height': 20}),
+    ('Spacer', {'width': 1, 'height': 26}),
     ('Paragraph', {'Ключ в подборке': 'Количество мера / цена', 'Стиль': 'BC_base_price_right'}),
-    ('Spacer', {'width': 1, 'height': 20}),
+    ('Spacer', {'width': 1, 'height': 26}),
     ('Paragraph', {'Текст': '<b>Плюсы:</b>', 'Стиль': 'BC_bold_1'}),
-    ('Spacer', {'width': 1, 'height': 15}),
-    ('Paragraph', {'Ключ в подборке': 'Плюсы', 'Стиль': 'BC_normal_1'}),
     ('Spacer', {'width': 1, 'height': 20}),
+    ('Paragraph', {'Ключ в подборке': 'Плюсы', 'Стиль': 'BC_normal_1'}),
+    ('Spacer', {'width': 1, 'height': 26}),
     ('Paragraph', {'Текст': '<b>Минусы:</b>', 'Стиль': 'BC_bold_1'}),
-    ('Spacer', {'width': 1, 'height': 15}),
+    ('Spacer', {'width': 1, 'height': 20}),
     ('Paragraph', {'Ключ в подборке': 'Минусы', 'Стиль': 'BC_normal_1'}),
 ]
 page_frames_elem_source_product = {
     'template_1':
         (
-            (0, (100, 0), (596, 966)),  # Номер, Координаты левого нижнего угла, ширина и высота фрейма
+            (0, (133, 0), (794, 1288)),  # Номер, Координаты левого нижнего угла, ширина и высота фрейма
         ),
 }
 
 elem_best_combination_product = [
     ('Image', {'Ключ в подборке': 'Путь к изображению средства', 'width': 1024, 'height': 1280}),
-    ('Spacer', {'width': 1, 'height': 10}),
+    ('Spacer', {'width': 1, 'height': 13}),
     ('FreeText',
-     {'Ключ в подборке': 'Артикул', 'x': 450, 'y': 500,
-      'font_name': 'DejaVuSans',
+     {'Ключ в подборке': 'Артикул', 'x': 600, 'y': 666,
+      'font_name': 'Montserrat-Regular',
       'font_size': 14, 'font_color': "#000000FF", 'bold': False, 'align': 'left'}),
     ('FreeText',
-     {'Текст': 'Правообладатель изображения: https://goldapple.ru/', 'x': -30, 'y': 40,
-      'font_name': 'DejaVuSans',
+     {'Текст': 'Правообладатель изображения: https://goldapple.ru/', 'x': -40, 'y': 54,
+      'font_name': 'Montserrat-Regular',
       'font_size': 10, 'font_color': "#1E1F2280", 'bold': False, 'align': 'left'}),
     ('Paragraph', {'Ключ в подборке': 'Тип продукта', 'Стиль': 'BC_normal_2'}),
-    ('Spacer', {'width': 1, 'height': 20}),
+    ('Spacer', {'width': 1, 'height': 26}),
     ('Paragraph', {'Ключ в подборке': 'Название средства', 'Стиль': 'BC_title_1'}),
-    ('Spacer', {'width': 1, 'height': 20}),
+    ('Spacer', {'width': 1, 'height': 26}),
     ('Paragraph', {'Ключ в подборке': 'Количество мера / цена', 'Стиль': 'BC_base_price_right'}),
-    ('Spacer', {'width': 1, 'height': 40}),
+    ('Spacer', {'width': 1, 'height': 54}),
     ('Paragraph', {'Текст': '<b>Почему выбрали это средство:</b>', 'Стиль': 'BC_bold_1'}),
-    ('Spacer', {'width': 1, 'height': 15}),
+    ('Spacer', {'width': 1, 'height': 20}),
     ('Paragraph', {'Ключ в подборке': 'Вывод', 'Стиль': 'BC_normal_1'}),
 ]
 page_frames_best_combination_product = {
     'template_1':
         (
-            (0, (100, 0), (596, 966)),  # Номер, Координаты левого нижнего угла, ширина и высота фрейма
+            (0, (133, 0), (794, 1288)),  # Номер, Координаты левого нижнего угла, ширина и высота фрейма
         ),
 }
 
 elem_unselect_combination_product = [
     ('Image', {'Ключ в подборке': 'Путь к изображению средства', 'width': 1024, 'height': 1280}),
-    ('Spacer', {'width': 1, 'height': 10}),
+    ('Spacer', {'width': 1, 'height': 13}),
     ('FreeText',
-     {'Ключ в подборке': 'Артикул', 'x': 450, 'y': 500,
-      'font_name': 'DejaVuSans',
+     {'Ключ в подборке': 'Артикул', 'x': 600, 'y': 666,
+      'font_name': 'Montserrat-Regular',
       'font_size': 14, 'font_color': "#000000FF", 'bold': False, 'align': 'left'}),
     ('FreeText',
-     {'Текст': 'Правообладатель изображения: https://goldapple.ru/', 'x': -30, 'y': 40,
-      'font_name': 'DejaVuSans',
+     {'Текст': 'Правообладатель изображения: https://goldapple.ru/', 'x': -40, 'y': 54,
+      'font_name': 'Montserrat-Regular',
       'font_size': 10, 'font_color': "#1E1F2280", 'bold': False, 'align': 'left'}),
     ('Paragraph', {'Ключ в подборке': 'Тип продукта', 'Стиль': 'BC_normal_2'}),
-    ('Spacer', {'width': 1, 'height': 20}),
+    ('Spacer', {'width': 1, 'height': 26}),
     ('Paragraph', {'Ключ в подборке': 'Название средства', 'Стиль': 'BC_title_1'}),
-    ('Spacer', {'width': 1, 'height': 20}),
+    ('Spacer', {'width': 1, 'height': 26}),
     ('Paragraph', {'Ключ в подборке': 'Количество мера / цена', 'Стиль': 'BC_base_price_right'}),
-    ('Spacer', {'width': 1, 'height': 40}),
+    ('Spacer', {'width': 1, 'height': 54}),
     ('Paragraph', {'Текст': '<b>Почему НЕ выбрали это средство:</b>', 'Стиль': 'BC_bold_1'}),
-    ('Spacer', {'width': 1, 'height': 15}),
+    ('Spacer', {'width': 1, 'height': 20}),
     ('Paragraph', {'Ключ в подборке': 'Вывод', 'Стиль': 'BC_normal_1'}),
 ]
 page_frames_unselect_combination_product = {
     'template_1':
         (
-            (0, (100, 0), (596, 966)),  # Номер, Координаты левого нижнего угла, ширина и высота фрейма
+            (0, (133, 0), (794, 1288)),  # Номер, Координаты левого нижнего угла, ширина и высота фрейма
         ),
 }
 
@@ -143,11 +143,13 @@ TEST_BEST_COMBINATION_EXPECTED_RESULT = [
         'Путь к изображению бренд-линии': Path('00_base/source/imagine_border/border_green.jpg'),
         'Путь для сохранения pdf-файла': Path(
             '01_test_base/00_info_for_post/22_22_2222/100_Шампуни/00_source/03_pdf/r_co_atlantis_moisturizing_b5_shampoo_24320200015.pdf'),
-        'Класс шаблона': 'PDFBaseDocTemplateWithBrandLine', 'Размеры бренд-линии': (80, 1280),
+        'Класс шаблона': 'PDFBaseDocTemplateWithBrandLine',
+        'Размеры бренд-линии': (85, 1280),
+        'Координаты вставки бренд-линии': [(0, 0), ],
         'Размеры документа': (1024, 1280),
         'Элементы и стили': elem_source_product,
         'Шаблоны страниц с фреймами': page_frames_elem_source_product,
-        'Название средства': 'R+CO Atlantis Moisturizing B5 Shampoo', 'Количество мера / цена': '241 мл / 5876 рублей',
+        'Название средства': 'R+CO Atlantis Moisturizing B5 Shampoo', 'Количество мера / цена': '241 мл / 5876 руб',
         'Путь к изображению средства': Path(
             '00_base/products/00_img/r_co_atlantis_moisturizing_b5_shampoo_24320200015.jpg'),
         'Тип продукта': 'Шампунь для увлажнения с витамином В5', 'Артикул': 'артикул: 24320200015'},
@@ -156,12 +158,14 @@ TEST_BEST_COMBINATION_EXPECTED_RESULT = [
         'Путь к изображению бренд-линии': Path('00_base/source/imagine_border/border_fiolet.jpg'),
         'Путь для сохранения pdf-файла': Path(
             '01_test_base/00_info_for_post/22_22_2222/100_Шампуни/00_source/03_pdf/r_co_television_perfect_hair_conditioner_24320100036.pdf'),
-        'Класс шаблона': 'PDFBaseDocTemplateWithBrandLine', 'Размеры бренд-линии': (80, 1280),
+        'Класс шаблона': 'PDFBaseDocTemplateWithBrandLine',
+        'Размеры бренд-линии': (85, 1280),
+        'Координаты вставки бренд-линии': [(0, 0), ],
         'Размеры документа': (1024, 1280),
         'Элементы и стили': elem_unselect_combination_product,
         'Шаблоны страниц с фреймами': page_frames_unselect_combination_product,
         'Название средства': 'R+CO Television Perfect Hair Conditioner',
-        'Количество мера / цена': '241 мл / 6846 рублей', 'Путь к изображению средства': Path(
+        'Количество мера / цена': '241 мл / 6846 руб', 'Путь к изображению средства': Path(
         '00_base/products/00_img/r_co_television_perfect_hair_conditioner_24320100036.jpg'),
         'Тип продукта': 'Кондиционер для совершенства волос', 'Артикул': 'артикул: 24320100036'},
     {
@@ -169,12 +173,14 @@ TEST_BEST_COMBINATION_EXPECTED_RESULT = [
         'Путь к изображению бренд-линии': Path('00_base/source/imagine_border/border_green.jpg'),
         'Путь для сохранения pdf-файла': Path(
             '01_test_base/00_info_for_post/22_22_2222/100_Шампуни/00_source/03_pdf/r_co_atlantis_moisturizing_b5_conditioner_24320200016.pdf'),
-        'Класс шаблона': 'PDFBaseDocTemplateWithBrandLine', 'Размеры бренд-линии': (80, 1280),
+        'Класс шаблона': 'PDFBaseDocTemplateWithBrandLine',
+        'Размеры бренд-линии': (85, 1280),
+        'Координаты вставки бренд-линии': [(0, 0), ],
         'Размеры документа': (1024, 1280),
         'Элементы и стили': elem_best_combination_product,
         'Шаблоны страниц с фреймами': page_frames_best_combination_product,
         'Название средства': 'R+CO Atlantis Moisturizing B5 Conditioner',
-        'Количество мера / цена': '241 мл / 5876 рублей', 'Путь к изображению средства': Path(
+        'Количество мера / цена': '241 мл / 5876 руб', 'Путь к изображению средства': Path(
         '00_base/products/00_img/r_co_atlantis_moisturizing_b5_conditioner_24320200016.jpg'),
         'Тип продукта': 'Кондиционер для увлажнения с витамином В5', 'Артикул': 'артикул: 24320200016'},
     {
@@ -182,11 +188,13 @@ TEST_BEST_COMBINATION_EXPECTED_RESULT = [
         'Путь к изображению бренд-линии': Path('00_base/source/imagine_border/border_fiolet.jpg'),
         'Путь для сохранения pdf-файла': Path(
             '01_test_base/00_info_for_post/22_22_2222/100_Шампуни/00_source/03_pdf/r_co_television_perfect_hair_masque_19760310342.pdf'),
-        'Класс шаблона': 'PDFBaseDocTemplateWithBrandLine', 'Размеры бренд-линии': (80, 1280),
+        'Класс шаблона': 'PDFBaseDocTemplateWithBrandLine',
+        'Размеры бренд-линии': (85, 1280),
+        'Координаты вставки бренд-линии': [(0, 0), ],
         'Размеры документа': (1024, 1280),
         'Элементы и стили': elem_unselect_combination_product,
         'Шаблоны страниц с фреймами': page_frames_unselect_combination_product,
-        'Название средства': 'R+CO TELEVISION Perfect Hair Masque', 'Количество мера / цена': '147 мл / 8307 рублей',
+        'Название средства': 'R+CO TELEVISION Perfect Hair Masque', 'Количество мера / цена': '147 мл / 8307 руб',
         'Путь к изображению средства': Path(
             '00_base/products/00_img/r_co_television_perfect_hair_masque_19760310342.jpg'),
         'Тип продукта': 'Маска для совершенства волос', 'Артикул': 'артикул: 19760310342'}

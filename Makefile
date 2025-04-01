@@ -30,7 +30,7 @@ excel_test:
 	pytest -s excel_process_data/utils/test/test_utils.py::TestUtils::test_counting_hash_best_product
 
 jsontest:
-	pytest -s json_constructor/test/test_json_scheme.py::TestJsonScheme
+	pytest -s json_constructor/test/test_json_scheme.py::TestJsonScheme::test_get_json_scheme_for_analog_product
 
 
 prompt_test:
@@ -42,6 +42,8 @@ proc_test:
 post_test:
 	pytest -s post_constructor/test/test_post.py::TestPostConstructor::test_create_hashtag_2
 
+parser_test:
+	pytest -s ga_parser/parser_v2/parser/tests/test_parser_2.py::ParserTestCase::test_get_detailed_product_type
 
 veron_test:
 	pytest -s excel_process_data/utils/test/test_utils.py::TestUtils

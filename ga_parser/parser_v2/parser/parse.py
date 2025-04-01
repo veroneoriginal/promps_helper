@@ -26,7 +26,7 @@ def parse_product(
 
     download_image(
         url=product_data_dict['Ссылка на изображение'],
-        file_save_path=product_data_dict['Ссылка на изображение в базе'],
+        file_save_path=product_data_dict['Путь для сохранения изображения'],
     )
 
     return product_data_dict

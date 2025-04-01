@@ -9,10 +9,10 @@ class PromptConstructor:
             'Лучшее средство без канцерогенов':
                 self.products_for_code_best_product_carcinogen_free,
             'Разбор состава одного средства': self.products_for_code_one_product,
-            'Лучший набор': self.products_for_code_best_set,
+            'Лучшая пара': self.products_for_code_best_couple,
             'Лучшее сочетание': self.products_for_code_best_combination,
             'Лучшая компоновка': 'метод который расшифровывает словарь для этого кода задачи',
-            'Аналог': 'метод который расшифровывает словарь для этого кода задачи',
+            'Аналог': self.products_for_code_analogue_product,
             'Наиболее похож': 'метод который расшифровывает словарь для этого кода задачи',
             'Наименее похож': 'метод который расшифровывает словарь для этого кода задачи',
         }
@@ -43,6 +43,23 @@ class PromptConstructor:
 
 Ответ ты должен дать в следующем виде: {data_decrypted['Задача']}"""
         }
+
+    def products_for_code_analogue_product(
+            self,
+            data_decrypted: dict,
+    ) -> str:
+        """
+        Метод для формирования текстового описания блока со средствами
+        для кода "Аналог".
+
+        :param data_decrypted: словарь с расшифрованными данными по текущей подборке
+       :return: строка с описанием средств
+        """
+
+        return f"""
+Информация о средствах, их типе и составах: {data_decrypted["Средства"]}.
+Учти всю вышепредставленную информацию и сделай вывод.
+"""
 
     def products_for_code_best_product(
             self,
@@ -97,13 +114,13 @@ class PromptConstructor:
 Учти всю вышепредставленную информацию и проведи детальный анализ состава.
 """
 
-    def products_for_code_best_set(
+    def products_for_code_best_couple(
             self,
             data_decrypted: dict,
     ) -> str:
         """
         Метод для формирования текстового промпта на основе данных словаря
-        для кода 'Лучший набор'.
+        для кода 'Лучшая пара'.
 
         :param data_decrypted: словарь с расшифрованными данными по текущей подборке
         :return: строка с описанием средств

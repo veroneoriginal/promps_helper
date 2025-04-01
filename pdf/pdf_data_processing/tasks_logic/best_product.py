@@ -12,37 +12,38 @@ PDF_STRUCTURE = {
     'Базовая категория':
         {
             'Класс шаблона': 'PDFBaseDocTemplateWithBrandLine',
-            'Размеры бренд-линии': (80, 1280),
+            'Размеры бренд-линии': (85, 1280),
+            'Координаты вставки бренд-линии': [(0, 0), ],
             'Размеры документа': (1024, 1280),  # (ширина, высота) в пикселях
             'Элементы и стили': [
                 ('Image', {'Ключ в подборке': 'Путь к изображению средства', 'width': 1024, 'height': 1280}),
-                ('Spacer', {'width': 1, 'height': 25}),
+                ('Spacer', {'width': 1, 'height': 34}),
                 ('FreeText',
-                 {'Ключ в подборке': 'Артикул', 'x': 450, 'y': 500,
-                  'font_name': 'DejaVuSans',
+                 {'Ключ в подборке': 'Артикул', 'x': 600, 'y': 666,
+                  'font_name': 'Montserrat-Regular',
                   'font_size': 14, 'font_color': "#000000FF", 'bold': False, 'align': 'left'}),
                 ('FreeText',
-                 {'Текст': 'Правообладатель изображения: https://goldapple.ru/', 'x': -30, 'y': 40,
-                  'font_name': 'DejaVuSans',
+                 {'Текст': 'Правообладатель изображения: https://goldapple.ru/', 'x': -40, 'y': 54,
+                  'font_name': 'Montserrat-Regular',
                   'font_size': 10, 'font_color': "#1E1F2280", 'bold': False, 'align': 'left'}),
                 ('Paragraph', {'Ключ в подборке': 'Тип продукта', 'Стиль': 'BP_normal_2', 'Заглавными': True}),
-                ('Spacer', {'width': 1, 'height': 20}),
+                ('Spacer', {'width': 1, 'height': 26}),
                 ('Paragraph', {'Ключ в подборке': 'Название средства', 'Стиль': 'BP_title_1'}),
-                ('Spacer', {'width': 1, 'height': 30}),
+                ('Spacer', {'width': 1, 'height': 40}),
                 ('Paragraph', {'Ключ в подборке': 'Количество мера / цена', 'Стиль': 'BP_base_price_1'}),
-                ('Spacer', {'width': 1, 'height': 20}),
+                ('Spacer', {'width': 1, 'height': 26}),
                 ('Paragraph', {'Текст': '<b>Плюсы:</b>', 'Стиль': 'BP_bold_1'}),
-                ('Spacer', {'width': 1, 'height': 15}),
-                ('Paragraph', {'Ключ в подборке': 'Плюсы', 'Стиль': 'BP_normal_1'}),
                 ('Spacer', {'width': 1, 'height': 20}),
+                ('Paragraph', {'Ключ в подборке': 'Плюсы', 'Стиль': 'BP_normal_1'}),
+                ('Spacer', {'width': 1, 'height': 26}),
                 ('Paragraph', {'Текст': '<b>Минусы:</b>', 'Стиль': 'BP_bold_1'}),
-                ('Spacer', {'width': 1, 'height': 15}),
+                ('Spacer', {'width': 1, 'height': 20}),
                 ('Paragraph', {'Ключ в подборке': 'Минусы', 'Стиль': 'BP_normal_1'}),
             ],
             'Шаблоны страниц с фреймами': {
                 'template_1':
                     (
-                        (0, (100, 0), (596, 966)),  # Номер, Координаты левого нижнего угла, ширина и высота фрейма
+                        (0, (133, 0), (794, 1288)),  # Номер, Координаты левого нижнего угла, ширина и высота фрейма
                     )
             },
         },

@@ -9,11 +9,23 @@ from pprint import pprint
 
 from dev_helpers.data_tools_for_test import ALL_DATA_TOOLS_FOR_TEST
 from pdf.pdf_data_processing.main import PDFDataProcessor
+from pdf.tests.tests_analogue.data_example import (
+    TEST_ANALOGUE_COLLECTION_DATA,
+    TEST_ANALOGUE_SELECTION_RESULT,
+    TEST_ANALOGUE_PATH_PDF_FILE,
+    TEST_ANALOGUE_EXPECTED_RESULT
+)
 from pdf.tests.tests_best_combination.data_example import (
     TEST_BEST_COMBINATION_COLLECTION_DATA,
     TEST_BEST_COMBINATION_SELECTION_RESULT,
     TEST_BEST_COMBINATION_PATH_PDF_FILE,
     TEST_BEST_COMBINATION_EXPECTED_RESULT,
+)
+from pdf.tests.tests_best_couple.data_example import (
+    TEST_BEST_COUPLE_COLLECTION_DATA,
+    TEST_BEST_COUPLE_SELECTION_RESULT,
+    TEST_BEST_COUPLE_PATH_PDF_FILE,
+    TEST_BEST_COUPLE_EXPECTED_RESULT,
 )
 
 from pdf.tests.tests_best_product.data_example import (
@@ -51,7 +63,6 @@ class TestTasksDataProcessing(unittest.TestCase):
             path_to_output_folder_pdf_file=TEST_BEST_PRODUCT_PATH_PDF_FILE,
         )
         result = data_processor.process_data_with_task_code()
-        # pprint(result)
         self.maxDiff = None
         self.assertListEqual(result, TEST_BEST_PRODUCT_EXPECTED_RESULT)
 
@@ -97,3 +108,33 @@ class TestTasksDataProcessing(unittest.TestCase):
         result = data_processor.process_data_with_task_code()
         self.maxDiff = None
         self.assertListEqual(result, TEST_BEST_COMBINATION_EXPECTED_RESULT)
+
+    def test_best_couple(self):
+        """
+        Задача "Лучшая пара"
+        """
+        data_processor = PDFDataProcessor(
+            collection_data=TEST_BEST_COUPLE_COLLECTION_DATA,
+            info_data=ALL_DATA_TOOLS_FOR_TEST,
+            selection_result=TEST_BEST_COUPLE_SELECTION_RESULT,
+            path_to_output_folder_pdf_file=TEST_BEST_COUPLE_PATH_PDF_FILE,
+        )
+        result = data_processor.process_data_with_task_code()
+        self.maxDiff = None
+        # print(result)
+        self.assertListEqual(result, TEST_BEST_COUPLE_EXPECTED_RESULT)
+
+    def test_analogue(self):
+        """
+        Задача "Аналог"
+        """
+        data_processor = PDFDataProcessor(
+            collection_data=TEST_ANALOGUE_COLLECTION_DATA,
+            info_data=ALL_DATA_TOOLS_FOR_TEST,
+            selection_result=TEST_ANALOGUE_SELECTION_RESULT,
+            path_to_output_folder_pdf_file=TEST_ANALOGUE_PATH_PDF_FILE,
+        )
+        result = data_processor.process_data_with_task_code()
+        self.maxDiff = None
+        # print(result)
+        self.assertListEqual(result, TEST_ANALOGUE_EXPECTED_RESULT)

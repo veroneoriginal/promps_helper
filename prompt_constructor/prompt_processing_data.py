@@ -21,10 +21,10 @@ class PromptProcessingData:
             'Лучшее средство': self.decrypting_info_code_best_product,
             'Лучшее средство без канцерогенов': self.decrypting_info_code_best_product,
             'Разбор состава одного средства': self.decrypting_info_code_best_product,
-            'Лучший набор': self.decrypting_best_set,
+            'Лучшая пара': self.decrypting_best_couple,
             'Лучшее сочетание': self.decrypting_info_code_best_product,
             'Лучшая компоновка': 'метод который расшифровывает словарь для этого кода задачи',
-            'Аналог': 'метод который расшифровывает словарь для этого кода задачи',
+            'Аналог': self.decrypting_info_code_best_product,
             'Наиболее похож': 'метод который расшифровывает словарь для этого кода задачи',
             'Наименее похож': 'метод который расшифровывает словарь для этого кода задачи',
         }
@@ -228,7 +228,7 @@ class PromptProcessingData:
             product_set: dict,
     ) -> str:
         """
-        Метод, работающий для кода задачи "Лучший набор", форматирует наборы
+        Метод, работающий для кода задачи "Лучшая пара", форматирует наборы
         средств в читаемую строку для промпта.
 
         :param product_set: набор из средств (пара, тройка, четверка средств)
@@ -240,20 +240,20 @@ class PromptProcessingData:
             lines.append(f"\n{product_group_name}:")
             for product_name, product_info in products.items():
                 lines.append(f"Продукт: {product_name}. "
-                             f"Тип продукта: {product_info.get('Тип продукта', 'Не указан')}. "
                              f"Артикул: {product_info['Артикул в Золотом Яблоке']}. "
+                             f"Тип продукта: {product_info.get('Тип продукта', 'Не указан')}. "
                              f"Состав: {product_info.get('Состав', 'Не указан')}. ")
 
         return "\n".join(lines)
 
-    def decrypting_best_set(
+    def decrypting_best_couple(
             self,
             data: dict,
             data_collection: dict,
             key_for_decrypted: str,
     ) -> str:
         """
-        Метод для расшифровки ключа средства для кода задачи 'Лучший набор'.
+        Метод для расшифровки ключа средства для кода задачи 'Лучшая пара'.
 
         :param data: словарь со всеми данными по средствам
         :param data_collection: словарь с подборкой наборов

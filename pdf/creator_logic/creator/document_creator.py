@@ -1,3 +1,5 @@
+import os
+import re
 from pathlib import Path
 from typing import Tuple
 
@@ -67,10 +69,10 @@ class PDFPageTemplateandFrameBuilder:
         """
 
         return Frame(
-            x1=x1_y1[0],
-            y1=x1_y1[1],
-            width=width_height[0],
-            height=width_height[1],
+            x1=_pixels_to_points(x1_y1[0]),
+            y1=_pixels_to_points(x1_y1[1]),
+            width=_pixels_to_points(width_height[0]),
+            height=_pixels_to_points(width_height[1]),
             id=frame_id,
             # showBoundary=True,
         )
@@ -160,8 +162,8 @@ class PDFFlowablesCreator:
                 case 'Image':
                     self._create_image(
                         img_path=self.data[flowable_data['Ключ в подборке']],
-                        width=flowable_data['width'],
-                        height=flowable_data['height'],
+                        width=_pixels_to_points(flowable_data['width']),
+                        height=_pixels_to_points(flowable_data['height']),
                     )
                 case 'Paragraph':
                     text = (
@@ -175,8 +177,8 @@ class PDFFlowablesCreator:
                     )
                 case 'Spacer':
                     self._create_spacer(
-                        width=flowable_data['width'],
-                        height=flowable_data['height'],
+                        width=_pixels_to_points(flowable_data['width']),
+                        height=_pixels_to_points(flowable_data['height']),
                     )
                 case 'NextPageTemplate':
                     self.flowables.append(NextPageTemplate(
@@ -190,20 +192,20 @@ class PDFFlowablesCreator:
                     self.flowables.append(
                         FreeImage(
                             path=self.data[flowable_data.get('Ключ в подборке')],
-                            x=flowable_data.get('x'),
-                            y=flowable_data.get('y'),
-                            width=flowable_data.get('width'),
-                            height=flowable_data.get('height'),
+                            x=_pixels_to_points(flowable_data.get('x')),
+                            y=_pixels_to_points(flowable_data.get('y')),
+                            width=_pixels_to_points(flowable_data.get('width')),
+                            height=_pixels_to_points(flowable_data.get('height')),
                             preserve_aspect_ratio=flowable_data.get('preserve_aspect_ratio'),
                         )
                     )
                 case 'FreeRect':
                     self.flowables.append(
                         FreeRect(
-                            x=flowable_data.get('x'),
-                            y=flowable_data.get('y'),
-                            width=flowable_data.get('width'),
-                            height=flowable_data.get('height'),
+                            x=_pixels_to_points(flowable_data.get('x')),
+                            y=_pixels_to_points(flowable_data.get('y')),
+                            width=_pixels_to_points(flowable_data.get('width')),
+                            height=_pixels_to_points(flowable_data.get('height')),
                             fill_color=flowable_data.get('fill_color'),
                         )
                     )
@@ -215,8 +217,8 @@ class PDFFlowablesCreator:
                     self.flowables.append(
                         FreeText(
                             text=text,
-                            x=flowable_data.get('x'),
-                            y=flowable_data.get('y'),
+                            x=_pixels_to_points(flowable_data.get('x')),
+                            y=_pixels_to_points(flowable_data.get('y')),
                             font_name=flowable_data.get('font_name'),
                             font_size=flowable_data.get('font_size'),
                             font_color=flowable_data.get('font_color'),
@@ -266,9 +268,11 @@ class PDFFlowablesCreator:
         :param height: высота изображения
         :return: None
         """
-        img = Image(img_path,
-                    width=_pixels_to_points(pixels=width),
-                    height=_pixels_to_points(pixels=height),
+        # Заменяем все типы слешей на правильный для ОС
+        normalized_path = Path(re.sub(r'[\\/]', os.sep, str(img_path))).resolve()
+        img = Image(normalized_path,
+                    width=width,
+                    height=height,
                     kind='proportional')
         self.flowables.append(img)
 
@@ -323,6 +327,8 @@ class PDFConverterToImage:
                 img.save(jpg_file, "JPEG")
 
 
+# pylint: disable=R0913: too-many-arguments
+# pylint: disable=R0917: too-many-positional-arguments
 class PDFBaseDocTemplateWithBrandLine(BaseDocTemplate):
     """
     Создаёт шаблон документа с переопределением
@@ -336,6 +342,7 @@ class PDFBaseDocTemplateWithBrandLine(BaseDocTemplate):
             doc_width_height: tuple,
             brand_line_width_height: tuple,
             path_to_brandline_file: Path,
+            brand_line_coords: list[tuple[int, int], ...],
             **kwargs
     ):
         """
@@ -343,10 +350,12 @@ class PDFBaseDocTemplateWithBrandLine(BaseDocTemplate):
         :param doc_width_height: ширина и высота документа
         :param brand_line_width_height:  ширина и высота бренд-линии
         :param path_to_brandline_file: путь к файлу с бренд-линией
+        :param brand_line_coords: координаты вставки бренд-линии (x, y)
         """
         self.doc_width_height = doc_width_height
         self.brand_line_width_height = brand_line_width_height
         self.path_to_brandline_file = path_to_brandline_file
+        self.brand_line_coords = brand_line_coords
 
         super().__init__(
             filename=filename,
@@ -366,13 +375,15 @@ class PDFBaseDocTemplateWithBrandLine(BaseDocTemplate):
         """
         Рисует бренд-линию на канве
         """
-        canvas.drawImage(
-            image=self.path_to_brandline_file,
-            x=0,  # x (левый край)
-            y=0,  # y (нижний край)
-            width=_pixels_to_points(pixels=self.brand_line_width_height[0]),
-            height=_pixels_to_points(pixels=self.brand_line_width_height[1]),
-        )
+
+        for coords in self.brand_line_coords:
+            canvas.drawImage(
+                image=self.path_to_brandline_file,
+                x=_pixels_to_points(coords[0]),  # x (левый край)
+                y=_pixels_to_points(coords[1]),  # y (нижний край)
+                width=_pixels_to_points(pixels=self.brand_line_width_height[0]),
+                height=_pixels_to_points(pixels=self.brand_line_width_height[1]),
+            )
 
     def afterPage(self):
         """
