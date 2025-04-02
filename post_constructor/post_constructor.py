@@ -16,7 +16,7 @@ class PostConstructor:
             'Лучшее средство без канцерогенов':
                 self.create_text_for_post_code_best_product_canc_free,
             'Разбор состава одного средства': self.create_text_for_post_code_one_product,
-            'Лучший набор': self.create_text_for_post_code_best_set,
+            'Лучшая пара': self.create_text_for_post_code_best_couple,
             'Лучшее сочетание': self.create_text_for_post_code_best_combination,
             'Лучшая компоновка': None,
             'Аналог': None,
@@ -78,13 +78,13 @@ class PostConstructor:
     и проанализировать каждый компонент состава.
     """
 
-    def create_text_for_post_code_best_set(
+    def create_text_for_post_code_best_couple(
             self,
             data: dict,
     ) -> str:
         """
         Метод возвращает строку с типами и запросом пользователя
-        для кода задачи "Лучший набор".
+        для кода задачи "Лучшая пара".
 
         :param data: словарь с данными о пользователе и косметических средствах
         :return: строка с данными о потребностях пользователя

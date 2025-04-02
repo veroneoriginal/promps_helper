@@ -35,7 +35,8 @@ class PDFCreator:
                 brand_line_width_height=(
                     data['Размеры бренд-линии'][0],
                     data['Размеры бренд-линии'][1]
-                )
+                ),
+                brand_line_coords=data['Координаты вставки бренд-линии']
             )
 
             # Создаём flowables-элементы документа

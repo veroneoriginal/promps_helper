@@ -1,12 +1,14 @@
 # pylint: disable=E0611: no-name-in-module
 from copy import deepcopy
 
+from pdf.pdf_data_processing.tasks_logic.analogue import AnaloguePDFTemplateCreator
 from pdf.pdf_data_processing.tasks_logic.analysis_composition_one_product import (
     AnalisisCompositionProductPDFTemplateCreator,
 )
 from pdf.pdf_data_processing.tasks_logic.best_combination import (
     BestCombinationProductPDFTemplateCreator,
 )
+from pdf.pdf_data_processing.tasks_logic.best_couple import BestCouplePDFTemplateCreator
 from pdf.pdf_data_processing.tasks_logic.best_product import BestProductPDFTemplateCreator
 from pdf.pdf_data_processing.tasks_logic.best_product_without_carcinogens import (
     BestProductWithOutConcerogensPDFTemplateCreator,
@@ -45,7 +47,7 @@ class PDFDataProcessor:
             'Лучшее средство': self._best_product,
             'Лучшее средство без канцерогенов': self._best_product_without_carcinogens,
             'Разбор состава одного средства': self._analysis_composition_one_product,
-            'Лучшая пара': self._best_para,
+            'Лучшая пара': self._best_couple,
             'Лучшее сочетание': self._best_combination,
             'Лучшая компоновка': self._best_layout,
             'Аналог': self._analogue,
@@ -85,6 +87,8 @@ class PDFDataProcessor:
     def _analogue(self):
         """ Задача "Аналог" """
 
+        return AnaloguePDFTemplateCreator
+
     def _best_layout(self):
         """ Задача "Лучшая компоновка" """
 
@@ -93,8 +97,10 @@ class PDFDataProcessor:
 
         return BestCombinationProductPDFTemplateCreator
 
-    def _best_para(self):
+    def _best_couple(self):
         """ Задача "Лучшая пара" """
+
+        return BestCouplePDFTemplateCreator
 
     def _analysis_composition_one_product(self) -> callable:
         """

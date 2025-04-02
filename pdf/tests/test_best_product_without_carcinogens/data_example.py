@@ -44,37 +44,37 @@ TEST_BEST_PRODUCT_WITHOUT_CARCINOGENS_COLLECTION_DATA = {
 
 elem = [
     ('Image', {'Ключ в подборке': 'Путь к изображению средства', 'width': 1024, 'height': 1280}),
-    ('Spacer', {'width': 1, 'height': 25}),
+    ('Spacer', {'width': 1, 'height': 34}),
     ('FreeText',
-     {'Ключ в подборке': 'Артикул', 'x': 450, 'y': 500,
-      'font_name': 'DejaVuSans',
+     {'Ключ в подборке': 'Артикул', 'x': 600, 'y': 666,
+      'font_name': 'Montserrat-Regular',
       'font_size': 14, 'font_color': "#000000FF", 'bold': False, 'align': 'left'}),
     ('FreeText',
-     {'Текст': 'Правообладатель изображения: https://goldapple.ru/', 'x': -30, 'y': 40,
-      'font_name': 'DejaVuSans',
+     {'Текст': 'Правообладатель изображения: https://goldapple.ru/', 'x': -40, 'y': 54,
+      'font_name': 'Montserrat-Regular',
       'font_size': 10, 'font_color': "#1E1F2280", 'bold': False, 'align': 'left'}),
     ('Paragraph', {'Ключ в подборке': 'Тип продукта', 'Стиль': 'BPWC_normal_2', 'Заглавными': True}),
-    ('Spacer', {'width': 1, 'height': 20}),
+    ('Spacer', {'width': 1, 'height': 26}),
     ('Paragraph', {'Ключ в подборке': 'Название средства', 'Стиль': 'BPWC_title_1'}),
-    ('Spacer', {'width': 1, 'height': 20}),
+    ('Spacer', {'width': 1, 'height': 26}),
     ('Paragraph', {'Ключ в подборке': 'Количество мера / цена', 'Стиль': 'BPWC_base_price_1'}),
-    ('Spacer', {'width': 1, 'height': 20}),
+    ('Spacer', {'width': 1, 'height': 26}),
     ('Paragraph', {'Текст': '<b>Плюсы:</b>', 'Стиль': 'BPWC_bold_1'}),
-    ('Spacer', {'width': 1, 'height': 15}),
+    ('Spacer', {'width': 1, 'height': 20}),
     ('Paragraph', {'Ключ в подборке': 'Плюсы', 'Стиль': 'BPWC_normal_1'}),
-    ('Spacer', {'width': 1, 'height': 10}),
+    ('Spacer', {'width': 1, 'height': 13}),
     ('Paragraph', {'Текст': '<b>Минусы:</b>', 'Стиль': 'BPWC_bold_1'}),
-    ('Spacer', {'width': 1, 'height': 15}),
+    ('Spacer', {'width': 1, 'height': 20}),
     ('Paragraph', {'Ключ в подборке': 'Минусы', 'Стиль': 'BPWC_normal_1'}),
-    ('Spacer', {'width': 1, 'height': 10}),
+    ('Spacer', {'width': 1, 'height': 13}),
     ('Paragraph', {'Текст': '<b>Канцерогены:</b>', 'Стиль': 'BPWC_bold_1'}),
-    ('Spacer', {'width': 1, 'height': 15}),
+    ('Spacer', {'width': 1, 'height': 20}),
     ('Paragraph', {'Ключ в подборке': 'Канцерогены', 'Стиль': 'BPWC_normal_1'}),
 ]
 page_frames = {
     'template_1':
         (
-            (0, (100, 0), (596, 966)),  # Номер, Координаты левого нижнего угла, ширина и высота фрейма
+            (0, (133, 0), (794, 1288)),  # Номер, Координаты левого нижнего угла, ширина и высота фрейма
         )
 }
 
@@ -82,7 +82,7 @@ TEST_BEST_PRODUCT_WITHOUT_CARCINOGENS_EXPECTED_RESULT = [
     {
         'Артикул': 'артикул: 19000222491',
         'Канцерогены': 'Sodium c14-16 olefin sulfonate, Phenoxyethanol',
-        'Количество мера / цена': '300 мл / 3390 рублей',
+        'Количество мера / цена': '300 мл / 3390 руб',
         'Минусы': 'Содержит сульфаты и консерванты, которые могут сушить волосы и '
                   'вызывать раздражение кожи головы.',
         'Название средства': 'ALTEREGO ITALY Scalpego Balancing',
@@ -93,7 +93,8 @@ TEST_BEST_PRODUCT_WITHOUT_CARCINOGENS_EXPECTED_RESULT = [
         'Путь к изображению бренд-линии': Path('00_base/source/imagine_border/border_fiolet.jpg'),
         'Путь к изображению средства': Path(
             '00_base/products/00_img/alterego_italy_scalpego_balancing_19000222491.jpg'),
-        'Размеры бренд-линии': (80, 1280),
+        'Размеры бренд-линии': (85, 1280),
+        'Координаты вставки бренд-линии': [(0, 0), ],
         'Размеры документа': (1024, 1280),
         'Класс шаблона': 'PDFBaseDocTemplateWithBrandLine',
         'Тип продукта': 'Балансирующий Шампунь для волос',
@@ -102,7 +103,7 @@ TEST_BEST_PRODUCT_WITHOUT_CARCINOGENS_EXPECTED_RESULT = [
     },
     {'Артикул': 'артикул: 19000146259',
      'Канцерогены': 'Нет',
-     'Количество мера / цена': '300 мл / 2450 рублей',
+     'Количество мера / цена': '300 мл / 2450 руб',
      'Минусы': 'Содержит сульфаты, которые могут сушить волосы и вызывать '
                'раздражение кожи головы.',
      'Название средства': 'LOREAL PROFESSIONNEL Serioxyl Advanced',
@@ -114,7 +115,8 @@ TEST_BEST_PRODUCT_WITHOUT_CARCINOGENS_EXPECTED_RESULT = [
      'Путь к изображению средства': Path(
          '00_base/products/00_img/loreal_professionnel_serioxyl_advanced_19000146259.jpg'),
      'Класс шаблона': 'PDFBaseDocTemplateWithBrandLine',
-     'Размеры бренд-линии': (80, 1280),
+     'Размеры бренд-линии': (85, 1280),
+     'Координаты вставки бренд-линии': [(0, 0), ],
      'Размеры документа': (1024, 1280),
      'Тип продукта': 'Шампунь для уплотнения волос',
      'Шаблоны страниц с фреймами': page_frames,
@@ -123,7 +125,7 @@ TEST_BEST_PRODUCT_WITHOUT_CARCINOGENS_EXPECTED_RESULT = [
     {
         'Артикул': 'артикул: 19000141580',
         'Канцерогены': 'Sodium c14-16 olefin sulfonate, Phenoxyethanol',
-        'Количество мера / цена': '400 мл / 507 рублей',
+        'Количество мера / цена': '400 мл / 507 руб',
         'Минусы': 'Может быть более дорогим по сравнению с другими средствами.',
         'Название средства': 'NATURA SIBERICA Oblepikha',
         'Плюсы': 'Содержит гидролизованный кератин, шелк и масла, которые глубоко '
@@ -133,7 +135,8 @@ TEST_BEST_PRODUCT_WITHOUT_CARCINOGENS_EXPECTED_RESULT = [
         'Путь к изображению бренд-линии': Path('00_base/source/imagine_border/border_fiolet.jpg'),
         'Путь к изображению средства': Path('00_base/products/00_img/natura_siberica_oblepikha_19000141580.jpg'),
         'Класс шаблона': 'PDFBaseDocTemplateWithBrandLine',
-        'Размеры бренд-линии': (80, 1280),
+        'Размеры бренд-линии': (85, 1280),
+        'Координаты вставки бренд-линии': [(0, 0), ],
         'Размеры документа': (1024, 1280),
         'Тип продукта': 'Шампунь',
         'Шаблоны страниц с фреймами': page_frames,

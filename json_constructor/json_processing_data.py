@@ -16,10 +16,10 @@ class JsonProcessingData:
             'Лучшее средство': self.decryption_task_best_product,
             'Лучшее средство без канцерогенов': self.decryption_task_best_product,
             'Разбор состава одного средства': self.decryption_task_one_product,
-            'Лучший набор': self.decryption_task_best_set,
+            'Лучшая пара': self.decryption_task_best_couple,
             'Лучшее сочетание': self.decryption_task_best_combination,
             'Лучшая компоновка': 'метод который расшифровывает словарь для этого кода задачи',
-            'Аналог': 'метод который расшифровывает словарь для этого кода задачи',
+            'Аналог': self.decryption_analogue_product,
             'Наиболее похож': 'метод который расшифровывает словарь для этого кода задачи',
             'Наименее похож': 'метод который расшифровывает словарь для этого кода задачи',
         }
@@ -31,6 +31,22 @@ class JsonProcessingData:
         task = self.data_collection['Задача']
         result_function = self.method_for_task_code[task]
         return result_function(self.data_collection)
+
+    def decryption_analogue_product(
+            self,
+            data_collection: dict,
+    ) -> dict:
+        """
+        Метод для преобразования словаря по коду задачи - 'Аналог'.
+        Считаем длину словаря по ключу 'Средства' и обновляем исходный словарь.
+
+        :param data_collection: словарь с текущей подборкой
+        :return: словарь с текущей подборкой с добавленным ключом 'Количество средств'
+        """
+
+        data_collection['Количество средств'] = len(data_collection['Средства'])
+
+        return data_collection
 
     def decryption_task_best_product(
             self,
@@ -79,7 +95,7 @@ class JsonProcessingData:
 
         return data_collection
 
-    def decryption_task_best_set(
+    def decryption_task_best_couple(
             self,
             data_collection: dict,
     ) -> dict:

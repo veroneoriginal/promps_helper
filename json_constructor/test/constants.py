@@ -2,302 +2,361 @@
 
 # В этом модуле константы для тестов json конструктора
 
+EXPECTED_SCHEMA_FOR_ANALOGUE_PRODUCT = {
+    'name': 'analog_product',
+    'schema': {
+        'additionalProperties': False,
+        'properties': {
+            'analog_product': {
+                'additionalProperties': False,
+                'properties': {
+                    'article': {
+                        'description': 'Артикул '
+                                       'средства-аналога, '
+                                       'только '
+                                       'цифры.',
+                        'type': 'string'},
+                    'title': {
+                        'description': 'Название '
+                                       'средства-аналога',
+                        'type': 'string'}},
+                'required': ['title', 'article'],
+                'type': 'object'},
+            'differences': {'description': 'Здесь укажи '
+                                           'различия средств, '
+                                           'чем они отличаются',
+                            'type': 'string'},
+            'result': {'description': 'Итоговый вывод подробно',
+                       'type': 'string'},
+            'short_result': {'description': 'Итоговый вывод '
+                                            'коротко',
+                             'type': 'string'},
+            'similarities': {'description': 'Здесь укажи '
+                                            'сходства средств, '
+                                            'что у них общего',
+                             'type': 'string'},
+            'source_product': {'additionalProperties': False,
+                               'properties': {'article': {
+                                   'description': 'Артикул '
+                                                  'исходного '
+                                                  'средства, '
+                                                  'только '
+                                                  'цифры.',
+                                   'type': 'string'},
+                                   'title': {
+                                       'description': 'Название '
+                                                      'исходного '
+                                                      'средства',
+                                       'type': 'string'}},
+                               'required': ['title', 'article'],
+                               'type': 'object'}},
+        'required': ['result',
+                     'short_result',
+                     'similarities',
+                     'differences',
+                     'source_product',
+                     'analog_product'],
+        'type': 'object'},
+    'strict': True}
+
 EXPECTED_SCHEMA_FOR_BEST_PRODUCT = {
-    'name': 'cosmetics_analysis',
-    'schema': {'additionalProperties': False,
-               'properties': {'product_1': {'additionalProperties': False,
-                                            'properties': {'article': {'description': 'Артикул '
-                                                                                      '1-го '
-                                                                                      'средства, '
-                                                                                      'только '
-                                                                                      'цифры.',
-                                                                       'type': 'string'},
-                                                           'best_product': {'description': 'Если '
-                                                                                           'это '
-                                                                                           'средство '
-                                                                                           'стало '
-                                                                                           'лучшим, '
-                                                                                           'поставь '
-                                                                                           'здесь '
-                                                                                           'True, '
-                                                                                           'если '
-                                                                                           'нет, '
-                                                                                           'то '
-                                                                                           'False',
-                                                                            'type': 'boolean'},
-                                                           'minus': {'description': 'Описание '
-                                                                                    'минусов '
-                                                                                    '1-го '
-                                                                                    'средства '
-                                                                                    '(без '
-                                                                                    'названия '
-                                                                                    'средства)',
-                                                                     'type': 'string'},
-                                                           'plus': {'description': 'Описание '
-                                                                                   'плюсов '
-                                                                                   '1-го '
-                                                                                   'средства '
-                                                                                   '(без '
-                                                                                   'названия '
-                                                                                   'средства)',
-                                                                    'type': 'string'},
-                                                           'title': {'description': 'Название '
-                                                                                    '1-го '
-                                                                                    'средства',
-                                                                     'type': 'string'}},
-                                            'required': ['title',
-                                                         'article',
-                                                         'plus',
-                                                         'minus',
-                                                         'best_product'],
-                                            'type': 'object'},
-                              'product_2': {'additionalProperties': False,
-                                            'properties': {'article': {'description': 'Артикул '
-                                                                                      '2-го '
-                                                                                      'средства, '
-                                                                                      'только '
-                                                                                      'цифры.',
-                                                                       'type': 'string'},
-                                                           'best_product': {'description': 'Если '
-                                                                                           'это '
-                                                                                           'средство '
-                                                                                           'стало '
-                                                                                           'лучшим, '
-                                                                                           'поставь '
-                                                                                           'здесь '
-                                                                                           'True, '
-                                                                                           'если '
-                                                                                           'нет, '
-                                                                                           'то '
-                                                                                           'False',
-                                                                            'type': 'boolean'},
-                                                           'minus': {'description': 'Описание '
-                                                                                    'минусов '
-                                                                                    '2-го '
-                                                                                    'средства '
-                                                                                    '(без '
-                                                                                    'названия '
-                                                                                    'средства)',
-                                                                     'type': 'string'},
-                                                           'plus': {'description': 'Описание '
-                                                                                   'плюсов '
-                                                                                   '2-го '
-                                                                                   'средства '
-                                                                                   '(без '
-                                                                                   'названия '
-                                                                                   'средства)',
-                                                                    'type': 'string'},
-                                                           'title': {'description': 'Название '
-                                                                                    '2-го '
-                                                                                    'средства',
-                                                                     'type': 'string'}},
-                                            'required': ['title',
-                                                         'article',
-                                                         'plus',
-                                                         'minus',
-                                                         'best_product'],
-                                            'type': 'object'},
-                              'product_3': {'additionalProperties': False,
-                                            'properties': {'article': {'description': 'Артикул '
-                                                                                      '3-го '
-                                                                                      'средства, '
-                                                                                      'только '
-                                                                                      'цифры.',
-                                                                       'type': 'string'},
-                                                           'best_product': {'description': 'Если '
-                                                                                           'это '
-                                                                                           'средство '
-                                                                                           'стало '
-                                                                                           'лучшим, '
-                                                                                           'поставь '
-                                                                                           'здесь '
-                                                                                           'True, '
-                                                                                           'если '
-                                                                                           'нет, '
-                                                                                           'то '
-                                                                                           'False',
-                                                                            'type': 'boolean'},
-                                                           'minus': {'description': 'Описание '
-                                                                                    'минусов '
-                                                                                    '3-го '
-                                                                                    'средства '
-                                                                                    '(без '
-                                                                                    'названия '
-                                                                                    'средства)',
-                                                                     'type': 'string'},
-                                                           'plus': {'description': 'Описание '
-                                                                                   'плюсов '
-                                                                                   '3-го '
-                                                                                   'средства '
-                                                                                   '(без '
-                                                                                   'названия '
-                                                                                   'средства)',
-                                                                    'type': 'string'},
-                                                           'title': {'description': 'Название '
-                                                                                    '3-го '
-                                                                                    'средства',
-                                                                     'type': 'string'}},
-                                            'required': ['title',
-                                                         'article',
-                                                         'plus',
-                                                         'minus',
-                                                         'best_product'],
-                                            'type': 'object'},
-                              'product_4': {'additionalProperties': False,
-                                            'properties': {'article': {'description': 'Артикул '
-                                                                                      '4-го '
-                                                                                      'средства, '
-                                                                                      'только '
-                                                                                      'цифры.',
-                                                                       'type': 'string'},
-                                                           'best_product': {'description': 'Если '
-                                                                                           'это '
-                                                                                           'средство '
-                                                                                           'стало '
-                                                                                           'лучшим, '
-                                                                                           'поставь '
-                                                                                           'здесь '
-                                                                                           'True, '
-                                                                                           'если '
-                                                                                           'нет, '
-                                                                                           'то '
-                                                                                           'False',
-                                                                            'type': 'boolean'},
-                                                           'minus': {'description': 'Описание '
-                                                                                    'минусов '
-                                                                                    '4-го '
-                                                                                    'средства '
-                                                                                    '(без '
-                                                                                    'названия '
-                                                                                    'средства)',
-                                                                     'type': 'string'},
-                                                           'plus': {'description': 'Описание '
-                                                                                   'плюсов '
-                                                                                   '4-го '
-                                                                                   'средства '
-                                                                                   '(без '
-                                                                                   'названия '
-                                                                                   'средства)',
-                                                                    'type': 'string'},
-                                                           'title': {'description': 'Название '
-                                                                                    '4-го '
-                                                                                    'средства',
-                                                                     'type': 'string'}},
-                                            'required': ['title',
-                                                         'article',
-                                                         'plus',
-                                                         'minus',
-                                                         'best_product'],
-                                            'type': 'object'},
-                              'product_5': {'additionalProperties': False,
-                                            'properties': {'article': {'description': 'Артикул '
-                                                                                      '5-го '
-                                                                                      'средства, '
-                                                                                      'только '
-                                                                                      'цифры.',
-                                                                       'type': 'string'},
-                                                           'best_product': {'description': 'Если '
-                                                                                           'это '
-                                                                                           'средство '
-                                                                                           'стало '
-                                                                                           'лучшим, '
-                                                                                           'поставь '
-                                                                                           'здесь '
-                                                                                           'True, '
-                                                                                           'если '
-                                                                                           'нет, '
-                                                                                           'то '
-                                                                                           'False',
-                                                                            'type': 'boolean'},
-                                                           'minus': {'description': 'Описание '
-                                                                                    'минусов '
-                                                                                    '5-го '
-                                                                                    'средства '
-                                                                                    '(без '
-                                                                                    'названия '
-                                                                                    'средства)',
-                                                                     'type': 'string'},
-                                                           'plus': {'description': 'Описание '
-                                                                                   'плюсов '
-                                                                                   '5-го '
-                                                                                   'средства '
-                                                                                   '(без '
-                                                                                   'названия '
-                                                                                   'средства)',
-                                                                    'type': 'string'},
-                                                           'title': {'description': 'Название '
-                                                                                    '5-го '
-                                                                                    'средства',
-                                                                     'type': 'string'}},
-                                            'required': ['title',
-                                                         'article',
-                                                         'plus',
-                                                         'minus',
-                                                         'best_product'],
-                                            'type': 'object'},
-                              'product_6': {'additionalProperties': False,
-                                            'properties': {'article': {'description': 'Артикул '
-                                                                                      '6-го '
-                                                                                      'средства, '
-                                                                                      'только '
-                                                                                      'цифры.',
-                                                                       'type': 'string'},
-                                                           'best_product': {'description': 'Если '
-                                                                                           'это '
-                                                                                           'средство '
-                                                                                           'стало '
-                                                                                           'лучшим, '
-                                                                                           'поставь '
-                                                                                           'здесь '
-                                                                                           'True, '
-                                                                                           'если '
-                                                                                           'нет, '
-                                                                                           'то '
-                                                                                           'False',
-                                                                            'type': 'boolean'},
-                                                           'minus': {'description': 'Описание '
-                                                                                    'минусов '
-                                                                                    '6-го '
-                                                                                    'средства '
-                                                                                    '(без '
-                                                                                    'названия '
-                                                                                    'средства)',
-                                                                     'type': 'string'},
-                                                           'plus': {'description': 'Описание '
-                                                                                   'плюсов '
-                                                                                   '6-го '
-                                                                                   'средства '
-                                                                                   '(без '
-                                                                                   'названия '
-                                                                                   'средства)',
-                                                                    'type': 'string'},
-                                                           'title': {'description': 'Название '
-                                                                                    '6-го '
-                                                                                    'средства',
-                                                                     'type': 'string'}},
-                                            'required': ['title',
-                                                         'article',
-                                                         'plus',
-                                                         'minus',
-                                                         'best_product'],
-                                            'type': 'object'},
-                              'result': {'description': 'Итоговая рекомендация, '
-                                                        'вывод',
-                                         'type': 'string'}},
-               'required': ['result',
-                            'product_1',
-                            'product_2',
-                            'product_3',
-                            'product_4',
-                            'product_5',
-                            'product_6'],
-               'type': 'object'},
+    'name': 'best_product',
+    'schema': {
+        'additionalProperties': False,
+        'properties': {
+            'product_1': {'additionalProperties': False,
+                          'properties': {'article': {'description': 'Артикул '
+                                                                    '1-го '
+                                                                    'средства, '
+                                                                    'только '
+                                                                    'цифры.',
+                                                     'type': 'string'},
+                                         'best_product': {'description': 'Если '
+                                                                         'это '
+                                                                         'средство '
+                                                                         'стало '
+                                                                         'лучшим, '
+                                                                         'поставь '
+                                                                         'здесь '
+                                                                         'True, '
+                                                                         'если '
+                                                                         'нет, '
+                                                                         'то '
+                                                                         'False',
+                                                          'type': 'boolean'},
+                                         'minus': {'description': 'Описание '
+                                                                  'минусов '
+                                                                  '1-го '
+                                                                  'средства '
+                                                                  '(без '
+                                                                  'названия '
+                                                                  'средства)',
+                                                   'type': 'string'},
+                                         'plus': {'description': 'Описание '
+                                                                 'плюсов '
+                                                                 '1-го '
+                                                                 'средства '
+                                                                 '(без '
+                                                                 'названия '
+                                                                 'средства)',
+                                                  'type': 'string'},
+                                         'title': {'description': 'Название '
+                                                                  '1-го '
+                                                                  'средства',
+                                                   'type': 'string'}},
+                          'required': ['title',
+                                       'article',
+                                       'plus',
+                                       'minus',
+                                       'best_product'],
+                          'type': 'object'},
+            'product_2': {'additionalProperties': False,
+                          'properties': {'article': {'description': 'Артикул '
+                                                                    '2-го '
+                                                                    'средства, '
+                                                                    'только '
+                                                                    'цифры.',
+                                                     'type': 'string'},
+                                         'best_product': {'description': 'Если '
+                                                                         'это '
+                                                                         'средство '
+                                                                         'стало '
+                                                                         'лучшим, '
+                                                                         'поставь '
+                                                                         'здесь '
+                                                                         'True, '
+                                                                         'если '
+                                                                         'нет, '
+                                                                         'то '
+                                                                         'False',
+                                                          'type': 'boolean'},
+                                         'minus': {'description': 'Описание '
+                                                                  'минусов '
+                                                                  '2-го '
+                                                                  'средства '
+                                                                  '(без '
+                                                                  'названия '
+                                                                  'средства)',
+                                                   'type': 'string'},
+                                         'plus': {'description': 'Описание '
+                                                                 'плюсов '
+                                                                 '2-го '
+                                                                 'средства '
+                                                                 '(без '
+                                                                 'названия '
+                                                                 'средства)',
+                                                  'type': 'string'},
+                                         'title': {'description': 'Название '
+                                                                  '2-го '
+                                                                  'средства',
+                                                   'type': 'string'}},
+                          'required': ['title',
+                                       'article',
+                                       'plus',
+                                       'minus',
+                                       'best_product'],
+                          'type': 'object'},
+            'product_3': {'additionalProperties': False,
+                          'properties': {'article': {'description': 'Артикул '
+                                                                    '3-го '
+                                                                    'средства, '
+                                                                    'только '
+                                                                    'цифры.',
+                                                     'type': 'string'},
+                                         'best_product': {'description': 'Если '
+                                                                         'это '
+                                                                         'средство '
+                                                                         'стало '
+                                                                         'лучшим, '
+                                                                         'поставь '
+                                                                         'здесь '
+                                                                         'True, '
+                                                                         'если '
+                                                                         'нет, '
+                                                                         'то '
+                                                                         'False',
+                                                          'type': 'boolean'},
+                                         'minus': {'description': 'Описание '
+                                                                  'минусов '
+                                                                  '3-го '
+                                                                  'средства '
+                                                                  '(без '
+                                                                  'названия '
+                                                                  'средства)',
+                                                   'type': 'string'},
+                                         'plus': {'description': 'Описание '
+                                                                 'плюсов '
+                                                                 '3-го '
+                                                                 'средства '
+                                                                 '(без '
+                                                                 'названия '
+                                                                 'средства)',
+                                                  'type': 'string'},
+                                         'title': {'description': 'Название '
+                                                                  '3-го '
+                                                                  'средства',
+                                                   'type': 'string'}},
+                          'required': ['title',
+                                       'article',
+                                       'plus',
+                                       'minus',
+                                       'best_product'],
+                          'type': 'object'},
+            'product_4': {'additionalProperties': False,
+                          'properties': {'article': {'description': 'Артикул '
+                                                                    '4-го '
+                                                                    'средства, '
+                                                                    'только '
+                                                                    'цифры.',
+                                                     'type': 'string'},
+                                         'best_product': {'description': 'Если '
+                                                                         'это '
+                                                                         'средство '
+                                                                         'стало '
+                                                                         'лучшим, '
+                                                                         'поставь '
+                                                                         'здесь '
+                                                                         'True, '
+                                                                         'если '
+                                                                         'нет, '
+                                                                         'то '
+                                                                         'False',
+                                                          'type': 'boolean'},
+                                         'minus': {'description': 'Описание '
+                                                                  'минусов '
+                                                                  '4-го '
+                                                                  'средства '
+                                                                  '(без '
+                                                                  'названия '
+                                                                  'средства)',
+                                                   'type': 'string'},
+                                         'plus': {'description': 'Описание '
+                                                                 'плюсов '
+                                                                 '4-го '
+                                                                 'средства '
+                                                                 '(без '
+                                                                 'названия '
+                                                                 'средства)',
+                                                  'type': 'string'},
+                                         'title': {'description': 'Название '
+                                                                  '4-го '
+                                                                  'средства',
+                                                   'type': 'string'}},
+                          'required': ['title',
+                                       'article',
+                                       'plus',
+                                       'minus',
+                                       'best_product'],
+                          'type': 'object'},
+            'product_5': {'additionalProperties': False,
+                          'properties': {'article': {'description': 'Артикул '
+                                                                    '5-го '
+                                                                    'средства, '
+                                                                    'только '
+                                                                    'цифры.',
+                                                     'type': 'string'},
+                                         'best_product': {'description': 'Если '
+                                                                         'это '
+                                                                         'средство '
+                                                                         'стало '
+                                                                         'лучшим, '
+                                                                         'поставь '
+                                                                         'здесь '
+                                                                         'True, '
+                                                                         'если '
+                                                                         'нет, '
+                                                                         'то '
+                                                                         'False',
+                                                          'type': 'boolean'},
+                                         'minus': {'description': 'Описание '
+                                                                  'минусов '
+                                                                  '5-го '
+                                                                  'средства '
+                                                                  '(без '
+                                                                  'названия '
+                                                                  'средства)',
+                                                   'type': 'string'},
+                                         'plus': {'description': 'Описание '
+                                                                 'плюсов '
+                                                                 '5-го '
+                                                                 'средства '
+                                                                 '(без '
+                                                                 'названия '
+                                                                 'средства)',
+                                                  'type': 'string'},
+                                         'title': {'description': 'Название '
+                                                                  '5-го '
+                                                                  'средства',
+                                                   'type': 'string'}},
+                          'required': ['title',
+                                       'article',
+                                       'plus',
+                                       'minus',
+                                       'best_product'],
+                          'type': 'object'},
+            'product_6': {'additionalProperties': False,
+                          'properties': {'article': {'description': 'Артикул '
+                                                                    '6-го '
+                                                                    'средства, '
+                                                                    'только '
+                                                                    'цифры.',
+                                                     'type': 'string'},
+                                         'best_product': {'description': 'Если '
+                                                                         'это '
+                                                                         'средство '
+                                                                         'стало '
+                                                                         'лучшим, '
+                                                                         'поставь '
+                                                                         'здесь '
+                                                                         'True, '
+                                                                         'если '
+                                                                         'нет, '
+                                                                         'то '
+                                                                         'False',
+                                                          'type': 'boolean'},
+                                         'minus': {'description': 'Описание '
+                                                                  'минусов '
+                                                                  '6-го '
+                                                                  'средства '
+                                                                  '(без '
+                                                                  'названия '
+                                                                  'средства)',
+                                                   'type': 'string'},
+                                         'plus': {'description': 'Описание '
+                                                                 'плюсов '
+                                                                 '6-го '
+                                                                 'средства '
+                                                                 '(без '
+                                                                 'названия '
+                                                                 'средства)',
+                                                  'type': 'string'},
+                                         'title': {'description': 'Название '
+                                                                  '6-го '
+                                                                  'средства',
+                                                   'type': 'string'}},
+                          'required': ['title',
+                                       'article',
+                                       'plus',
+                                       'minus',
+                                       'best_product'],
+                          'type': 'object'},
+            'result': {'description': 'Итоговая рекомендация, '
+                                      'вывод',
+                       'type': 'string'}},
+        'required': ['result',
+                     'product_1',
+                     'product_2',
+                     'product_3',
+                     'product_4',
+                     'product_5',
+                     'product_6'],
+        'type': 'object'},
     'strict': True}
 
 # ожидаемая схема для 1 продукта для категории - уход за кожей лица
 # проверить, что всё добавляется
 EXPECTED_SCHEMA_FOR_ONE_PRODUCT = {
-    "name": "cosmetic_product_analysis",
+    "name": "one_product",
     "strict": True,
     "schema": {
         "type": "object",
@@ -401,7 +460,7 @@ EXPECTED_SCHEMA_FOR_ONE_PRODUCT = {
 }
 
 EXPECTED_SCHEMA_FOR_BEST_PROD_CARCINOGEN = {
-    'name': 'cosmetics_analysis',
+    'name': 'carcinogen_free',
     'schema': {'additionalProperties': False,
                'properties': {'product_1': {'additionalProperties': False,
                                             'properties': {'article': {'description': 'Артикул '
@@ -643,18 +702,23 @@ EXPECTED_SCHEMA_FOR_BEST_PROD_CARCINOGEN = {
     'strict': True}
 
 BEST_COMBINATION_JSON = {
-    'name': 'cosmetics_analysis',
+    'name': 'best_combination',
     'strict': True, 'schema': {
         'type': 'object', 'properties': {
             'origin_product': {
                 'type': 'object',
-                'properties': {'title': {'type': 'string', 'description': 'Название исходного средства'},
-                               'article': {'type': 'string',
-                                           'description': 'Артикул исходного средства, только цифры.'},
-                               'plus': {'type': 'string',
-                                        'description': 'Описание плюсов исходного средства (без названия средства)'},
-                               'minus': {'type': 'string',
-                                         'description': 'Описание минусов исходного средства (без названия средства)'}},
+                'properties': {
+                    'title': {
+                        'type': 'string', 'description': 'Название исходного средства'
+                    },
+                    'article': {
+                        'type': 'string',
+                        'description': 'Артикул исходного средства, только цифры.'
+                    },
+                    'plus': {'type': 'string',
+                             'description': 'Описание плюсов исходного средства (без названия средства)'},
+                    'minus': {'type': 'string',
+                              'description': 'Описание минусов исходного средства (без названия средства)'}},
                 'required': ['title', 'article', 'plus', 'minus'], 'additionalProperties': False},
             'result': {'type': 'string', 'description': 'Итоговая рекомендация, вывод'},
             'product_1': {'type': 'object',
@@ -699,136 +763,46 @@ BEST_COMBINATION_JSON = {
                 'additionalProperties': False}}, 'required': ['origin_product', 'result', 'product_1', 'product_2'],
         'additionalProperties': False}}
 
-best_set_json = {
-    'name': 'cosmetics_analysis',
-    'schema': {
-        'additionalProperties': False,
-        'properties': {'best_set': {'description': 'Названия средств '
-                                                   'внутри набора, который '
-                                                   'считается лучшим среди '
-                                                   'всех предложенных.',
-                                    'type': 'string'},
-                       'result': {'description': 'Итоговая рекомендация по '
-                                                 'лучшему набору, вывод',
-                                  'type': 'string'},
-                       'set_1': {'additionalProperties': False,
-                                 'properties': {'best_set': {'description': 'Если '
-                                                                            'этот '
-                                                                            'набор '
-                                                                            'выбран '
-                                                                            'как '
-                                                                            'лучший '
-                                                                            'среди '
-                                                                            'всех, '
-                                                                            'поставь '
-                                                                            'True; '
-                                                                            'если '
-                                                                            'нет '
-                                                                            '— '
-                                                                            'False',
-                                                             'type': 'boolean'},
-                                                'product_1': {'description': 'Название '
-                                                                             'средства '
-                                                                             '№1 '
-                                                                             'из '
-                                                                             'набора '
-                                                                             '№1',
-                                                              'type': 'string'},
-                                                'product_2': {'description': 'Название '
-                                                                             'средства '
-                                                                             '№2 '
-                                                                             'из '
-                                                                             'набора '
-                                                                             '№1',
-                                                              'type': 'string'},
-                                                'result': {'description': 'Объяснение, '
-                                                                          'почему '
-                                                                          'этот '
-                                                                          'набор '
-                                                                          'выбран '
-                                                                          'как '
-                                                                          'лучший, '
-                                                                          'или '
-                                                                          'почему '
-                                                                          'он '
-                                                                          'не '
-                                                                          'выбран',
-                                                           'type': 'string'},
-                                                'title': {'description': 'Названия '
-                                                                         'всех '
-                                                                         'средств '
-                                                                         'из '
-                                                                         'набора '
-                                                                         '№1, '
-                                                                         'перечисленные '
-                                                                         'через '
-                                                                         'запятую',
-                                                          'type': 'string'}},
-                                 'required': ['title',
-                                              'result',
-                                              'best_set',
-                                              'product_1',
-                                              'product_2'],
-                                 'type': 'object'},
-                       'set_2': {'additionalProperties': False,
-                                 'properties': {'best_set': {'description': 'Если '
-                                                                            'этот '
-                                                                            'набор '
-                                                                            'выбран '
-                                                                            'как '
-                                                                            'лучший '
-                                                                            'среди '
-                                                                            'всех, '
-                                                                            'поставь '
-                                                                            'True; '
-                                                                            'если '
-                                                                            'нет '
-                                                                            '— '
-                                                                            'False',
-                                                             'type': 'boolean'},
-                                                'product_1': {'description': 'Название '
-                                                                             'средства '
-                                                                             '№1 '
-                                                                             'из '
-                                                                             'набора '
-                                                                             '№2',
-                                                              'type': 'string'},
-                                                'product_2': {'description': 'Название '
-                                                                             'средства '
-                                                                             '№2 '
-                                                                             'из '
-                                                                             'набора '
-                                                                             '№2',
-                                                              'type': 'string'},
-                                                'result': {'description': 'Объяснение, '
-                                                                          'почему '
-                                                                          'этот '
-                                                                          'набор '
-                                                                          'выбран '
-                                                                          'как '
-                                                                          'лучший, '
-                                                                          'или '
-                                                                          'почему '
-                                                                          'он '
-                                                                          'не '
-                                                                          'выбран',
-                                                           'type': 'string'},
-                                                'title': {'description': 'Названия '
-                                                                         'всех '
-                                                                         'средств '
-                                                                         'из '
-                                                                         'набора '
-                                                                         '№2, '
-                                                                         'перечисленные '
-                                                                         'через '
-                                                                         'запятую',
-                                                          'type': 'string'}},
-                                 'required': ['title',
-                                              'result',
-                                              'best_set',
-                                              'product_1',
-                                              'product_2'],
-                                 'type': 'object'}},
-        'required': ['best_set', 'result', 'set_1', 'set_2'],
-        'type': 'object'},
-    'strict': True}
+BEST_SET_JSON = {
+    'name': 'best_set',
+    'strict': True, 'schema': {
+        'type': 'object',
+        'properties': {'result': {'type': 'string', 'description': 'Итоговая рекомендация по лучшему набору, вывод'},
+                       'set_1': {'type': 'object', 'properties': {'result': {'type': 'string',
+                                                                             'description': 'Объяснение, почему этот набор выбран как лучший, или почему он не выбран'},
+                                                                  'best_set': {'type': 'boolean',
+                                                                               'description': 'Если этот набор выбран как лучший среди всех, поставь True; если нет — False'},
+                                                                  'product_1': {'type': 'object', 'properties': {
+                                                                      'title': {'type': 'string',
+                                                                                'description': 'Название средства №1'},
+                                                                      'article': {'type': 'string',
+                                                                                  'description': 'Артикул средства №1, только цифры'}},
+                                                                                'required': ['title', 'article'],
+                                                                                'additionalProperties': False},
+                                                                  'product_2': {'type': 'object', 'properties': {
+                                                                      'title': {'type': 'string',
+                                                                                'description': 'Название средства №2'},
+                                                                      'article': {'type': 'string',
+                                                                                  'description': 'Артикул средства №2, только цифры'}},
+                                                                                'required': ['title', 'article'],
+                                                                                'additionalProperties': False}},
+                                 'required': ['result', 'best_set', 'product_1', 'product_2'],
+                                 'additionalProperties': False}, 'set_2': {'type': 'object', 'properties': {
+                'result': {'type': 'string',
+                           'description': 'Объяснение, почему этот набор выбран как лучший, или почему он не выбран'},
+                'best_set': {'type': 'boolean',
+                             'description': 'Если этот набор выбран как лучший среди всех, поставь True; если нет — False'},
+                'product_1': {'type': 'object',
+                              'properties': {'title': {'type': 'string', 'description': 'Название средства №1'},
+                                             'article': {'type': 'string',
+                                                         'description': 'Артикул средства №1, только цифры'}},
+                              'required': ['title', 'article'], 'additionalProperties': False},
+                'product_2': {'type': 'object',
+                              'properties': {'title': {'type': 'string', 'description': 'Название средства №2'},
+                                             'article': {'type': 'string',
+                                                         'description': 'Артикул средства №2, только цифры'}},
+                              'required': ['title', 'article'], 'additionalProperties': False}},
+                                                                           'required': ['result', 'best_set',
+                                                                                        'product_1', 'product_2'],
+                                                                           'additionalProperties': False}},
+        'required': ['result', 'set_1', 'set_2'], 'additionalProperties': False}}

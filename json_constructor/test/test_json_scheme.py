@@ -11,7 +11,8 @@ from json_constructor.test.constants import (
     EXPECTED_SCHEMA_FOR_ONE_PRODUCT,
     EXPECTED_SCHEMA_FOR_BEST_PROD_CARCINOGEN,
     BEST_COMBINATION_JSON,
-    best_set_json,
+    BEST_SET_JSON,
+    EXPECTED_SCHEMA_FOR_ANALOGUE_PRODUCT,
 )
 from source.structure_for_products import PARAMETERS_DIF_PRODUCT_CATEGORIES
 
@@ -91,6 +92,49 @@ class TestJsonScheme(unittest.TestCase):
         # Проверка, что результат равен ожидаемому
         self.assertEqual(result, expected_result,
                          msg="Результат обработки не совпадает с ожидаемым словарём")
+
+
+    def test_get_json_scheme_for_analogue_product(self):
+        """
+        Проверка корректного формирования json-схемы для задачи 'Аналог'
+        """
+
+        # Подготовка данных
+        data_collection = {
+            'Возраст': 32,
+            'Задача': 'Аналог',
+            'Запрос': 'ЗВ8, ЗВ12',
+            'Итог': None,
+            'Лучший вариант': None,
+            'Пол': 'женский',
+            'Категория': 'Шампуни',
+            'Специалист': 'Т',
+            'Средства': {
+                'Исходное средство': ('КУДРЯВЫЙ МЕТОД for curly hair № 1', '19000351723'),
+                'Аналог средство': ('R+CO Dallas Biotin Thickening Shampoo', '24320200017'),
+            },
+            'Тип': 'В1, В10',
+            'Хеш': '6157254f8a165e4f6baa6a45ee2ca32042b8de1d6a19680d11879ab43c7a5cd1',
+            'Количество средств': 6
+        }
+
+        # product_categories можно пустым (если в этой логике не участвует)
+        product_categories = {}
+
+        # Инициализация JsonCreator и получение схемы
+        json_creator = JsonCreator(
+            data_collection=data_collection,
+            product_categories=product_categories
+        )
+
+        actual_schema = json_creator.get_json_scheme_for_distribution_on_task()
+        # pprint(actual_schema)
+        # Проверка, что схема совпадает с ожидаемой
+        self.assertDictEqual(
+            actual_schema,
+            EXPECTED_SCHEMA_FOR_ANALOGUE_PRODUCT,
+            msg="Схема не совпадает с ожидаемой",
+        )
 
     def test_get_json_scheme_for_best_product(self):
         """
@@ -265,14 +309,14 @@ class TestJsonScheme(unittest.TestCase):
             msg="Схема не совпадает с ожидаемой",
         )
 
-    def test_get_json_scheme_for_best_set(self):
+    def test_get_json_scheme_for_best_couple(self):
         """
         Проверка работы метода для преобразования словаря
-        по коду задачи - 'Лучший набор' и получения json-схемы
+        по коду задачи - 'Лучшая пара' и получения json-схемы
         """
         data_collection = {
             'Возраст': 32,
-            'Задача': 'Лучший набор',
+            'Задача': 'Лучшая пара',
             'Запрос': 'ЗВ8, ЗВ12',
             'Итог': None,
             'Категория': 'Шампуни',
@@ -308,8 +352,8 @@ class TestJsonScheme(unittest.TestCase):
         actual_schema = json_creator.get_json_scheme_for_distribution_on_task()
 
         # Проверка, что схема совпадает с ожидаемой
-        self.assertEqual(
+        self.assertDictEqual(
             actual_schema,
-            best_set_json,
+            BEST_SET_JSON,
             msg="Схема не совпадает с ожидаемой",
         )

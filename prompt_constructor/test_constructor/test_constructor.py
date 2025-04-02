@@ -179,7 +179,7 @@ class TestPromptConstructor(unittest.TestCase):
 
         self.assertEqual(prompt, best_combination_prompt)
 
-    def test_main_decryp_data_from_best_set(self):
+    def test_main_decryp_data_from_best_couple(self):
         """
         Проверка, что данные текущей подборки по коду 'Лучшая пара'
         расшифровываются и что промпт получается корректный
@@ -188,7 +188,7 @@ class TestPromptConstructor(unittest.TestCase):
         # текущая подборка
         data_collection = {
             'Возраст': 32,
-            'Задача': 'Лучший набор',
+            'Задача': 'Лучшая пара',
             'Запрос': 'ЗВ8, ЗВ12',
             'Категория': 'Шампуни',
             'Количество наборов': 2,

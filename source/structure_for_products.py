@@ -83,10 +83,14 @@ _MAPPING_KEYS = {
     "plus": "Плюсы",
     "minus": "Минусы",
     "result": "Вывод",
+    "short_result": "Вывод коротко",
+    "similarities": "Сходства",
+    "differences": "Различия",
     "best_product": "Лучшее средство",
     "carcinogen": "Канцерогены",
     "origin_product": "Исходное средство",
     "best_combination_product": "Подобранное средство",
+    "best_set": "Лучший набор",
 
     # Расширенные поля из категорий
     "skin_type_impact": "Влияние на тип кожи",

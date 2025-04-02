@@ -57,7 +57,7 @@ def get_product_data_dict(
         measure_quantity
     ) = get_measure(characteristics=characteristics)
     img_link = get_img_link(soup=soup)
-    img_link_in_base = get_img_link_in_base(
+    path_to_save_image, image_path_to_base = get_img_link_in_base(
         product_title=product_name,
         product_id=product_id,
         image_dir_path=image_dir_path
@@ -86,7 +86,8 @@ def get_product_data_dict(
         'Количество меры (число)': measure_quantity,
         'Юниты меры (мл/шт)': measure_units,
         'Ссылка на изображение': img_link,
-        'Ссылка на изображение в базе': img_link_in_base,
+        'Ссылка на изображение в базе': image_path_to_base,
+        'Путь для сохранения изображения': path_to_save_image,
         'Дополнительная информация': additional_info,
         'Заполнено': 'да',
     }
@@ -96,7 +97,7 @@ def get_detailed_product_type(
         soup: Tag | NavigableString,
 ) -> str:
     """
-    Для получения: Верхнее описание ,
+    Для получения: Подробное описание
 
     :param soup: суп из HTML-контента
     :return: str
@@ -108,13 +109,13 @@ def get_detailed_product_type(
         # Ищем первый <div> с текстом
         target_div = parent.find("div")
         if target_div:
-            upper_description = clean_text_2(target_div.get_text(strip=True))
+            detailed_product_type = clean_text_2(target_div.get_text(strip=True))
         else:
-            upper_description = None
+            detailed_product_type = None
     else:
-        upper_description = None
+        detailed_product_type = None
 
-    return upper_description
+    return detailed_product_type
 
 
 def get_characteristics(
@@ -194,7 +195,7 @@ def get_img_link_in_base(
         product_id: str,
         image_dir_path: str,
         img_format: str = 'jpg',
-) -> str:
+) -> tuple[str, str]:
     """
     Для получения Ссылка на изображение в базе
 
@@ -205,8 +206,12 @@ def get_img_link_in_base(
     :return: путь до изображения
     """
     cleaned_product_title = clean_product_name(product_title)
-    image_path = Path(image_dir_path) / f'{cleaned_product_title}_{product_id}.{img_format}'
-    return str(image_path)
+    image_path_to_download = str(
+        Path(image_dir_path)
+        / f'{cleaned_product_title}_{product_id}.{img_format}'
+    )
+    image_path_to_base = f'{image_dir_path}/{cleaned_product_title}_{product_id}.{img_format}'
+    return image_path_to_download, image_path_to_base
 
 
 def get_application_instruction(

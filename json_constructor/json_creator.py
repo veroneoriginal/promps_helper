@@ -24,10 +24,10 @@ class JsonCreator:
             'Лучшее средство без канцерогенов':
                 self.create_json_scheme_for_best_product_carcinogen_free,
             'Разбор состава одного средства': self.create_json_scheme_for_one_product,
-            'Лучший набор': self.create_json_scheme_for_best_set,
+            'Лучшая пара': self.create_json_scheme_for_best_couple,
             'Лучшее сочетание': self.create_json_scheme_for_best_combination,
             'Лучшая компоновка': 'метод создает json-схему для текущей подборки по коду задачи',
-            'Аналог': 'метод создает json-схему для текущей подборки по коду задачи',
+            'Аналог': self.create_json_scheme_for_analogue_product,
             'Наиболее похож': 'метод создает json-схему для текущей подборки по коду задачи',
             'Наименее похож': 'метод создает json-схему для текущей подборки по коду задачи',
         }
@@ -39,6 +39,83 @@ class JsonCreator:
         task = self.data_collection['Задача']
         return self.method_for_task_code[task]()
 
+    def create_json_scheme_for_analogue_product(
+            self,
+    ) -> dict:
+        """
+        Метод для динамического формирования json-схемы для кода задачи 'Аналог'
+
+        :return: json-схема для заданного количества средств
+        """
+        schema = {
+            "name": "analog_product",
+            "strict": True,
+            "schema": {
+                "type": "object",
+                "properties": {
+
+                    "similarities": {
+                        "type": "string",
+                        "description": "Здесь укажи сходства средств, что у них общего"
+                    },
+                    "differences": {
+                        "type": "string",
+                        "description": "Здесь укажи различия средств, чем они отличаются"
+                    },
+                    "result": {
+                        "type": "string",
+                        "description": "Итоговый вывод подробно"
+                    },
+                    "short_result": {
+                        "type": "string",
+                        "description": "Итоговый вывод коротко"
+                    },
+                },
+                "required": ["result", "short_result", "similarities", "differences"],
+                "additionalProperties": False
+            }
+        }
+
+        products = {
+            'source_product': {
+                "type": "object",
+                "properties": {
+                    "title": {
+                        "type": "string",
+                        "description": "Название исходного средства"
+                    },
+                    "article": {
+                        "type": "string",
+                        "description": "Артикул исходного средства, только цифры."
+                    },
+                },
+                "required": ["title", "article"],
+                "additionalProperties": False
+            },
+            'analog_product': {
+                "type": "object",
+                "properties": {
+                    "title": {
+                        "type": "string",
+                        "description": "Название средства-аналога"
+                    },
+                    "article": {
+                        "type": "string",
+                        "description": "Артикул средства-аналога, только цифры."
+                    },
+                },
+                "required": ["title", "article"],
+                "additionalProperties": False
+            }}
+
+        # Добавляем продукты в свойства схемы
+        schema["schema"]["properties"].update(products)
+
+        # Добавляем продукты в список `required`
+        schema["schema"]["required"].extend(products.keys())
+
+        return schema
+
     def create_json_scheme_for_best_combination(self):
         """
         Метод для динамического формирования json-схемы
@@ -48,7 +125,7 @@ class JsonCreator:
         """
 
         schema = {
-            "name": "cosmetics_analysis",
+            "name": "best_combination",
             "strict": True,
             "schema": {
                 "type": "object",
@@ -157,7 +234,7 @@ class JsonCreator:
         :return: json-схема для заданного количества средств
         """
         schema = {
-            "name": "cosmetics_analysis",
+            "name": "best_product",
             "strict": True,
             "schema": {
                 "type": "object",
@@ -222,7 +299,7 @@ class JsonCreator:
         :return: json-схема для заданного количества средств
         """
         schema = {
-            "name": "cosmetics_analysis",
+            "name": "carcinogen_free",
             "strict": True,
             "schema": {
                 "type": "object",
@@ -322,7 +399,7 @@ class JsonCreator:
         product_schema = self._format_properties(properties_dict)
 
         schema = {
-            "name": "cosmetic_product_analysis",
+            "name": "one_product",
             "strict": True,
             "schema": {
                 "type": "object",
@@ -363,11 +440,11 @@ class JsonCreator:
 
         return schema
 
-    def create_json_scheme_for_best_set(
+    def create_json_scheme_for_best_couple(
             self,
     ) -> dict:
         """
-        Метод для динамического формирования json-схемы для кода задачи 'Лучший набор'
+        Метод для динамического формирования json-схемы для кода задачи 'Лучшая пара'
 
         :return: json-схема для заданного количества наборов и средств внутри наборов
         """
@@ -376,52 +453,26 @@ class JsonCreator:
         num_products_per_set = self.data_collection.get("Количество средств в наборе", 0)
 
         schema = {
-            "name": "cosmetics_analysis",
+            "name": "best_set",
             "strict": True,
             "schema": {
                 "type": "object",
                 "properties": {
-                    "best_set": {
-                        "type": "string",
-                        "description":
-                            "Названия средств внутри набора, который считается лучшим "
-                            "среди всех предложенных."
-                    },
                     "result": {
                         "type": "string",
                         "description": "Итоговая рекомендация по лучшему набору, вывод"
                     }
                 },
-                "required": ["best_set", "result"],
+                "required": ["result"],
                 "additionalProperties": False
             }
         }
 
         # Генерируем схемы для каждого набора
-        for i in range(1, num_sets + 1):
-            set_key = f"set_{i}"
+        for set_number in range(1, num_sets + 1):
+            set_key = f"set_{set_number}"
 
-            # Создаем словарь для описания всех средств внутри текущего набора
-            product_properties = {}
-
-            # Проходимся по каждому средству внутри набора
-            for j in range(1, num_products_per_set + 1):
-                # Формируем ключ для средства, например: product_1, product_2, и т.д.
-                product_key = f"product_{j}"
-
-                # Описываем свойства каждого средства
-                product_properties[product_key] = {
-                    "type": "string",
-                    "description": f"Название средства №{j} из набора №{i}"
-                }
-
-            # Добавляем стандартные поля
             set_properties = {
-                "title": {
-                    "type": "string",
-                    "description": f"Названия всех средств из набора №{i},"
-                                   f" перечисленные через запятую"
-                },
                 "result": {
                     "type": "string",
                     "description": "Объяснение, почему этот набор выбран как лучший,"
@@ -434,16 +485,45 @@ class JsonCreator:
                 }
             }
 
-            # Объединяем поля
-            set_properties.update(product_properties)
+            # Создаем словарь для описания всех средств внутри текущего набора
+            products = {}
+
+            # Проходимся по каждому средству внутри набора
+            for product_number in range(1, num_products_per_set + 1):
+                # Формируем ключ для средства, например: product_1, product_2, и т.д.
+                product_key = f"product_{product_number}"
+
+                product_data = {
+                    "type": "object",
+                    "properties": {
+                        "title": {
+                            "type": "string",
+                            "description": f"Название средства №{product_number}"
+                        },
+                        "article": {
+                            "type": "string",
+                            "description": f"Артикул средства №{product_number}, только цифры"
+                        }
+                    },
+                    "required": [
+                        "title",
+                        "article"
+                    ],
+                    "additionalProperties": False
+                }
+
+                products[product_key] = product_data
+
+            set_properties.update(products)
 
             # Формируем список обязательных полей
-            required_fields = ["title", "result", "best_set"] + list(product_properties.keys())
+            set_required_fields = ["result", "best_set"]
+            set_required_fields.extend(list(products.keys()))
 
             schema["schema"]["properties"][set_key] = {
                 "type": "object",
                 "properties": set_properties,
-                "required": required_fields,
+                "required": set_required_fields,
                 "additionalProperties": False
             }
 
