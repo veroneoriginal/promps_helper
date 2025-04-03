@@ -3,20 +3,11 @@
 и добавление данных из json в таблицу
 """
 
-import ast
+from datetime import datetime
 
 from openpyxl import load_workbook
-from openpyxl.utils import get_column_letter
+from openpyxl.styles import PatternFill
 from openpyxl.worksheet.worksheet import Worksheet
-
-from excel_process_data.utils.utils import counting_hash
-
-
-# from excel_process_data.utils.utils import (
-#     find_target_row_for_today_and_full_best_product,
-#     find_amount_funds,
-#     function_for_forming_dict_with_correlation,
-# )
 
 
 class ExcelManager:
@@ -50,23 +41,33 @@ class ExcelManager:
             headers[cell.value] = index
         return headers
 
-    def _create_headers_numerate(
+    def write_value_to_cell(
             self,
-            sheet: Worksheet,
-    ) -> dict:
+            ws_title: str,
+            row: int,
+            column_name: str,
+            value: str | int | float, ):
         """
-        Создаёт словарь заголовков из первой строки указанного листа Excel.
-        Функция проходит по первой строке листа Excel и формирует словарь,
-        где ключами являются значения заголовков (названия столбцов),
-        а значениями — их порядковые номера (начиная с 1, как в openpyxl).
+        Записывает значение в заданную ячейку по имени столбца и номеру строки.
 
-        Это удобно для быстрого поиска нужного столбца по названию заголовка.
-
-        :param sheet: Объект Worksheet (лист из Excel-файла), откуда берутся заголовки.
-        :return: Словарь { "Название столбца": индекс_столбца }, где индекс начинается с 1.
+        :param ws_title: Название листа
+        :param row: Номер строки (начиная с 1)
+        :param column_name: Название столбца (заголовок из первой строки)
+        :param value: Значение для записи
         """
 
-        return {cell.value: idx + 1 for idx, cell in enumerate(sheet[1])}
+        if ws_title not in self.wb.sheetnames:
+            raise ValueError(f"Лист '{ws_title}' не найден в книге.")
+
+        sheet = self.wb[ws_title]
+        headers = self._create_dict_headers(sheet)
+
+        if column_name not in headers:
+            raise ValueError(f"Столбец '{column_name}' не найден среди заголовков.")
+
+        column_index = headers[column_name] + 1
+        sheet.cell(row=row, column=column_index, value=value)
+        self.save_wb()
 
     def _load_data(
             self,
@@ -116,6 +117,25 @@ class ExcelManager:
                 data[item_name] = entry
 
         return data
+
+    def fill_row_color(
+            self,
+            ws_title: str,
+            row_nums: tuple[int, ...],
+            hex_color: str = "FF0000"
+    ) -> None:
+        """
+        Закрашивает все строки по номерам в указанный цвет
+        :param ws_title: название листа
+        :param row_nums: номера строк, которые нужно покрасить (начиная с 1)
+        :param hex_color: цвет в hex формате (например, "FF0000" — красный)
+        """
+        sheet = self.wb[ws_title]
+
+        fill = PatternFill(fill_type="solid", fgColor=hex_color)
+        for row in row_nums:
+            for cell in sheet[row]:
+                cell.fill = fill
 
     def load_info_about_products(
             self,
@@ -173,7 +193,7 @@ class ExcelManager:
 
         return data
 
-    def _save_wb(
+    def save_wb(
             self,
             file_path: str = None,
     ) -> None:
@@ -273,137 +293,77 @@ class ExcelManager:
 
         return self._load_data(ws_title=ws_title, column_name="Код")
 
-    def count_empty_result(
+    def get_column_values(
             self,
-            ws_title: str = "Подборки",
-    ) -> int:
+            column_title: str,
+            ws_title: str,
+            skip_empty: bool = False,
+    ) -> dict[str | float | datetime | None, int]:
         """
-        Метод для подсчитывания количества строк в таблице 'Подборки'
-        с незаполненным полем 'Путь'.
-
-        :param ws_title: название листа (по умолчанию "Подборки")
-        :return: количество строк с пустым полем 'Путь'
+        Возвращает словарь {значение_ячейки: номер_строки} из указанного столбца.
+        :param column_title: название столбца (из первой строки)
+        :param ws_title: название листа
+        :param skip_empty: если True — пропускает пустые значения
         """
         sheet = self.wb[ws_title]
+
+        # Получаем заголовки из первой строки
         headers = self._create_dict_headers(sheet=sheet)
+        col_index = headers[column_title]
 
-        # Проверяем, есть ли столбец "Путь"
-        if "Путь" not in headers:
-            raise ValueError("В листе отсутствует столбец 'Путь'")
+        result = {}
 
-        # Индекс столбца "Путь"
-        result_index = headers["Путь"]
+        for row_num, row in enumerate(sheet.iter_rows(min_row=2, values_only=True), start=2):
+            cell_value = row[col_index]
+            if skip_empty and (cell_value is None or str(cell_value).strip() == ""):
+                continue
+            result[cell_value] = row_num
 
-        # Счетчик пустых значений
-        empty_count = 0
+        return result
 
-        # Проходим по всем строкам, начиная со второй
-        for row in sheet.iter_rows(min_row=2, values_only=True):
-            result_value = row[result_index]
-            # Считаем пустые или None значения
-            if not result_value:
-                empty_count += 1
-
-        return empty_count
-
-    def get_data_from_table_in_form_of_dict(
+    def get_rows_with_value_in_cell(
             self,
+            target_column_title: str,
+            target_column_value: str | None,
             ws_title: str,
-            checking_unique: bool,
     ) -> dict:
         """
-        Метод, в котором:
-        1) получаем данные из таблицы и преобразовываем их в словарь
-        2) считаем хеш текущей подборки
-        3) проверяем уникальность этой подборки
-
+        Возвращает все строки, у которых в определённом столбце стоит
+        определённое значение.
+        Возвращает словарь вида: номер строки: (кортеж значений строки)
         :param ws_title: лист, с которого берем информацию
-        :param checking_unique: параметр, который отвечает за запись или незапись хеша в таблицу
-        :return: возвращает либо словарь с данными о подборке (если она уникальная),
-        либо возбуждает исключение и код дальше не идет
+        :param target_column_title: название целевого столбца
+        :param target_column_value: значение, которое должно быть в столбце
         """
-
-        # Открытие файла Excel на нужном листе
         sheet = self.wb[ws_title]
 
-        # Создание словаря заголовков
+        collections = {}
+
+        # Получаем заголовки из первой строки
         headers = self._create_dict_headers(sheet=sheet)
+        target_col_index = headers.get(target_column_title)
 
-        # Индекс столбца "Путь"
-        result_index = headers["Путь"]
+        for row_num, row in enumerate(sheet.iter_rows(min_row=2, values_only=True), start=2):
+            cell_value = row[target_col_index]
 
-        # Индекс столбца "Хеш"
-        hash_column_index = headers["Хеш"]
+            if target_column_value == "":
+                if cell_value is None or str(cell_value).strip() == "":
+                    collections[row_num] = row
+            else:
+                if str(cell_value).strip().lower() == target_column_value.lower():
+                    collections[row_num] = row
 
-        # Находим строку, с которой работаем
-        current_row = self.find_first_empty_row(
-            sheet=sheet,
-            result_index=result_index,
-        )
-
-        # получаем данные из таблицы и преобразовываем их в словарь
-        dict_collection = self.load_info_about_collection(
-            sheet=sheet,
-            number_row=current_row,
-            headers=headers,
-        )
-
-        # считаем хеш текущей подборки
-        hash_collection = str(counting_hash(data=dict_collection))
-        dict_collection['Хеш'] = hash_collection
-
-        # проверяем уникальность этой подборки
-        self.checking_unique_current_collection(
-            hash_value=hash_collection,
-            hash_column_index=hash_column_index,
-            sheet=sheet,
-        )
-        if checking_unique:
-            # запись значения хеша в xlsx в строку с текущей подборкой
-            sheet.cell(row=current_row, column=hash_column_index + 1, value=hash_collection)
-
-            # Сохраняем изменения в файл
-            self.wb.save(self.file_path)
-
-        # по ключу получаем строку, которая только внешне имеет вид словаря
-        products = dict_collection['Средства']
-
-        # Заменяем нестандартных кавычек на обычные
-        normalized_products = products.replace('«', '"').replace('»', '"')
-
-        # Превращаем строку в словарь и обновляем
-        dict_collection['Средства'] = ast.literal_eval(normalized_products)
-
-        return dict_collection
-
-    def find_first_empty_row(
-            self,
-            sheet: Worksheet,
-            result_index: int,
-    ) -> int:
-        """
-        Метод для поиска первой строки, где ячейка в столбце 'Путь' пустая.
-
-        :param sheet: лист, с которого забирать информацию
-        :param result_index: индекс столбца Путь
-        :return: возвращаем индекс нужной строки
-        """
-        for row_index, row in enumerate(sheet.iter_rows(min_row=2, values_only=True), start=2):
-            # Если row[result_index] содержит None или пустую строку
-            # то not row[result_index] вернёт True
-            if not row[result_index]:
-                return row_index
-        raise ValueError("Не найдена пустая ячейка в столбце 'Путь'")
+        return collections
 
     def load_info_about_collection(
             self,
-            sheet: Worksheet,
-            headers: dict,
-            number_row: int,
+            ws_title: str,
+            row: tuple,
     ) -> dict:
         """
         Метод, в котором осуществляется загрузка данных из таблицы Подборки
-        -> лист "Подборки" с конкретной строки и формирование из этих данных словаря вида
+        -> лист "Подборки" с конкретной строки и формирование из этих данных словаря вида.
+        То есть добавляем заголовки столбцов к данным для удобства.
         {
         'Пол': 'женский',
         'Возраст': 30,
@@ -413,14 +373,17 @@ class ExcelManager:
         и так далее по всем столбцам
         }
 
-        :param sheet: лист, с которого забирать информацию
-        :param headers: словарь заголовков
-        :param number_row: номер строки, с которой забирать информацию
+        :param ws_title: имя листа
+        :param row: кортеж с значениями из строки
 
         :return: словарь с информацией о подборке
         """
 
-        row = [cell.value for cell in sheet[number_row]]
+        # Открытие файла Excel на нужном листе
+        sheet = self.wb[ws_title]
+
+        # Создание словаря заголовков
+        headers = self._create_dict_headers(sheet=sheet)
 
         # Формируем словарь со всеми столбцами
         data = {}
@@ -429,67 +392,3 @@ class ExcelManager:
             data[header] = row[index]
 
         return data
-
-    def checking_unique_current_collection(
-            self,
-            hash_value: str,
-            hash_column_index: int,
-            sheet: Worksheet
-    ) -> bool:
-        """
-        Метод для проверки уникальности текущей подборки.
-
-        :param hash_value: хеш текущей подборки
-        :param hash_column_index: индекс столбца, в котором брать другие хеши
-        :param sheet: лист, на котором осуществляется поиск
-
-        :return: True или выбрасывает исключение
-        """
-
-        # получаем букву столбца
-        column_letter = get_column_letter(hash_column_index + 1)
-
-        # Получаем все значения столбца
-        values = [cell.value for cell in sheet[column_letter]]
-
-        # проверяю есть ли текущий хеш во взятых значениях
-        if hash_value in values:
-            raise ValueError("Такая подборка уже существует.")
-        return True  # то есть такой подборки еще нет
-
-    def update_excel(
-            self,
-            file_path: str,
-            hash_current_collection: str,
-            file_path_current_collection: str,
-    ) -> None:
-        """
-        Метод для записи пути текущей подборки в лист "Подборки"
-
-        :param file_path: путь до документа Подборки.xlsx
-        :param hash_current_collection: хеш текущей подборки
-        :param file_path_current_collection: путь до папки с текущей подборкой
-        :return: None
-        """
-
-        # Загружаем существующий Excel-файл
-        ws = self.wb["Подборки"]
-
-        # Считываем заголовки и определяем их позиции
-        headers = {cell.value: cell.column for cell in ws[1] if cell.value}
-
-        # Определяем нужные столбцы
-        col_recommendation = headers["Путь"]
-        col_hash = headers["Хеш"]
-
-        # Перебираем строки, начиная со 2-й (1-я — заголовки)
-        for row in ws.iter_rows(min_row=2, max_row=ws.max_row, values_only=False):
-            # -1, так как индексация с 0 в списке `row`
-            cell_hash = row[col_hash - 1]
-
-            if cell_hash.value == hash_current_collection:
-                # Записываем путь до текущей подборки в ячейку столбца "ПУть"
-                row[col_recommendation - 1].value = file_path_current_collection
-
-        # Сохраняем изменения
-        self._save_wb(file_path=file_path)
