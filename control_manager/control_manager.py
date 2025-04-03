@@ -6,7 +6,9 @@ import os
 from dotenv import load_dotenv
 from appeal_to_openai.main import main as appeal_to_openai_main
 from appeal_to_openai.utils import checking_file_with_response
+from control_manager.utils import create_dict_from_str
 from dirs_structure_constructor.main import DirsConstructor
+from excel_process_data.hash_utils import counting_hash, is_hash_unique
 from excel_process_data.process_data import ExcelManager
 from json_constructor.main import get_json_scheme
 from post_constructor.main_post import forming_text_for_post
@@ -51,55 +53,42 @@ class ControlManager:
             "Специалист": excel_manager.load_specialists_data(ws_title='Специалист'),
         }
 
-    def _get_count_collections(
+    def _get_collections(
             self,
+            ws_title: str,
             file_path_collection: str,
-    ) -> int:
-        """
-        Метод для вызова метода для подсчета незаполненных подборок.
-
-        :param file_path_collection: путь до документа Подборки.xlsx
-        :return: количество незаполненных подборок
-        """
-
-        excel_manager = ExcelManager(file_path=file_path_collection)
-        return excel_manager.count_empty_result()
-
-    def _take_data_from_collection(
-            self,
-            file_path_collection: str,
-            checking_unique: bool,
     ) -> dict:
         """
-        Метод для загрузки данных по текущей подборке из таблицы Подборки.
+        Метод для получения незаполненных подборок.
 
+        :param ws_title: имя листа с подборками
         :param file_path_collection: путь до документа Подборки.xlsx
-        :param checking_unique: параметр, который отвечает за запись или незапись хеша в таблицу
-        :return: словарь с информацией о текущей подборке вида
-
-            {'Возраст': '32',
-             'Задача': 'Лучшее средство',
-             'Запрос': 'ЗВ8',
-             'Итог': None,
-             'Лучший вариант': None,
-             'Пол': 'женский',
-             'Содержимое': 'Шампуни',
-             'Специалист': 'Т',
-             'Средства': ('AUSSIE Miracle Moist',
-                          'ICE BY NATURA SIBERICA REFRESH MY SCALP',
-                          'LADOR Keratin LPP',
-                          'NATURA SIBERICA Oblepikha',
-                          'PAYOT Shampoing doux biome-friendly',
-                          'КУДРЯВЫЙ МЕТОД for curly hair'),
-             'Тип': ('В1', 'В10'),
-             'Хеш': -4256620288625128615}
+        :return: словарь с ключом - номер строки и вложенный словарь с данными
+        подборки с заголовками столбцов
         """
 
         excel_manager = ExcelManager(file_path=file_path_collection)
-        return excel_manager.get_data_from_table_in_form_of_dict(
-            ws_title="Подборки",
-            checking_unique=checking_unique,
+        # Получаем словарь с подборками вида (номер строки: (кортеж с ячейками с данными))
+        collections_data = excel_manager.get_rows_with_value_in_cell(
+            ws_title=ws_title,
+            target_column_title='Путь',
+            target_column_value="",
         )
+
+        # Добавляем к данным названия столбцов для удобства
+        for row_number, row_data in collections_data.items():
+            data_with_row_title = excel_manager.load_info_about_collection(
+                ws_title=ws_title,
+                row=row_data,
+            )
+            collections_data[row_number] = data_with_row_title
+
+        # Превращаем строку с средствами в словарь
+        for row_number, row_data in collections_data.items():
+            products = row_data.get("Средства")
+            row_data["Средства"] = create_dict_from_str(_str=products)
+
+        return collections_data
 
     def _create_context_for_request_to_openai(
             self,
@@ -132,28 +121,33 @@ class ControlManager:
 
         return file_path_to_saving_json
 
-    def save_path_current_collection_to_excel(
+    # pylint: disable=R0913: too-many-arguments
+    # pylint: disable=R0917: too-many-positional-arguments
+    def update_collection_data_in_database(
             self,
-            file_path: str,
-            file_path_current_collection: str,
-            hash_current_collection: str,
+            file_path_collection: str,
+            ws_title: str,
+            row: int,
+            column_name: str,
+            value: str | int | float,
     ) -> None:
         """
-        Метод-обертка для сохранения пути до файлов текущей подборки
-        в excel-файл.
+        Обновляет данные в подборке в указанном столбце
 
-        :param file_path: путь до документа .xlsx, из которого мы работаем с подборками
-        :param file_path_current_collection: путь до папки с текущей подборкой
-        :param hash_current_collection: хеш текущей подборки
-        :return: None
+        :param file_path_collection: путь до документа Подборки.xlsx
+        :param ws_title: Название листа
+        :param row: Номер строки (начиная с 1)
+        :param column_name: Название столбца (заголовок из первой строки)
+        :param value: Значение для записи
         """
 
-        # записываю в таблицу путь до текущей подборки
-        excel_manager = ExcelManager(file_path=file_path)
-        excel_manager.update_excel(
-            hash_current_collection=hash_current_collection,
-            file_path=file_path,
-            file_path_current_collection=file_path_current_collection,
+        excel_manager = ExcelManager(file_path=file_path_collection)
+
+        excel_manager.write_value_to_cell(
+            ws_title=ws_title,
+            row=row,
+            column_name=column_name,
+            value=value,
         )
 
     # pylint: disable=R0917 too-many-arguments
@@ -201,14 +195,12 @@ class ControlManager:
             file_path_tools: str,
             file_path_collection: str,
             path_to_output_folder: str,
-            checking_unique: bool,
     ) -> None:
         """
         Главный метод класса, в котором собрана вся логика программы
 
         :param file_path_tools: путь до таблицы со всей инфой о средствах, типах и прочем
         :param file_path_collection: путь до таблицы с подборками
-        :param checking_unique: параметр, который отвечает за запись или незапись хеша в таблицу
         :param path_to_output_folder: путь до папки, в которую идет сохранение ответа от OpenAI,
         промпта, картинок и текста.
 
@@ -219,29 +211,40 @@ class ControlManager:
         data_tools = self._take_data_from_table_tool(
             file_path_tools_table=file_path_tools,
         )
+        # Захожу в "Подборки" и получаю незаполненные подборки
+        collections = self._get_collections(
+            ws_title='Подборки',
+            file_path_collection=file_path_collection
+        )
 
-        # Захожу в "Подборки" и считаю сколько подборок не заполнено
-        count_collection = self._get_count_collections(file_path_collection)
-
-        for number in range(count_collection):
-            print(f'Готовим подборку №{number + 1}.')
-            # Формирую словарь с подборкой
-            data_collection = self._take_data_from_collection(
+        for row_number, collection_data in collections.items():
+            print(f'Готовим подборку из строки № {row_number}.')
+            print('Считаем хеш и проверяем подборку на уникальность.')
+            hash_collection = str(counting_hash(data=collection_data))
+            result = is_hash_unique(
+                ws_title='Подборки',
                 file_path_collection=file_path_collection,
-                checking_unique=checking_unique,
+                hash_collection=hash_collection,
+                row_number=row_number,
             )
+            # если не уникальная подборка
+            if result:
+                print(f'При проверке хеша подборки в строке {row_number} нашли такой же хеш'
+                      f' в строке {result} и выделили её красным')
+                return None
+            print('Подборка уникальна, продолжаем.')
 
             # Формирую пути для сохранения данных и создаю нужные папки
             self.paths_to_folders = DirsConstructor(
                 base_output_folder_path=path_to_output_folder,
-                data_collection=data_collection,
+                data_collection=collection_data,
             ).get_output_folders(
-                prefix=data_collection['Группа'],
+                prefix=collection_data['Группа'],
             )
 
             # Определяю json-схему
             json_scheme = get_json_scheme(
-                data_collection=data_collection,
+                data_collection=collection_data,
                 product_categories=self.param_dif_products_categories,
             )
 
@@ -256,7 +259,7 @@ class ControlManager:
             # Собираю промпт
             prompt = get_prompt(
                 data_tools=data_tools,
-                data_collection=data_collection,
+                data_collection=collection_data,
             )
 
             # Сохраняем prompt в папку
@@ -274,16 +277,9 @@ class ControlManager:
                 folder_name=self.paths_to_folders["00_source_02_answer_gpt"],
             )
 
-            print('Сохранение пути до текущей подборки в таблицу Excel в ячейку столбца Путь')
-            self.save_path_current_collection_to_excel(
-                file_path=file_path_collection,
-                file_path_current_collection=self.paths_to_folders['folder_path'],
-                hash_current_collection=data_collection["Хеш"],
-            )
-
             print('Создание PDF и изображений со средствами для постов в соц.сети.')
             self._create_pdf_jpg(
-                collection_data=data_collection,
+                collection_data=collection_data,
                 info_data=data_tools,
                 selection_result=checking_file_with_response(
                     json_file_path=self.paths_to_folders["00_source_02_answer_gpt"]
@@ -295,9 +291,29 @@ class ControlManager:
             print('Готовлю текстовое оформление поста.')
             forming_text_for_post(
                 data_tools=data_tools,
-                data=data_collection,
+                data=collection_data,
                 path_to_result_recommend=self.paths_to_folders["00_source_02_answer_gpt"],
                 path_for_save=self.paths_to_folders['00_source_05_text'],
             )
 
-            print(f"Подборка по коду '{data_collection['Задача']}' готова.\n")
+            # Обновляем "Путь" подборки в таблице
+            self.update_collection_data_in_database(
+                file_path_collection=file_path_collection,
+                ws_title='Подборки',
+                row=row_number,
+                column_name='Путь',
+                value=self.paths_to_folders['folder_path'],
+            )
+
+            # Обновляем "Хеш" подборки в таблице
+            self.update_collection_data_in_database(
+                file_path_collection=file_path_collection,
+                ws_title='Подборки',
+                row=row_number,
+                column_name='Хеш',
+                value=hash_collection,
+            )
+
+            print(f"Подборка из строки {row_number} готова 🌀\n")
+
+        return None
