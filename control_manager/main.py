@@ -2,6 +2,7 @@
 В этом модуле - класс, управляющий логикой всего проекта
 """
 import os
+from pathlib import Path
 
 from dotenv import load_dotenv
 from appeal_to_openai.main import main as appeal_to_openai_main
@@ -57,12 +58,17 @@ class ControlManager:
             self,
             ws_title: str,
             file_path_collection: str,
+            target_column_title: str,
+            target_column_value: str | None,
     ) -> dict:
         """
-        Метод для получения незаполненных подборок.
+        Метод для получения подборок, у которых определённое
+        значение в определённом столбце.
 
         :param ws_title: имя листа с подборками
         :param file_path_collection: путь до документа Подборки.xlsx
+        :param target_column_title: название целевого столбца
+        :param target_column_value: значение, которое должно быть в целевом столбце
         :return: словарь с ключом - номер строки и вложенный словарь с данными
         подборки с заголовками столбцов
         """
@@ -71,8 +77,8 @@ class ControlManager:
         # Получаем словарь с подборками вида (номер строки: (кортеж с ячейками с данными))
         collections_data = excel_manager.get_rows_with_value_in_cell(
             ws_title=ws_title,
-            target_column_title='Путь',
-            target_column_value="",
+            target_column_title=target_column_title,
+            target_column_value=target_column_value,
         )
 
         # Добавляем к данным названия столбцов для удобства
@@ -190,19 +196,21 @@ class ControlManager:
         #     where_copy_to=self.paths_to_folders['pinterest_jpg'],
         # )
 
-    def create_collection(
+    def recreate_pdf_and_posts(
             self,
             file_path_tools: str,
             file_path_collection: str,
             path_to_output_folder: str,
+            progress_callback=None,
     ) -> None:
         """
-        Главный метод класса, в котором собрана вся логика программы
+        Метод для перегенерации PDF и постов
 
         :param file_path_tools: путь до таблицы со всей инфой о средствах, типах и прочем
         :param file_path_collection: путь до таблицы с подборками
         :param path_to_output_folder: путь до папки, в которую идет сохранение ответа от OpenAI,
         промпта, картинок и текста.
+        :param progress_callback: колл-бек для отрисовки прогресс-бара
 
         :return: None
         """
@@ -211,13 +219,111 @@ class ControlManager:
         data_tools = self._take_data_from_table_tool(
             file_path_tools_table=file_path_tools,
         )
-        # Захожу в "Подборки" и получаю незаполненные подборки
+        # Захожу в "Подборки" и получаю все подборки для пересоздания постов и PDF
         collections = self._get_collections(
             ws_title='Подборки',
-            file_path_collection=file_path_collection
+            file_path_collection=file_path_collection,
+            target_column_title='Пересоздать PDF',
+            target_column_value="да",
         )
+        total = len(collections)
+        for i, (row_number, collection_data) in enumerate(collections.items(), start=1):
+            print(f'Готовим подборку из строки № {row_number}.')
+            print('Считаем хеш и проверяем подборку на уникальность.')
+            hash_collection = str(counting_hash(data=collection_data))
+            result = is_hash_unique(
+                ws_title='Подборки',
+                file_path_collection=file_path_collection,
+                hash_collection=hash_collection,
+                row_number=row_number,
+            )
+            # если не уникальная подборка
+            if result:
+                print(f'При проверке хеша подборки в строке {row_number} нашли такой же хеш'
+                      f' в строке {result} и выделили её красным')
+                return None
+            print('Подборка уникальна, продолжаем.')
 
-        for row_number, collection_data in collections.items():
+            # Формирую пути для сохранения данных
+            dirs_constructor = DirsConstructor(
+                base_output_folder_path=path_to_output_folder,
+                data_collection=collection_data,
+            )
+            self.paths_to_folders = (
+                dirs_constructor
+                .get_folder_paths(
+                    category_folder=Path(collection_data['Путь'])
+                )
+            )
+            print('Пересоздание PDF и изображений со средствами для постов в соц.сети.')
+            self._create_pdf_jpg(
+                collection_data=collection_data,
+                info_data=data_tools,
+                selection_result=checking_file_with_response(
+                    json_file_path=self.paths_to_folders["00_source_02_answer_gpt"]
+                ),
+                path_to_output_folder_pdf_file=self.paths_to_folders["00_source_03_pdf"],
+                path_to_output_folder_jpg_file=self.paths_to_folders["00_source_04_jpg"],
+            )
+
+            print('Пересоздание текстовой части постов.')
+            forming_text_for_post(
+                data_tools=data_tools,
+                data=collection_data,
+                path_to_result_recommend=self.paths_to_folders["00_source_02_answer_gpt"],
+                path_for_save=self.paths_to_folders['00_source_05_text'],
+            )
+
+            # Обновляем "Хеш" подборки в таблице
+            self.update_collection_data_in_database(
+                file_path_collection=file_path_collection,
+                ws_title='Подборки',
+                row=row_number,
+                column_name='Хеш',
+                value=hash_collection,
+            )
+
+            # Вызов колбэка для обновления прогресс бара
+            if progress_callback:
+                progress_callback(i, total)
+
+            print(f"Подборка из строки {row_number} готова 🌀\n")
+
+        return None
+
+    def create_collection(
+            self,
+            file_path_tools: str,
+            file_path_collection: str,
+            path_to_output_folder: str,
+            progress_callback=None,
+    ) -> None:
+        """
+        Метод для генерации новых подборок
+
+        :param file_path_tools: путь до таблицы со всей инфой о средствах, типах и прочем
+        :param file_path_collection: путь до таблицы с подборками
+        :param path_to_output_folder: путь до папки, в которую идет сохранение ответа от OpenAI,
+        промпта, картинок и текста.
+        :param progress_callback: колл-бек для отрисовки прогресс-бара
+
+
+        :return: None
+        """
+
+        # Забираю все данные из таблицы "Средства", "Тип", "Запрос" и т.д.
+        data_tools = self._take_data_from_table_tool(
+            file_path_tools_table=file_path_tools,
+        )
+        # Захожу в "Подборки" и получаю новые подборки (которые ещё без пути сохранения)
+        collections = self._get_collections(
+            ws_title='Подборки',
+            file_path_collection=file_path_collection,
+            target_column_title='Путь',
+            target_column_value="",
+        )
+        total = len(collections)
+        for i, (row_number, collection_data) in enumerate(collections.items(), start=1):
             print(f'Готовим подборку из строки № {row_number}.')
             print('Считаем хеш и проверяем подборку на уникальность.')
             hash_collection = str(counting_hash(data=collection_data))
@@ -313,6 +419,10 @@ class ControlManager:
                 column_name='Хеш',
                 value=hash_collection,
             )
+
+            # Вызов колбэка для обновления прогресс бара
+            if progress_callback:
+                progress_callback(i, total)
 
             print(f"Подборка из строки {row_number} готова 🌀\n")
 

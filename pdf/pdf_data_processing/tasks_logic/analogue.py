@@ -28,9 +28,9 @@ PDF_STRUCTURE = {
                           'height': 70, 'fill_color': "#F2F2F2"}),
 
             ('Image', {'Ключ в подборке': 'Путь к изображению средства 2', 'width': 728, 'height': 1280}),
-            ('FreeText', {'Текст': '&', 'x': 320, 'y': 475,
-                          'font_name': 'Montserrat-Bold',
-                          'font_size': 80, 'font_color': "#BBE02CFF", 'bold': False, 'align': 'left'}),
+            # ('FreeText', {'Текст': '&', 'x': 320, 'y': 475,
+            #               'font_name': 'Montserrat-Bold',
+            #               'font_size': 80, 'font_color': "#BBE02CFF", 'bold': False, 'align': 'left'}),
 
             ('FrameBreak', {}),
             # описание средства 1
@@ -157,7 +157,7 @@ class AnaloguePDFTemplateCreator:
             'Артикул 2': product_2_base_data["Артикул"],
             'Количество мера / цена 2': product_2_base_data['Количество мера / цена'],
 
-            'Путь к изображению бренд-линии': Path("00_base/source/imagine_border/border_green.jpg"),
+            'Путь к изображению бренд-линии': Path("00_base/source/imagine_border/border_orange_light.jpg"),
             'Путь для сохранения pdf-файла': get_path_for_save_pdf(
                 product_title=product_1_name,
                 path_to_output_folder_pdf_file=self.path_to_output_folder_pdf_file,

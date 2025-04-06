@@ -1,6 +1,6 @@
 """В этом модуле запуск логики анализа средств и формирования отчета"""
 
-from control_manager.control_manager import ControlManager
+from control_manager.main import ControlManager
 # словарь со всеми параметрами для разных категорий продуктов
 from source.structure_for_products import PARAMETERS_DIF_PRODUCT_CATEGORIES
 

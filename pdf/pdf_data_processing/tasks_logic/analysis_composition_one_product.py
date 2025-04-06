@@ -114,6 +114,9 @@ PDF_STRUCTURE = {
             ('Paragraph', {'Текст': '<b>Соотношение цены:</b>', 'Стиль': 'ACOP_bold_2'}),
             ('Spacer', {'width': 1, 'height': 34}),
             ('Paragraph', {'Ключ в подборке': 'Соотношение цены', 'Стиль': 'ACOP_price_ratio_1'}),
+
+
+
             ('NextPageTemplate', {'template_id': 'template_2'}),
             ('PageBreak', {}),
             # следующая страница

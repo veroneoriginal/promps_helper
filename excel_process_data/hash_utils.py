@@ -51,28 +51,30 @@ def counting_hash(
 
     # приводим к кортежу
     data_copy['Средства'] = get_values(data_copy['Средства'])
+    # приводим к спискам
+    data_copy['Тип'] = normalize_list_string(data['Тип'])
+    data_copy['Запрос'] = normalize_list_string(data['Запрос'])
 
-    # привожу к нормальному виду "Тип"
-    edit_type_list = data['Тип'].split(',')
-    data_copy['Тип'] = [type_elem.strip() for type_elem in edit_type_list]
-
-    data_copy['Возраст'] = str(data_copy['Возраст'])
-
+    # Сбор значений для хеша
+    exclude_keys = {"Категория", "Группа", "Путь", "Хеш", "Пересоздать PDF"}
     list_for_hash = []
     for key, value in data_copy.items():
-        if key not in ("Содержимое", "Лучший вариант", "Путь", "Хеш", "Пересоздать PDF"):
-            if isinstance(value, (list, tuple)):
-                list_for_hash.extend(value)  # Разворачиваем список или кортеж
-            else:
-                list_for_hash.append(value.lower())
+        if key in exclude_keys:
+            continue
+        if isinstance(value, (list, tuple)):
+            # Разворачиваем список или кортеж
+            list_for_hash.extend(str(v).lower().strip() for v in value)
+        else:
+            list_for_hash.append(str(value).lower().strip())
 
-    # Сортируем список для консистентности хеша
+    # Сортировка и хеширование
     final_list = sorted(list_for_hash)
-
-    # Хэшируем как строку
-    final_str = str(final_list).encode()
-
+    final_str = ','.join(final_list).encode("utf-8")
     return hashlib.sha256(final_str).hexdigest()
+
+
+def normalize_list_string(value: str) -> list[str]:
+    return [item.strip().lower() for item in value.split(',') if item.strip()]
 
 
 def get_values(
