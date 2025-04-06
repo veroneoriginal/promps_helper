@@ -229,21 +229,6 @@ class ControlManager:
         total = len(collections)
         for i, (row_number, collection_data) in enumerate(collections.items(), start=1):
             print(f'Готовим подборку из строки № {row_number}.')
-            print('Считаем хеш и проверяем подборку на уникальность.')
-            hash_collection = str(counting_hash(data=collection_data))
-            result = is_hash_unique(
-                ws_title='Подборки',
-                file_path_collection=file_path_collection,
-                hash_collection=hash_collection,
-                row_number=row_number,
-            )
-            # если не уникальная подборка
-            if result:
-                print(f'При проверке хеша подборки в строке {row_number} нашли такой же хеш'
-                      f' в строке {result} и выделили её красным')
-                return None
-            print('Подборка уникальна, продолжаем.')
-
             # Формирую пути для сохранения данных
             dirs_constructor = DirsConstructor(
                 base_output_folder_path=path_to_output_folder,
@@ -272,15 +257,6 @@ class ControlManager:
                 data=collection_data,
                 path_to_result_recommend=self.paths_to_folders["00_source_02_answer_gpt"],
                 path_for_save=self.paths_to_folders['00_source_05_text'],
-            )
-
-            # Обновляем "Хеш" подборки в таблице
-            self.update_collection_data_in_database(
-                file_path_collection=file_path_collection,
-                ws_title='Подборки',
-                row=row_number,
-                column_name='Хеш',
-                value=hash_collection,
             )
 
             # Вызов колбэка для обновления прогресс бара
