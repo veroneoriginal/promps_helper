@@ -1,7 +1,7 @@
 # pylint: disable=W0212 protected-access
 import json
 
-from control_manager.control_manager import ControlManager
+from control_manager.main import ControlManager
 from source.structure_for_products import PARAMETERS_DIF_PRODUCT_CATEGORIES
 
 

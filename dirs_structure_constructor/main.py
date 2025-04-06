@@ -28,6 +28,7 @@ class DirsConstructor:
         # формируемый словарь с путями
         self.paths_to_folders = {}
 
+
     def get_output_folders(
             self,
             prefix: str,
@@ -62,7 +63,7 @@ class DirsConstructor:
         )
 
         # Наполняем self.paths_to_folders путями до каждой конкретной папки
-        self._get_folder_paths(category_folder=category_folder)
+        self.get_folder_paths(category_folder=category_folder)
 
         # Создаем папки для соц.сетей и их внутренние папки с категориями
         self._create_subfolders()
@@ -156,15 +157,15 @@ class DirsConstructor:
         category_folder.mkdir(exist_ok=True)
         return category_folder
 
-    def _get_folder_paths(
+    def get_folder_paths(
             self,
             category_folder: Path,
-    ) -> None:
+    ) -> dict:
         """
         Создает словарь путей ко всем созданным папкам соцсетей и их подпапкам.
 
         :param category_folder: Путь к папке подборки
-        :return: None (изменяет self.paths_to_folders)
+        :return: self.paths_to_folders
         """
 
         for service, folders in self.scheme_for_folders_name.items():
@@ -180,6 +181,8 @@ class DirsConstructor:
                 full_path = str(service_path / folder)
                 # записываем в словарь
                 self.paths_to_folders[key] = full_path
+
+        return self.paths_to_folders
 
     def _create_subfolders(self) -> None:
         """

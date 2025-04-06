@@ -52,13 +52,25 @@ elem_source_product = [
     ('Image', {'Ключ в подборке': 'Путь к изображению средства', 'width': 1024, 'height': 1280}),
     ('Spacer', {'width': 1, 'height': 13}),
     ('FreeText',
-     {'Ключ в подборке': 'Артикул', 'x': 600, 'y': 666,
+     {'Ключ в подборке': 'Артикул', 'x': 0, 'y': 666,
       'font_name': 'Montserrat-Regular',
       'font_size': 14, 'font_color': "#000000FF", 'bold': False, 'align': 'left'}),
     ('FreeText',
-     {'Текст': 'Правообладатель изображения: https://goldapple.ru/', 'x': -40, 'y': 54,
+     {'Текст': 'Правообладатель изображения: https://goldapple.ru/', 'x': 0, 'y': 54,
       'font_name': 'Montserrat-Regular',
       'font_size': 10, 'font_color': "#1E1F2280", 'bold': False, 'align': 'left'}),
+
+    ('FreeImage',
+     {
+         'Ключ в подборке': 'Путь к изображению галочки',
+         'x': 620,
+         'y': 450,
+         'width': 225,
+         'height': 225,
+         'preserve_aspect_ratio': True,
+     }
+     ),
+
     ('Paragraph', {'Ключ в подборке': 'Тип продукта', 'Стиль': 'BC_normal_2'}),
     ('Spacer', {'width': 1, 'height': 26}),
     ('Paragraph', {'Ключ в подборке': 'Название средства', 'Стиль': 'BC_title_1'}),
@@ -72,6 +84,7 @@ elem_source_product = [
     ('Paragraph', {'Текст': '<b>Минусы:</b>', 'Стиль': 'BC_bold_1'}),
     ('Spacer', {'width': 1, 'height': 20}),
     ('Paragraph', {'Ключ в подборке': 'Минусы', 'Стиль': 'BC_normal_1'}),
+
 ]
 page_frames_elem_source_product = {
     'template_1':
@@ -84,13 +97,23 @@ elem_best_combination_product = [
     ('Image', {'Ключ в подборке': 'Путь к изображению средства', 'width': 1024, 'height': 1280}),
     ('Spacer', {'width': 1, 'height': 13}),
     ('FreeText',
-     {'Ключ в подборке': 'Артикул', 'x': 600, 'y': 666,
+     {'Ключ в подборке': 'Артикул', 'x': 0, 'y': 666,
       'font_name': 'Montserrat-Regular',
       'font_size': 14, 'font_color': "#000000FF", 'bold': False, 'align': 'left'}),
     ('FreeText',
-     {'Текст': 'Правообладатель изображения: https://goldapple.ru/', 'x': -40, 'y': 54,
+     {'Текст': 'Правообладатель изображения: https://goldapple.ru/', 'x': 0, 'y': 54,
       'font_name': 'Montserrat-Regular',
       'font_size': 10, 'font_color': "#1E1F2280", 'bold': False, 'align': 'left'}),
+    ('FreeImage',
+     {
+         'Ключ в подборке': 'Путь к изображению галочки',
+         'x': 620,
+         'y': 450,
+         'width': 225,
+         'height': 225,
+         'preserve_aspect_ratio': True,
+     }
+     ),
     ('Paragraph', {'Ключ в подборке': 'Тип продукта', 'Стиль': 'BC_normal_2'}),
     ('Spacer', {'width': 1, 'height': 26}),
     ('Paragraph', {'Ключ в подборке': 'Название средства', 'Стиль': 'BC_title_1'}),
@@ -100,6 +123,7 @@ elem_best_combination_product = [
     ('Paragraph', {'Текст': '<b>Почему выбрали это средство:</b>', 'Стиль': 'BC_bold_1'}),
     ('Spacer', {'width': 1, 'height': 20}),
     ('Paragraph', {'Ключ в подборке': 'Вывод', 'Стиль': 'BC_normal_1'}),
+
 ]
 page_frames_best_combination_product = {
     'template_1':
@@ -112,11 +136,11 @@ elem_unselect_combination_product = [
     ('Image', {'Ключ в подборке': 'Путь к изображению средства', 'width': 1024, 'height': 1280}),
     ('Spacer', {'width': 1, 'height': 13}),
     ('FreeText',
-     {'Ключ в подборке': 'Артикул', 'x': 600, 'y': 666,
+     {'Ключ в подборке': 'Артикул', 'x': 0, 'y': 666,
       'font_name': 'Montserrat-Regular',
       'font_size': 14, 'font_color': "#000000FF", 'bold': False, 'align': 'left'}),
     ('FreeText',
-     {'Текст': 'Правообладатель изображения: https://goldapple.ru/', 'x': -40, 'y': 54,
+     {'Текст': 'Правообладатель изображения: https://goldapple.ru/', 'x': 0, 'y': 54,
       'font_name': 'Montserrat-Regular',
       'font_size': 10, 'font_color': "#1E1F2280", 'bold': False, 'align': 'left'}),
     ('Paragraph', {'Ключ в подборке': 'Тип продукта', 'Стиль': 'BC_normal_2'}),
@@ -141,6 +165,7 @@ TEST_BEST_COMBINATION_EXPECTED_RESULT = [
         'Плюсы': 'Глубокое увлажнение благодаря провитамину В5, обволакивание волосяного стержня, естественный блеск, увлажнение и поддержание здорового уровня РН благодаря экстракту стволовых клеток опунции, укрепление и питание волос благодаря маслу рисовых отрубей.',
         'Минусы': 'Может не обеспечивать достаточное питание и увлажнение для очень сухих и поврежденных волос, так как это шампунь, а не кондиционер или маска.',
         'Путь к изображению бренд-линии': Path('00_base/source/imagine_border/border_green.jpg'),
+        'Путь к изображению галочки': Path("00_base/source/check/v2.png"),
         'Путь для сохранения pdf-файла': Path(
             '01_test_base/00_info_for_post/22_22_2222/100_Шампуни/00_source/03_pdf/r_co_atlantis_moisturizing_b5_shampoo_24320200015.pdf'),
         'Класс шаблона': 'PDFBaseDocTemplateWithBrandLine',
@@ -152,6 +177,7 @@ TEST_BEST_COMBINATION_EXPECTED_RESULT = [
         'Название средства': 'R+CO Atlantis Moisturizing B5 Shampoo', 'Количество мера / цена': '241 мл / 5876 руб',
         'Путь к изображению средства': Path(
             '00_base/products/00_img/r_co_atlantis_moisturizing_b5_shampoo_24320200015.jpg'),
+
         'Тип продукта': 'Шампунь для увлажнения с витамином В5', 'Артикул': 'артикул: 24320200015'},
     {
         'Вывод': 'Хотя это средство и подходит для поддержания здоровья волос, оно не обеспечивает такого уровня увлажнения и питания, как R+CO Atlantis Moisturizing B5 Conditioner, что важно для сухих волос.',
@@ -171,6 +197,7 @@ TEST_BEST_COMBINATION_EXPECTED_RESULT = [
     {
         'Вывод': 'Это средство идеально дополняет исходный шампунь, так как они из одной серии и содержат схожие увлажняющие и питательные компоненты, что обеспечивает комплексный уход за сухими волосами.',
         'Путь к изображению бренд-линии': Path('00_base/source/imagine_border/border_green.jpg'),
+        'Путь к изображению галочки': Path("00_base/source/check/v2.png"),
         'Путь для сохранения pdf-файла': Path(
             '01_test_base/00_info_for_post/22_22_2222/100_Шампуни/00_source/03_pdf/r_co_atlantis_moisturizing_b5_conditioner_24320200016.pdf'),
         'Класс шаблона': 'PDFBaseDocTemplateWithBrandLine',

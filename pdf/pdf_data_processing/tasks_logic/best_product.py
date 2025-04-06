@@ -9,7 +9,7 @@ from pdf.pdf_data_processing.tasks_logic.base_task import get_base_info_by_produ
 from pdf.pdf_data_processing.tasks_utils import get_path_for_save_pdf
 
 PDF_STRUCTURE = {
-    'Базовая категория':
+    'Лучшее средство':
         {
             'Класс шаблона': 'PDFBaseDocTemplateWithBrandLine',
             'Размеры бренд-линии': (85, 1280),
@@ -19,11 +19,59 @@ PDF_STRUCTURE = {
                 ('Image', {'Ключ в подборке': 'Путь к изображению средства', 'width': 1024, 'height': 1280}),
                 ('Spacer', {'width': 1, 'height': 34}),
                 ('FreeText',
-                 {'Ключ в подборке': 'Артикул', 'x': 600, 'y': 666,
+                 {'Ключ в подборке': 'Артикул', 'x': 0, 'y': 666,
                   'font_name': 'Montserrat-Regular',
                   'font_size': 14, 'font_color': "#000000FF", 'bold': False, 'align': 'left'}),
                 ('FreeText',
-                 {'Текст': 'Правообладатель изображения: https://goldapple.ru/', 'x': -40, 'y': 54,
+                 {'Текст': 'Правообладатель изображения: https://goldapple.ru/', 'x': 0, 'y': 54,
+                  'font_name': 'Montserrat-Regular',
+                  'font_size': 10, 'font_color': "#1E1F2280", 'bold': False, 'align': 'left'}),
+                ('FreeImage',
+                 {
+                     'Ключ в подборке': 'Путь к изображению галочки',
+                     'x': 620,
+                     'y': 450,
+                     'width': 225,
+                     'height': 225,
+                     'preserve_aspect_ratio': True,
+                 }
+                 ),
+                ('Paragraph', {'Ключ в подборке': 'Тип продукта', 'Стиль': 'BP_normal_2', 'Заглавными': True}),
+                ('Spacer', {'width': 1, 'height': 26}),
+                ('Paragraph', {'Ключ в подборке': 'Название средства', 'Стиль': 'BP_title_1'}),
+                ('Spacer', {'width': 1, 'height': 40}),
+                ('Paragraph', {'Ключ в подборке': 'Количество мера / цена', 'Стиль': 'BP_base_price_1'}),
+                ('Spacer', {'width': 1, 'height': 26}),
+                ('Paragraph', {'Текст': '<b>Плюсы:</b>', 'Стиль': 'BP_bold_1'}),
+                ('Spacer', {'width': 1, 'height': 20}),
+                ('Paragraph', {'Ключ в подборке': 'Плюсы', 'Стиль': 'BP_normal_1'}),
+                ('Spacer', {'width': 1, 'height': 26}),
+                ('Paragraph', {'Текст': '<b>Минусы:</b>', 'Стиль': 'BP_bold_1'}),
+                ('Spacer', {'width': 1, 'height': 20}),
+                ('Paragraph', {'Ключ в подборке': 'Минусы', 'Стиль': 'BP_normal_1'}),
+            ],
+            'Шаблоны страниц с фреймами': {
+                'template_1':
+                    (
+                        (0, (133, 0), (794, 1288)),  # Номер, Координаты левого нижнего угла, ширина и высота фрейма
+                    )
+            },
+        },
+    'Не лучшее средство':
+        {
+            'Класс шаблона': 'PDFBaseDocTemplateWithBrandLine',
+            'Размеры бренд-линии': (85, 1280),
+            'Координаты вставки бренд-линии': [(0, 0), ],
+            'Размеры документа': (1024, 1280),  # (ширина, высота) в пикселях
+            'Элементы и стили': [
+                ('Image', {'Ключ в подборке': 'Путь к изображению средства', 'width': 1024, 'height': 1280}),
+                ('Spacer', {'width': 1, 'height': 34}),
+                ('FreeText',
+                 {'Ключ в подборке': 'Артикул', 'x': 0, 'y': 666,
+                  'font_name': 'Montserrat-Regular',
+                  'font_size': 14, 'font_color': "#000000FF", 'bold': False, 'align': 'left'}),
+                ('FreeText',
+                 {'Текст': 'Правообладатель изображения: https://goldapple.ru/', 'x': 0, 'y': 54,
                   'font_name': 'Montserrat-Regular',
                   'font_size': 10, 'font_color': "#1E1F2280", 'bold': False, 'align': 'left'}),
                 ('Paragraph', {'Ключ в подборке': 'Тип продукта', 'Стиль': 'BP_normal_2', 'Заглавными': True}),
@@ -84,10 +132,30 @@ class BestProductPDFTemplateCreator:
 
         for key, value in self.rus_selection_result.items():
             if key.startswith('product_'):
-                template = self.get_base_template(one_product_data=value)
+                template = self.get_template(one_product_data=value)
                 self.pdf_docs_data.append(template)
 
         return self.pdf_docs_data
+
+    def get_template(
+            self,
+            one_product_data: dict,
+    ) -> dict:
+        """
+        Наполняет шаблон PDF лучшего или не лучшего средства
+        :param one_product_data: данные одного средства
+        :return: словарь с информацией для создания PDF-документа
+        """
+
+        if one_product_data['Лучшее средство']:
+            template = self.get_best_product_template(
+                one_product_data=one_product_data,
+            )
+        else:
+            template = self.get_no_best_product_template(
+                one_product_data=one_product_data,
+            )
+        return template
 
     def get_base_template(
             self,
@@ -105,10 +173,6 @@ class BestProductPDFTemplateCreator:
         template_data = {  # отличается:
             'Плюсы': one_product_data['Плюсы'],
             'Минусы': one_product_data['Минусы'],
-            'Путь к изображению бренд-линии': Path(self.get_brand_line_path(
-                value=one_product_data['Лучшее средство'],
-            )
-            ),
 
             'Путь для сохранения pdf-файла': get_path_for_save_pdf(
                 product_title=product_name,
@@ -124,23 +188,38 @@ class BestProductPDFTemplateCreator:
         )
 
         template_data.update(base_product_data)
-        template_data.update(PDF_STRUCTURE['Базовая категория'])
 
         return template_data
 
-    def get_brand_line_path(
+    def get_best_product_template(
             self,
-            value: bool
-    ):
+            one_product_data: dict,
+    ) -> dict:
         """
-        Возвращает путь к файлу с нужной бренд-линией для нанесения на PDF
-        :param value: True или False (лучшее/не лучшее)
-        :return: путь до файла с бренд-линией
+        Возвращает шаблон PDF для лучшего средства
+        :param one_product_data: данные одного средства
+        :return: словарь с информацией для создания PDF-документа
         """
 
-        BRAND_LINE_PATH = {
-            'Цвет_1': "00_base/source/imagine_border/border_green.jpg",
-            'Цвет_2': "00_base/source/imagine_border/border_fiolet.jpg",
-        }
+        template = self.get_base_template(one_product_data=one_product_data)
+        template['Путь к изображению галочки'] = Path("00_base/source/check/v2.png")
+        template['Путь к изображению бренд-линии'] = Path('00_base/source/imagine_border/border_green.jpg')
+        template.update(PDF_STRUCTURE['Лучшее средство'])
 
-        return BRAND_LINE_PATH['Цвет_1'] if value else BRAND_LINE_PATH['Цвет_2']
+        return template
+
+    def get_no_best_product_template(
+            self,
+            one_product_data: dict,
+    ) -> dict:
+        """
+        Возвращает шаблон PDF для не лучшего средства
+        :param one_product_data: данные одного средства
+        :return: словарь с информацией для создания PDF-документа
+        """
+
+        template = self.get_base_template(one_product_data=one_product_data)
+        template['Путь к изображению бренд-линии'] = Path('00_base/source/imagine_border/border_fiolet.jpg')
+        template.update(PDF_STRUCTURE['Не лучшее средство'])
+
+        return template

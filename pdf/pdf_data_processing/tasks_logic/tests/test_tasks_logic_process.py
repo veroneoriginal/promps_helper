@@ -64,6 +64,7 @@ class TestTasksDataProcessing(unittest.TestCase):
         )
         result = data_processor.process_data_with_task_code()
         self.maxDiff = None
+        # pprint(result)
         self.assertListEqual(result, TEST_BEST_PRODUCT_EXPECTED_RESULT)
 
     def test_best_product_without_carcinogens_main(self):

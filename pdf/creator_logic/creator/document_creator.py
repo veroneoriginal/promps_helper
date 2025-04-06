@@ -19,7 +19,11 @@ from reportlab.platypus import (
     NextPageTemplate,
 )
 
-from pdf.creator_logic.creator.custom_flowables import FreeImage, FreeRect, FreeText
+from pdf.creator_logic.creator.custom_flowables import (
+    FreeImage,
+    FreeRect,
+    FreeText,
+)
 from pdf.creator_logic.creator.fonts_and_styles.styles import PDF_STYLE
 
 
