@@ -70,7 +70,6 @@ class PromptProcessingData:
         :param key_for_decrypted: категория, с который работаем
         :return: расшифрованная строка
         """
-
         # получение строки с содержимым, которое было в ячейке ТИП
         body_part_type = data_collection[key_for_decrypted]
 

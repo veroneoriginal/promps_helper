@@ -1,9 +1,11 @@
 """
 Главный модуль пост-конструктора.
 """
+import re
+from copy import deepcopy
 
-from prompt_constructor.prompt_processing_data import PromptProcessingData
 from post_constructor.post_constructor import PostConstructor
+from post_constructor.post_processing_data import build_description
 from utils.utils import save_file_in_process_work
 
 
@@ -52,18 +54,103 @@ def create_hashtag(
     for product_title, product_article in products:
         brand = data_tools['Средства'][product_title][product_article]['Бренд']
         if brand:
-            brand_no_space = ''.join(brand.split())
+            brand_no_space = re.sub(r'[^\wа-яА-ЯёЁ]+', '_', brand)
             hashtag.append(f"#{brand_no_space}")
         else:
-            brand_no_space = 'БРЕНД_ОТСУТСТВУЕТ'
-            hashtag.append(f"#{brand_no_space}")
+            hashtag.append('#БРЕНД_ОТСУТСТВУЕТ')
 
     return ' '.join(set(hashtag))
 
 
-def forming_text_for_post(
+# pylint: disable=R0913: too-many-arguments
+# pylint: disable=R0917: too-many-positional-arguments
+def create_post(
         data_tools: dict,
-        data: dict,
+        collection_data: dict,
+        path_to_result_recommend: str,
+        path_for_save: str,
+        detailed: bool,
+        file_name: str,
+) -> None:
+    """
+    Универсальный генератор постов (короткая/подробная версия)
+    """
+    collection_data['Тип'] = build_description(
+        code_string=collection_data['Тип'],
+        section_data=data_tools['Тип'],
+        detailed=detailed
+    )
+
+    collection_data['Запрос'] = build_description(
+        code_string=collection_data['Запрос'],
+        section_data=data_tools['Запрос'],
+        detailed=detailed
+    )
+
+    # добавляем хештег
+    collection_data['Хештег'] = create_hashtag(
+        data=collection_data,
+        data_tools=data_tools,
+    )
+
+    # создаём текст поста
+    post_constructor = PostConstructor()
+    info_for_post = post_constructor.create_text_for_post(
+        data=collection_data,
+        path_to_result_recommend=path_to_result_recommend,
+        task=collection_data['Задача'],
+    )
+
+    # сохраняем
+    save_file_in_process_work(
+        what_save=info_for_post,
+        path_to_folder=path_for_save,
+        file_name=file_name,
+        file_extension='.md',
+    )
+
+
+def create_post_detailed(
+        data_tools: dict,
+        collection_data: dict,
+        path_to_result_recommend: str,
+        path_for_save: str,
+) -> None:
+    """
+    Формирует длинную версию поста
+    """
+    create_post(
+        data_tools=data_tools,
+        collection_data=deepcopy(collection_data),
+        path_to_result_recommend=path_to_result_recommend,
+        path_for_save=path_for_save,
+        detailed=True,
+        file_name='text_for_post_detailed',
+    )
+
+
+def create_post_short(
+        data_tools: dict,
+        collection_data: dict,
+        path_to_result_recommend: str,
+        path_for_save: str,
+) -> None:
+    """
+    Формирует короткую версию поста
+    """
+    create_post(
+        data_tools=data_tools,
+        collection_data=deepcopy(collection_data),
+        path_to_result_recommend=path_to_result_recommend,
+        path_for_save=path_for_save,
+        detailed=False,
+        file_name='text_for_post_short',
+    )
+
+
+def forming_text_for_posts(
+        data_tools: dict,
+        collection_data: dict,
         path_to_result_recommend: str,
         path_for_save: str,
 ) -> None:
@@ -73,54 +160,22 @@ def forming_text_for_post(
     2) осуществляется формирование текста для поста и его сохранение
 
     :param data_tools: словарь со всеми данными по средствам
-    :param data: нерасшифрованный словарь с текущей подборкой
+    :param collection_data: нерасшифрованный словарь с текущей подборкой
     :param path_to_result_recommend: путь до json-файла, в котором находится
     ответ от GPT по подборке
     :param path_for_save: путь, по которому сохранять пост
     :return: None
     """
-
-    # т.к. из исходного словаря мне нужно расшифровать только запрос и тип
-
-    # расшифровка данных текущей подборки с помощью таблицы со всеми средствами
-    prompt_proces_data = PromptProcessingData(
+    create_post_detailed(
         data_tools=data_tools,
-        data_collection=data,
-    )
-
-    # расшифровываем ключ тип
-    data['Тип'] = prompt_proces_data.decrypting_data_from_cell(
-        data=data_tools,
-        data_collection=data,
-        key_for_decrypted="Тип",
-    )
-
-    # расшифровываем ключ запрос
-    data['Запрос'] = prompt_proces_data.decrypting_data_from_cell(
-        data=data_tools,
-        data_collection=data,
-        key_for_decrypted="Запрос",
-    )
-
-    # добавляем хештег
-    data['Хештег'] = create_hashtag(
-        data=data,
-        data_tools=data_tools,
-    )
-
-    # формируем текст для поста из нужных данных
-    post_constructor = PostConstructor()
-
-    info_for_post = post_constructor.create_text_for_post(
-        data=data,
+        collection_data=deepcopy(collection_data),
         path_to_result_recommend=path_to_result_recommend,
-        task=data['Задача'],
+        path_for_save=path_for_save,
     )
 
-    # сохраняем результат
-    save_file_in_process_work(
-        what_save=info_for_post,
-        path_to_folder=path_for_save,
-        file_name='text_for_post',
-        file_extension='.md',
+    create_post_short(
+        data_tools=data_tools,
+        collection_data=deepcopy(collection_data),
+        path_to_result_recommend=path_to_result_recommend,
+        path_for_save=path_for_save,
     )

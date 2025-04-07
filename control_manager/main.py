@@ -12,7 +12,7 @@ from dirs_structure_constructor.main import DirsConstructor
 from excel_process_data.hash_utils import counting_hash, is_hash_unique
 from excel_process_data.process_data import ExcelManager
 from json_constructor.main import get_json_scheme
-from post_constructor.main_post import forming_text_for_post
+from post_constructor.main_post import forming_text_for_posts
 from prompt_constructor.main import get_prompt
 from pdf.main import create_pdf
 from utils.utils import save_file_in_process_work
@@ -252,9 +252,9 @@ class ControlManager:
             )
 
             print('Пересоздание текстовой части постов.')
-            forming_text_for_post(
+            forming_text_for_posts(
                 data_tools=data_tools,
-                data=collection_data,
+                collection_data=collection_data,
                 path_to_result_recommend=self.paths_to_folders["00_source_02_answer_gpt"],
                 path_for_save=self.paths_to_folders['00_source_05_text'],
             )
@@ -264,8 +264,6 @@ class ControlManager:
                 progress_callback(i, total)
 
             print(f"Подборка из строки {row_number} готова 🌀\n")
-
-        return None
 
     def create_collection(
             self,
@@ -282,7 +280,6 @@ class ControlManager:
         :param path_to_output_folder: путь до папки, в которую идет сохранение ответа от OpenAI,
         промпта, картинок и текста.
         :param progress_callback: колл-бек для отрисовки прогресс-бара
-
 
         :return: None
         """
@@ -371,9 +368,9 @@ class ControlManager:
             )
 
             print('Готовлю текстовое оформление поста.')
-            forming_text_for_post(
+            forming_text_for_posts(
                 data_tools=data_tools,
-                data=collection_data,
+                collection_data=collection_data,
                 path_to_result_recommend=self.paths_to_folders["00_source_02_answer_gpt"],
                 path_for_save=self.paths_to_folders['00_source_05_text'],
             )

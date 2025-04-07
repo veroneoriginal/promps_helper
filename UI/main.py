@@ -140,6 +140,7 @@ class MainWindow(QWidget):
         Очистка окна лога
         """
         self.text_log.clear()
+        self.progress_bar.setValue(0)
 
     def center_on_screen(self):
         screen = QGuiApplication.primaryScreen()

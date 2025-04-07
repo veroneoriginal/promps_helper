@@ -212,11 +212,14 @@ class AnalisisCompositionProductPDFTemplateCreator:
     def get_additional_product_data_by_category(
             self,
             category_name: str,
+            one_product_data: dict,
     ) -> dict | None:
         """
         Возвращает дополнительную информацию в зависимости от
         категории подборки ("Стайлинг волос", "Макияж" и т.д.)
         :param category_name: категория подборки
+        :param one_product_data: данные одного средства из ответа нейронки
+        :return: dict
         """
 
         CATEGORY_WITH_ADDITIONAL_DATA = {
@@ -232,7 +235,7 @@ class AnalisisCompositionProductPDFTemplateCreator:
         )
 
         if additional_data_func:
-            return additional_data_func()
+            return additional_data_func(one_product_data=one_product_data)
         return None
 
     def get_base_template(
@@ -287,7 +290,8 @@ class AnalisisCompositionProductPDFTemplateCreator:
 
         # Добавляем дополнительные данные по категории
         additional_data = self.get_additional_product_data_by_category(
-            category_name=self.collection_data['Категория']
+            category_name=self.collection_data['Категория'],
+            one_product_data=one_product_data,
         )
         if additional_data:
             template_data.update(additional_data)
