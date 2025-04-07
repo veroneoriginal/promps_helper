@@ -417,6 +417,34 @@ def get_price_with_out_variance(
     return None
 
 
+def get_price_not_in_stock(
+        soup: Tag | NavigableString,
+) -> int | None:
+    """
+    Для получения:  Цена без скидки со словами "по максимальной карте", когда
+    товара нет в наличии
+
+    :param soup: суп из HTML-контента
+    :return: int
+    """
+
+    # Ищем блок с "по максимальной карте"
+    max_card_div = soup.find("div", string=lambda text: text and "по максимальной карте" in text)
+    # Поднимаемся к родителю два раза (это div, содержащий цену)
+    parent_div = max_card_div.find_parent("div").find_parent("div")
+    price_div = parent_div.find_all("div")
+    inner_price_divs = price_div[0].find_all("div")
+
+    if inner_price_divs:
+        raw_text = inner_price_divs[0].get_text(strip=True)
+        match = re.search(r"\d[\d\s]*", raw_text)
+        if match:
+            clean_price = match.group(0).replace(" ", "")
+            return int(clean_price)
+
+    return None
+
+
 def get_price_in_stock_by_max_card(
         soup: Tag | NavigableString,
 ) -> int | None:
@@ -436,7 +464,7 @@ def get_price_in_stock_by_max_card(
     if price_div:
         return int(price_div[0]['content'])
 
-    return None
+    return get_price_not_in_stock(soup=soup)
 
 
 def get_img_link(

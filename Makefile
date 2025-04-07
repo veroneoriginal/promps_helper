@@ -43,7 +43,7 @@ post_test:
 	pytest -s post_constructor/test/test_post.py::TestPostConstructor::test_create_hashtag_2
 
 parser_test:
-	pytest -s ga_parser/parser_v2/parser/tests/test_parser_2.py::ParserTestCase::test_get_detailed_product_type
+	pytest -s ga_parser/parser_v2/parser/tests/test_parser_2.py::ParserTestCase::test_get_price_in_stock
 
 veron_test:
 	pytest -s excel_process_data/utils/test/test_utils.py::TestUtils
