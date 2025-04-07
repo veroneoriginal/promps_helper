@@ -16,7 +16,8 @@ TEST_BEST_PRODUCT_WITHOUT_CARCINOGENS_SELECTION_RESULT = {
         "plus": "Содержит сок алоэ и масло макадамии, которые могут способствовать увлажнению и питанию волос.",
         "minus": "Содержит сульфаты и консерванты, которые могут сушить волосы и вызывать раздражение кожи головы.",
         "best_product": False,
-        "carcinogen": "Sodium c14-16 olefin sulfonate, Phenoxyethanol"
+        "carcinogen": "Sodium c14-16 olefin sulfonate, Phenoxyethanol",
+        "influence_of_carcinogens": "Benzyl Alcohol может вызывать раздражение кожи и аллергические реакции. Benzyl Benzoate и Benzyl Cinnamate могут быть потенциальными аллергенами и раздражителями."
     },
     "product_2": {
         "title": "LOREAL PROFESSIONNEL Serioxyl Advanced",
@@ -24,7 +25,8 @@ TEST_BEST_PRODUCT_WITHOUT_CARCINOGENS_SELECTION_RESULT = {
         "plus": "Содержит органические экстракты и масла, которые могут успокаивать кожу головы и укреплять волосы.",
         "minus": "Содержит сульфаты, которые могут сушить волосы и вызывать раздражение кожи головы.",
         "best_product": True,
-        "carcinogen": "Нет"
+        "carcinogen": "",
+        "influence_of_carcinogens": ""
     },
     "product_3": {
         "title": "NATURA SIBERICA Oblepikha",
@@ -32,7 +34,8 @@ TEST_BEST_PRODUCT_WITHOUT_CARCINOGENS_SELECTION_RESULT = {
         "plus": "Содержит гидролизованный кератин, шелк и масла, которые глубоко питают и увлажняют волосы, укрепляют их структуру.",
         "minus": "Может быть более дорогим по сравнению с другими средствами.",
         "best_product": False,
-        "carcinogen": "Sodium c14-16 olefin sulfonate, Phenoxyethanol"
+        "carcinogen": "Sodium c14-16 olefin sulfonate, Phenoxyethanol",
+        "influence_of_carcinogens": "Benzyl Alcohol может вызывать раздражение кожи и аллергические реакции. Benzyl Benzoate и Benzyl Cinnamate могут быть потенциальными аллергенами и раздражителями."
     },
     "result": "Лучшим средством является LOREAL PROFESSIONNEL Serioxyl Advanced. Это средство содержит гидролизованный кератин, шелк и различные масла, которые обеспечивают глубокое питание и увлажнение волос, что соответствует запросу пользователя. Оно помогает восстановить водный баланс, укрепить структуру волос и защитить их от внешних воздействий, что делает волосы мягкими, гладкими и здоровыми. В отличие от других средств, оно не содержит агрессивных сульфатов, что делает его более подходящим для сухих и ломких волос."
 }
@@ -80,11 +83,20 @@ best_elem = [
     ('Paragraph', {'Текст': '<b>Канцерогены:</b>', 'Стиль': 'BPWC_bold_1'}),
     ('Spacer', {'width': 1, 'height': 20}),
     ('Paragraph', {'Ключ в подборке': 'Канцерогены', 'Стиль': 'BPWC_normal_1'}),
+    ('NextPageTemplate', {'template_id': 'template_2'}),
+    ('PageBreak', {}),
+    ('Paragraph', {'Текст': '<b>Влияние канцерогенов:</b>', 'Стиль': 'BPWC_bold_1'}),
+    ('Spacer', {'width': 1, 'height': 30}),
+    ('Paragraph', {'Ключ в подборке': 'Влияние канцерогенов', 'Стиль': 'BPWC_normal_1'}),
 ]
 page_frames = {
     'template_1':
         (
             (0, (133, 0), (794, 1288)),  # Номер, Координаты левого нижнего угла, ширина и высота фрейма
+        ),
+    'template_2':
+        (
+            (1, (133, 0), (794, 1220)),  # Номер, Координаты левого нижнего угла, ширина и высота фрейма
         )
 }
 
@@ -116,12 +128,22 @@ no_best_elem = [
     ('Paragraph', {'Текст': '<b>Канцерогены:</b>', 'Стиль': 'BPWC_bold_1'}),
     ('Spacer', {'width': 1, 'height': 20}),
     ('Paragraph', {'Ключ в подборке': 'Канцерогены', 'Стиль': 'BPWC_normal_1'}),
+    ('NextPageTemplate', {'template_id': 'template_2'}),
+    ('PageBreak', {}),
+    ('Paragraph', {'Текст': '<b>Влияние канцерогенов:</b>', 'Стиль': 'BPWC_bold_1'}),
+    ('Spacer', {'width': 1, 'height': 30}),
+    ('Paragraph', {'Ключ в подборке': 'Влияние канцерогенов', 'Стиль': 'BPWC_normal_1'}),
 ]
 
 TEST_BEST_PRODUCT_WITHOUT_CARCINOGENS_EXPECTED_RESULT = [
     {
         'Артикул': 'артикул: 19000222491',
         'Канцерогены': 'Sodium c14-16 olefin sulfonate, Phenoxyethanol',
+        'Влияние канцерогенов': 'Benzyl Alcohol может вызывать раздражение кожи и '
+                                'аллергические реакции. Benzyl Benzoate и Benzyl '
+                                'Cinnamate могут быть потенциальными аллергенами и '
+                                'раздражителями.',
+
         'Количество мера / цена': '300 мл / 3390 руб',
         'Минусы': 'Содержит сульфаты и консерванты, которые могут сушить волосы и '
                   'вызывать раздражение кожи головы.',
@@ -142,7 +164,8 @@ TEST_BEST_PRODUCT_WITHOUT_CARCINOGENS_EXPECTED_RESULT = [
         'Элементы и стили': no_best_elem,
     },
     {'Артикул': 'артикул: 19000146259',
-     'Канцерогены': 'Нет',
+     'Канцерогены': 'Не найдены',
+     'Влияние канцерогенов': 'Не найдены',
      'Количество мера / цена': '300 мл / 2450 руб',
      'Минусы': 'Содержит сульфаты, которые могут сушить волосы и вызывать '
                'раздражение кожи головы.',
@@ -166,6 +189,11 @@ TEST_BEST_PRODUCT_WITHOUT_CARCINOGENS_EXPECTED_RESULT = [
     {
         'Артикул': 'артикул: 19000141580',
         'Канцерогены': 'Sodium c14-16 olefin sulfonate, Phenoxyethanol',
+        'Влияние канцерогенов': 'Benzyl Alcohol может вызывать раздражение кожи и '
+                                'аллергические реакции. Benzyl Benzoate и Benzyl '
+                                'Cinnamate могут быть потенциальными аллергенами и '
+                                'раздражителями.',
+
         'Количество мера / цена': '400 мл / 507 руб',
         'Минусы': 'Может быть более дорогим по сравнению с другими средствами.',
         'Название средства': 'NATURA SIBERICA Oblepikha',

@@ -16,7 +16,7 @@ def get_data_tools_for_test():
 
     # Забираю все данные из таблицы "Средства", "Тип", "Запрос" и т.д.
     data_tools = control_manager._take_data_from_table_tool(
-        file_path_tools_table='00_base/Средства.xlsx',
+        file_path_tools_table='00_base/Средства_АКТУАЛЬНАЯ.xlsx',
     )
 
     with open("dev_helpers/data.json", "w", encoding="utf-8") as file:

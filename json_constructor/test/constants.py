@@ -490,8 +490,38 @@ EXPECTED_SCHEMA_FOR_BEST_PROD_CARCINOGEN = {
                                                                                          'они '
                                                                                          'есть '
                                                                                          'в '
-                                                                                         'составе',
+                                                                                         'составе. '
+                                                                                         'Если '
+                                                                                         'нет '
+                                                                                         '- '
+                                                                                         'оставь '
+                                                                                         'пустой '
+                                                                                         'строкой',
                                                                           'type': 'string'},
+                                                           'influence_of_carcinogens': {'description': 'Опиши '
+                                                                                                       'подробно, '
+                                                                                                       'на '
+                                                                                                       'что '
+                                                                                                       'и '
+                                                                                                       'как '
+                                                                                                       'влияют '
+                                                                                                       'канцерогены '
+                                                                                                       'в '
+                                                                                                       'организме '
+                                                                                                       'человека, '
+                                                                                                       'найденные '
+                                                                                                       'в '
+                                                                                                       'средстве '
+                                                                                                       '1, '
+                                                                                                       'если '
+                                                                                                       'они '
+                                                                                                       'найдены '
+                                                                                                       'в '
+                                                                                                       'составе.Пиши '
+                                                                                                       'с '
+                                                                                                       'названиями '
+                                                                                                       'канцирогенов.',
+                                                                                        'type': 'string'},
                                                            'minus': {'description': 'Описание '
                                                                                     'минусов '
                                                                                     '1-го '
@@ -517,7 +547,8 @@ EXPECTED_SCHEMA_FOR_BEST_PROD_CARCINOGEN = {
                                                          'plus',
                                                          'minus',
                                                          'best_product',
-                                                         'carcinogen'],
+                                                         'carcinogen',
+                                                         'influence_of_carcinogens'],
                                             'type': 'object'},
                               'product_2': {'additionalProperties': False,
                                             'properties': {'article': {'description': 'Артикул '
@@ -547,8 +578,38 @@ EXPECTED_SCHEMA_FOR_BEST_PROD_CARCINOGEN = {
                                                                                          'они '
                                                                                          'есть '
                                                                                          'в '
-                                                                                         'составе',
+                                                                                         'составе. '
+                                                                                         'Если '
+                                                                                         'нет '
+                                                                                         '- '
+                                                                                         'оставь '
+                                                                                         'пустой '
+                                                                                         'строкой',
                                                                           'type': 'string'},
+                                                           'influence_of_carcinogens': {'description': 'Опиши '
+                                                                                                       'подробно, '
+                                                                                                       'на '
+                                                                                                       'что '
+                                                                                                       'и '
+                                                                                                       'как '
+                                                                                                       'влияют '
+                                                                                                       'канцерогены '
+                                                                                                       'в '
+                                                                                                       'организме '
+                                                                                                       'человека, '
+                                                                                                       'найденные '
+                                                                                                       'в '
+                                                                                                       'средстве '
+                                                                                                       '2, '
+                                                                                                       'если '
+                                                                                                       'они '
+                                                                                                       'найдены '
+                                                                                                       'в '
+                                                                                                       'составе.Пиши '
+                                                                                                       'с '
+                                                                                                       'названиями '
+                                                                                                       'канцирогенов.',
+                                                                                        'type': 'string'},
                                                            'minus': {'description': 'Описание '
                                                                                     'минусов '
                                                                                     '2-го '
@@ -574,7 +635,8 @@ EXPECTED_SCHEMA_FOR_BEST_PROD_CARCINOGEN = {
                                                          'plus',
                                                          'minus',
                                                          'best_product',
-                                                         'carcinogen'],
+                                                         'carcinogen',
+                                                         'influence_of_carcinogens'],
                                             'type': 'object'},
                               'product_3': {'additionalProperties': False,
                                             'properties': {'article': {'description': 'Артикул '
@@ -604,8 +666,38 @@ EXPECTED_SCHEMA_FOR_BEST_PROD_CARCINOGEN = {
                                                                                          'они '
                                                                                          'есть '
                                                                                          'в '
-                                                                                         'составе',
+                                                                                         'составе. '
+                                                                                         'Если '
+                                                                                         'нет '
+                                                                                         '- '
+                                                                                         'оставь '
+                                                                                         'пустой '
+                                                                                         'строкой',
                                                                           'type': 'string'},
+                                                           'influence_of_carcinogens': {'description': 'Опиши '
+                                                                                                       'подробно, '
+                                                                                                       'на '
+                                                                                                       'что '
+                                                                                                       'и '
+                                                                                                       'как '
+                                                                                                       'влияют '
+                                                                                                       'канцерогены '
+                                                                                                       'в '
+                                                                                                       'организме '
+                                                                                                       'человека, '
+                                                                                                       'найденные '
+                                                                                                       'в '
+                                                                                                       'средстве '
+                                                                                                       '3, '
+                                                                                                       'если '
+                                                                                                       'они '
+                                                                                                       'найдены '
+                                                                                                       'в '
+                                                                                                       'составе.Пиши '
+                                                                                                       'с '
+                                                                                                       'названиями '
+                                                                                                       'канцирогенов.',
+                                                                                        'type': 'string'},
                                                            'minus': {'description': 'Описание '
                                                                                     'минусов '
                                                                                     '3-го '
@@ -631,7 +723,8 @@ EXPECTED_SCHEMA_FOR_BEST_PROD_CARCINOGEN = {
                                                          'plus',
                                                          'minus',
                                                          'best_product',
-                                                         'carcinogen'],
+                                                         'carcinogen',
+                                                         'influence_of_carcinogens'],
                                             'type': 'object'},
                               'product_4': {'additionalProperties': False,
                                             'properties': {'article': {'description': 'Артикул '
@@ -661,8 +754,38 @@ EXPECTED_SCHEMA_FOR_BEST_PROD_CARCINOGEN = {
                                                                                          'они '
                                                                                          'есть '
                                                                                          'в '
-                                                                                         'составе',
+                                                                                         'составе. '
+                                                                                         'Если '
+                                                                                         'нет '
+                                                                                         '- '
+                                                                                         'оставь '
+                                                                                         'пустой '
+                                                                                         'строкой',
                                                                           'type': 'string'},
+                                                           'influence_of_carcinogens': {'description': 'Опиши '
+                                                                                                       'подробно, '
+                                                                                                       'на '
+                                                                                                       'что '
+                                                                                                       'и '
+                                                                                                       'как '
+                                                                                                       'влияют '
+                                                                                                       'канцерогены '
+                                                                                                       'в '
+                                                                                                       'организме '
+                                                                                                       'человека, '
+                                                                                                       'найденные '
+                                                                                                       'в '
+                                                                                                       'средстве '
+                                                                                                       '4, '
+                                                                                                       'если '
+                                                                                                       'они '
+                                                                                                       'найдены '
+                                                                                                       'в '
+                                                                                                       'составе.Пиши '
+                                                                                                       'с '
+                                                                                                       'названиями '
+                                                                                                       'канцирогенов.',
+                                                                                        'type': 'string'},
                                                            'minus': {'description': 'Описание '
                                                                                     'минусов '
                                                                                     '4-го '
@@ -688,7 +811,8 @@ EXPECTED_SCHEMA_FOR_BEST_PROD_CARCINOGEN = {
                                                          'plus',
                                                          'minus',
                                                          'best_product',
-                                                         'carcinogen'],
+                                                         'carcinogen',
+                                                         'influence_of_carcinogens'],
                                             'type': 'object'},
                               'result': {'description': 'Итоговая рекомендация, '
                                                         'вывод',

@@ -260,6 +260,7 @@ class TestJsonScheme(unittest.TestCase):
         )
 
         actual_schema = json_creator.get_json_scheme_for_distribution_on_task()
+        # pprint(actual_schema)
         # Проверка, что схема совпадает с ожидаемой
         self.assertDictEqual(
             actual_schema,

@@ -340,7 +340,13 @@ class JsonCreator:
                     "carcinogen": {
                         "type": "string",
                         "description": f"Названия канцерогенов {i}-го средства,"
-                                       f" если они есть в составе"
+                                       f" если они есть в составе. Если нет - оставь пустой строкой"
+                    },
+                    "influence_of_carcinogens": {
+                        "type": "string",
+                        "description": f"Опиши подробно, на что и как влияют канцерогены в организме "
+                                       f"человека, найденные в средстве {i}, если они найдены в составе."
+                                       f"Пиши с названиями канцирогенов."
                     },
                     "best_product": {
                         "type": "boolean",
@@ -348,7 +354,7 @@ class JsonCreator:
                                        " если нет, то False"
                     }
                 },
-                "required": ["title", "article", "plus", "minus", "best_product", "carcinogen"],
+                "required": ["title", "article", "plus", "minus", "best_product", "carcinogen", "influence_of_carcinogens"],
                 "additionalProperties": False
             }
 

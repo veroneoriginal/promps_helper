@@ -91,6 +91,7 @@ _MAPPING_KEYS = {
     "origin_product": "Исходное средство",
     "best_combination_product": "Подобранное средство",
     "best_set": "Лучший набор",
+    "influence_of_carcinogens": "Влияние канцерогенов",
 
     # Расширенные поля из категорий
     "skin_type_impact": "Влияние на тип кожи",

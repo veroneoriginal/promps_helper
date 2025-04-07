@@ -30,7 +30,7 @@ excel_test:
 	pytest -s excel_process_data/utils/test/test_utils.py::TestUtils::test_counting_hash_best_product
 
 jsontest:
-	pytest -s json_constructor/test/test_json_scheme.py::TestJsonScheme::test_get_json_scheme_for_analog_product
+	pytest -s json_constructor/test/test_json_scheme.py::TestJsonScheme
 
 
 prompt_test:

@@ -53,11 +53,20 @@ PDF_STRUCTURE = {
                 ('Paragraph', {'Текст': '<b>Канцерогены:</b>', 'Стиль': 'BPWC_bold_1'}),
                 ('Spacer', {'width': 1, 'height': 20}),
                 ('Paragraph', {'Ключ в подборке': 'Канцерогены', 'Стиль': 'BPWC_normal_1'}),
+                ('NextPageTemplate', {'template_id': 'template_2'}),
+                ('PageBreak', {}),
+                ('Paragraph', {'Текст': '<b>Влияние канцерогенов:</b>', 'Стиль': 'BPWC_bold_1'}),
+                ('Spacer', {'width': 1, 'height': 30}),
+                ('Paragraph', {'Ключ в подборке': 'Влияние канцерогенов', 'Стиль': 'BPWC_normal_1'}),
             ],
             'Шаблоны страниц с фреймами': {
                 'template_1':
                     (
                         (0, (133, 0), (794, 1288)),  # Номер, Координаты левого нижнего угла, ширина и высота фрейма
+                    ),
+                'template_2':
+                    (
+                        (1, (133, 0), (794, 1220)),  # Номер, Координаты левого нижнего угла, ширина и высота фрейма
                     )
             },
 
@@ -96,11 +105,20 @@ PDF_STRUCTURE = {
                 ('Paragraph', {'Текст': '<b>Канцерогены:</b>', 'Стиль': 'BPWC_bold_1'}),
                 ('Spacer', {'width': 1, 'height': 20}),
                 ('Paragraph', {'Ключ в подборке': 'Канцерогены', 'Стиль': 'BPWC_normal_1'}),
+                ('NextPageTemplate', {'template_id': 'template_2'}),
+                ('PageBreak', {}),
+                ('Paragraph', {'Текст': '<b>Влияние канцерогенов:</b>', 'Стиль': 'BPWC_bold_1'}),
+                ('Spacer', {'width': 1, 'height': 30}),
+                ('Paragraph', {'Ключ в подборке': 'Влияние канцерогенов', 'Стиль': 'BPWC_normal_1'}),
             ],
             'Шаблоны страниц с фреймами': {
                 'template_1':
                     (
                         (0, (133, 0), (794, 1288)),  # Номер, Координаты левого нижнего угла, ширина и высота фрейма
+                    ),
+                'template_2':
+                    (
+                        (1, (133, 0), (794, 1220)),  # Номер, Координаты левого нижнего угла, ширина и высота фрейма
                     )
             },
 
@@ -181,6 +199,7 @@ class BestProductWithOutConcerogensPDFTemplateCreator:
         product_article = one_product_data['Артикул в Золотом Яблоке']
 
         cancirogens = one_product_data['Канцерогены']
+        influence_of_carcinogens = one_product_data['Влияние канцерогенов']
         template_data = {
             'Плюсы': one_product_data['Плюсы'],
             'Минусы': one_product_data['Минусы'],
@@ -189,7 +208,8 @@ class BestProductWithOutConcerogensPDFTemplateCreator:
                 path_to_output_folder_pdf_file=self.path_to_output_folder_pdf_file,
                 product_article=product_article,
             ),
-            'Канцерогены': cancirogens if cancirogens else "Нет",
+            'Канцерогены': cancirogens if cancirogens else "Не найдены",
+            'Влияние канцерогенов': influence_of_carcinogens if influence_of_carcinogens else "Не найдены",
         }
 
         base_product_data = get_base_info_by_product(
