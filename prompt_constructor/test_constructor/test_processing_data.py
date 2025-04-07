@@ -2,7 +2,7 @@
 import unittest
 
 from prompt_constructor.prompt_processing_data import PromptProcessingData
-from prompt_constructor.test_constructor.constants import (
+from prompt_constructor.test_constructor.constants_for_tests import (
     BEST_SET_DECRYPED,
     DECRYPT_BEST_PROD,
     DECRYPT_BEST_ONE_PROD,
@@ -50,7 +50,7 @@ class TestProcessingData(unittest.TestCase):
             data_collection=data_collection,
             key_for_decrypted='Средства',
         )
-
+        print(decrypted_products)
         self.maxDiff = None
         self.assertEqual(decrypted_products, BEST_SET_DECRYPED)
 

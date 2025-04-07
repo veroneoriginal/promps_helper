@@ -37,7 +37,7 @@ prompt_test:
 	pytest -s prompt_constructor/test_constructor/test_constructor.py::TestPromptConstructor
 
 proc_test:
-	pytest -s prompt_constructor/test_constructor/test_processing_data.py::TestProcessingData::test_decryption_key_best_set
+	pytest -s prompt_constructor/test_constructor/test_processing_data.py::TestProcessingData::test_decryption_key_best_couple
 
 post_test:
 	pytest -s post_constructor/test/test_post.py::TestPostConstructor::test_create_hashtag_2

@@ -4,13 +4,12 @@
 import copy
 
 import unittest
-# from pprint import pprint
 from prompt_constructor.prompt_constructor import PromptConstructor
 from prompt_constructor.prompt_processing_data import PromptProcessingData
 
 from prompt_constructor.test_constructor.data_tools import data_tools
 
-from prompt_constructor.test_constructor.constants import (
+from prompt_constructor.test_constructor.constants_for_tests import (
     decrypted_collection_one_product,
     prompt_for_one_product,
     decrypted_collection_carcinogen_free,
