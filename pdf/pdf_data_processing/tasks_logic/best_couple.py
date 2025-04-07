@@ -186,13 +186,13 @@ class BestCouplePDFTemplateCreator:
             'Путь к изображению средства 1': product_1_base_data['Путь к изображению средства'],
             'Название средства 1': product_1_name,
             'Тип продукта 1': product_1_base_data['Тип продукта'],
-            'Артикул 1': f'артикул: {product_1_base_data["Артикул"]}',
+            'Артикул 1': f'{product_1_base_data["Артикул"]}',
             'Количество мера / цена 1': product_1_base_data['Количество мера / цена'],
 
             'Путь к изображению средства 2': product_2_base_data['Путь к изображению средства'],
             'Название средства 2': product_2_name,
             'Тип продукта 2': product_2_base_data['Тип продукта'],
-            'Артикул 2': f'артикул: {product_2_base_data["Артикул"]}',
+            'Артикул 2': f'{product_2_base_data["Артикул"]}',
             'Количество мера / цена 2': product_2_base_data['Количество мера / цена'],
             'Путь для сохранения pdf-файла': get_path_for_save_pdf(
                 product_title=product_1_name,

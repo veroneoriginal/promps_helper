@@ -130,12 +130,11 @@ class PromptProcessingData:
 
         list_cosmetic_products = []
 
-        for key, value in cosmetic_products.items():
+        for product_name_article, value in cosmetic_products.items():
             list_cosmetic_products.append(
-                f"{value['Номер']} - {key}. "
+                f"{value['Номер']} - {product_name_article[0]}. "
                 f"Артикул: {value['Артикул в Золотом Яблоке']}. "
                 f"Состав: {value['Состав']}. Тип продукта: {value['Тип продукта']}. ")
-
         # строка, которая объединяет инфо о всех сред-х в единый текст блок с переносами строк
         return "\n".join(list_cosmetic_products)
 
@@ -186,13 +185,13 @@ class PromptProcessingData:
             product_article = product_name_article[1]
 
             # ищем данные по product_name в основном data словаре
-            formated_products[product_name] = self.decryped_dict_with_one_product(
+            formated_products[product_name_article] = self.decryped_dict_with_one_product(
                 data=data,
                 product_name=product_name,
                 product_article=product_article,
             )
 
-            formated_products[product_name]["Номер"] = product_key
+            formated_products[product_name_article]["Номер"] = product_key
 
         return formated_products
 
@@ -220,6 +219,7 @@ class PromptProcessingData:
             products=products,
         )
         # преобразование словаря со средствами в строку
+
         return self._conversion_products(cosmetic_products=formated_products)
 
     def _format_set_for_prompt(
@@ -237,12 +237,11 @@ class PromptProcessingData:
 
         for product_group_name, products in product_set.items():
             lines.append(f"\n{product_group_name}:")
-            for product_name, product_info in products.items():
-                lines.append(f"Продукт: {product_name}. "
+            for product_name_article, product_info in products.items():
+                lines.append(f"Продукт: {product_name_article[0]}. "
                              f"Артикул: {product_info['Артикул в Золотом Яблоке']}. "
                              f"Тип продукта: {product_info.get('Тип продукта', 'Не указан')}. "
                              f"Состав: {product_info.get('Состав', 'Не указан')}. ")
-
         return "\n".join(lines)
 
     def decrypting_best_couple(
@@ -272,7 +271,6 @@ class PromptProcessingData:
                 data=data,
                 products=product_dict,
             )
-
             group_products[product_group_name] = formated_products
 
         return self._format_set_for_prompt(product_set=group_products)
