@@ -19,7 +19,6 @@ def get_prompt(
     # создание копии словаря с текущей подборкой,
     # т.к. иначе не добраться до кода задачи
     copy_data_collection = copy.deepcopy(data_collection)
-
     # расшифровка данных текущей подборки с помощью таблицы со всеми средствами
     prompt_proces_data = PromptProcessingData(
         data_tools=data_tools,

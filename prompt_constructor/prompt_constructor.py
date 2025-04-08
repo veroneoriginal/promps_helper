@@ -17,13 +17,14 @@ class PromptConstructor:
             'Наименее похож': 'метод который расшифровывает словарь для этого кода задачи',
         }
 
-    def create_prompt(
+    def create_prompt_with_user_parameters(
             self,
             data_decrypted: dict,
             task: dict,
     ) -> dict:
         """
-        Метод для формирования текстового промпта для отправки в OPENAI
+        Метод для формирования текстового промпта для отправки в OPENAI с учётом
+        параметров пользователя
 
         :param data_decrypted: словарь с расшифрованными данными по текущей подборке
         :param task: строка с кодом задачи по текущей подборке
@@ -42,6 +43,27 @@ class PromptConstructor:
 {self.prompts[task](data_decrypted=data_decrypted)}
 
 Ответ ты должен дать в следующем виде: {data_decrypted['Задача']}"""
+        }
+
+    def create_prompt_without_user_parameters(
+            self,
+            data_decrypted: dict,
+            task: dict,
+    ) -> dict:
+        """
+        Метод для формирования текстового промпта для отправки в OPENAI БЕЗ учёта
+        параметров пользователя
+
+        :param data_decrypted: словарь с расшифрованными данными по текущей подборке
+        :param task: строка с кодом задачи по текущей подборке
+        :return: словарь с системным промптом и основным промптом за отправки запроса.
+        """
+
+
+        return {
+            'system_prompt': f"{data_decrypted['Специалист']}",
+            'prompt': f"""{self.prompts[task](data_decrypted=data_decrypted)}
+    Ответ ты должен дать в следующем виде: {data_decrypted['Задача']}"""
         }
 
     def products_for_code_analogue_product(
@@ -164,7 +186,13 @@ class PromptConstructor:
         :return: словарь с промптом
         """
 
-        return self.create_prompt(
+        if data_decrypted['Параметры'].strip().lower() == 'учитывать':
+
+            return self.create_prompt_with_user_parameters(
+                data_decrypted=data_decrypted,
+                task=task,
+            )
+        return self.create_prompt_without_user_parameters(
             data_decrypted=data_decrypted,
             task=task,
         )

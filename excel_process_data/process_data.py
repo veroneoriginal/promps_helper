@@ -44,14 +44,14 @@ class ExcelManager:
     def write_value_to_cell(
             self,
             ws_title: str,
-            row: int,
+            row_number: int,
             column_name: str,
             value: str | int | float, ):
         """
         Записывает значение в заданную ячейку по имени столбца и номеру строки.
 
         :param ws_title: Название листа
-        :param row: Номер строки (начиная с 1)
+        :param row_number: Номер строки (начиная с 1)
         :param column_name: Название столбца (заголовок из первой строки)
         :param value: Значение для записи
         """
@@ -66,7 +66,7 @@ class ExcelManager:
             raise ValueError(f"Столбец '{column_name}' не найден среди заголовков.")
 
         column_index = headers[column_name] + 1
-        sheet.cell(row=row, column=column_index, value=value)
+        sheet.cell(row=row_number, column=column_index, value=value)
         self.save_wb()
 
     def _load_data(

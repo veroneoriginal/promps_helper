@@ -1,3 +1,4 @@
+import re
 from datetime import datetime
 from pathlib import Path
 
@@ -152,6 +153,7 @@ class DirsConstructor:
         :param prefix: префикс - платная группа или бесплатная
         :return: Путь к созданной папке категории
         """
+        category = re.sub(r'[^a-zA-Z0-9а-яА-ЯёЁ]', '_', category)
         category_folder_name = f"{new_folder_number}_{category}_{prefix}"
         category_folder = base_output_folder / category_folder_name
         category_folder.mkdir(exist_ok=True)

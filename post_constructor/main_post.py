@@ -75,17 +75,18 @@ def create_post(
     """
     Универсальный генератор постов (короткая/подробная версия)
     """
-    collection_data['Тип'] = build_description(
-        code_string=collection_data['Тип'],
-        section_data=data_tools['Тип'],
-        detailed=detailed
-    )
+    if collection_data['Параметры'].lower().strip() == 'учитывать':
+        collection_data['Тип'] = build_description(
+            code_string=collection_data['Тип'],
+            section_data=data_tools['Тип'],
+            detailed=detailed
+        )
 
-    collection_data['Запрос'] = build_description(
-        code_string=collection_data['Запрос'],
-        section_data=data_tools['Запрос'],
-        detailed=detailed
-    )
+        collection_data['Запрос'] = build_description(
+            code_string=collection_data['Запрос'],
+            section_data=data_tools['Запрос'],
+            detailed=detailed
+        )
 
     # добавляем хештег
     collection_data['Хештег'] = create_hashtag(
@@ -166,16 +167,17 @@ def forming_text_for_posts(
     :param path_for_save: путь, по которому сохранять пост
     :return: None
     """
-    create_post_detailed(
-        data_tools=data_tools,
-        collection_data=deepcopy(collection_data),
-        path_to_result_recommend=path_to_result_recommend,
-        path_for_save=path_for_save,
-    )
-
     create_post_short(
         data_tools=data_tools,
         collection_data=deepcopy(collection_data),
         path_to_result_recommend=path_to_result_recommend,
         path_for_save=path_for_save,
     )
+
+    if collection_data['Параметры'].lower().strip() == 'учитывать':
+        create_post_detailed(
+            data_tools=data_tools,
+            collection_data=deepcopy(collection_data),
+            path_to_result_recommend=path_to_result_recommend,
+            path_for_save=path_for_save,
+        )

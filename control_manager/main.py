@@ -7,7 +7,10 @@ from pathlib import Path
 from dotenv import load_dotenv
 from appeal_to_openai.main import main as appeal_to_openai_main
 from appeal_to_openai.utils import checking_file_with_response
-from control_manager.utils import create_dict_from_str
+from control_manager.utils import (
+    create_dict_from_str,
+    is_collection_without_user_parameters,
+)
 from dirs_structure_constructor.main import DirsConstructor
 from excel_process_data.hash_utils import counting_hash, is_hash_unique
 from excel_process_data.process_data import ExcelManager
@@ -96,7 +99,7 @@ class ControlManager:
 
         return collections_data
 
-    def _create_context_for_request_to_openai(
+    def request_to_openai(
             self,
             prompt_for_convert: dict,
             json_scheme: dict,
@@ -133,7 +136,7 @@ class ControlManager:
             self,
             file_path_collection: str,
             ws_title: str,
-            row: int,
+            row_number: int,
             column_name: str,
             value: str | int | float,
     ) -> None:
@@ -142,7 +145,7 @@ class ControlManager:
 
         :param file_path_collection: путь до документа Подборки.xlsx
         :param ws_title: Название листа
-        :param row: Номер строки (начиная с 1)
+        :param row_number: Номер строки (начиная с 1)
         :param column_name: Название столбца (заголовок из первой строки)
         :param value: Значение для записи
         """
@@ -151,7 +154,7 @@ class ControlManager:
 
         excel_manager.write_value_to_cell(
             ws_title=ws_title,
-            row=row,
+            row_number=row_number,
             column_name=column_name,
             value=value,
         )
@@ -195,6 +198,37 @@ class ControlManager:
         #     where_copy_from=paths_by_task[task_name]['jpg'],
         #     where_copy_to=self.paths_to_folders['pinterest_jpg'],
         # )
+
+    def check_user_parameters_in_collection(
+            self,
+            collection_data: dict,
+            file_path_collection: str,
+            ws_title: str,
+            row_number: int,
+
+    ):
+        """
+        Если в подборке НЕ НУЖНО учитывать параметры - отчищает
+        столбцы с параметрами.
+        :param collection_data: данные подборки
+        :param file_path_collection: путь до документа Подборки.xlsx
+        :param ws_title: Название листа
+        :param row_number: Номер строки (начиная с 1)
+        :return: подборку
+        """
+        COLUMS = {'Пол', 'Возраст', 'Тип', 'Запрос'}
+        if is_collection_without_user_parameters(collection_data=collection_data):
+            # Обнуляем столбцы параметров в подборке в таблице
+            for col in COLUMS:
+                self.update_collection_data_in_database(
+                    file_path_collection=file_path_collection,
+                    ws_title=ws_title,
+                    row_number=row_number,
+                    column_name=col,
+                    value='',
+                )
+                collection_data.pop(col, None)
+        return collection_data
 
     def recreate_pdf_and_posts(
             self,
@@ -298,6 +332,13 @@ class ControlManager:
         total = len(collections)
         for i, (row_number, collection_data) in enumerate(collections.items(), start=1):
             print(f'Готовим подборку из строки № {row_number}.')
+
+            collection_data = self.check_user_parameters_in_collection(
+                collection_data=collection_data,
+                file_path_collection=file_path_collection,
+                ws_title='Подборки',
+                row_number=row_number,
+            )
             print('Считаем хеш и проверяем подборку на уникальность.')
             hash_collection = str(counting_hash(data=collection_data))
             result = is_hash_unique(
@@ -350,7 +391,7 @@ class ControlManager:
             )
 
             print('Отправка запроса в OpenAI.')
-            self._create_context_for_request_to_openai(
+            self.request_to_openai(
                 prompt_for_convert=prompt,
                 json_scheme=json_scheme,
                 folder_name=self.paths_to_folders["00_source_02_answer_gpt"],
@@ -379,7 +420,7 @@ class ControlManager:
             self.update_collection_data_in_database(
                 file_path_collection=file_path_collection,
                 ws_title='Подборки',
-                row=row_number,
+                row_number=row_number,
                 column_name='Путь',
                 value=self.paths_to_folders['folder_path'],
             )
@@ -388,7 +429,7 @@ class ControlManager:
             self.update_collection_data_in_database(
                 file_path_collection=file_path_collection,
                 ws_title='Подборки',
-                row=row_number,
+                row_number=row_number,
                 column_name='Хеш',
                 value=hash_collection,
             )

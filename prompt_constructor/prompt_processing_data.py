@@ -291,26 +291,6 @@ class PromptProcessingData:
         # расшифровка средств в зависимости от задачи
         function_for_decryption_products = self.method_for_task_code[data_collection["Задача"]]
 
-        data_collection["Средства"] = function_for_decryption_products(
-            data=data_tools,
-            data_collection=data_collection,
-            key_for_decrypted="Средства",
-        )
-
-        # расшифровка данных по ключу Тип
-        data_collection['Тип'] = self.decrypting_data_from_cell(
-            data=data_tools,
-            data_collection=data_collection,
-            key_for_decrypted="Тип",
-        )
-
-        # расшифровка данных по ключу Запрос
-        data_collection["Запрос"] = self.decrypting_data_from_cell(
-            data=data_tools,
-            data_collection=data_collection,
-            key_for_decrypted="Запрос",
-        )
-
         # расшифровка данных по ключу Задача - ее содержимое пойдет в settings
         data_collection["Задача"] = self._decrypting_info_from_cell(
             data=data_tools,
@@ -318,11 +298,32 @@ class PromptProcessingData:
             key_for_decrypted="Задача",
         )
 
-        # расшифровка данных по ключу Специалист - ее содержимое пойдет в system
-        data_collection["Специалист"] = self._decrypting_info_from_cell(
+        data_collection["Средства"] = function_for_decryption_products(
             data=data_tools,
             data_collection=data_collection,
-            key_for_decrypted="Специалист",
+            key_for_decrypted="Средства",
         )
+
+        if data_collection['Параметры'].strip().lower() == 'учитывать':
+            # расшифровка данных по ключу Тип
+            data_collection['Тип'] = self.decrypting_data_from_cell(
+                data=data_tools,
+                data_collection=data_collection,
+                key_for_decrypted="Тип",
+            )
+
+            # расшифровка данных по ключу Запрос
+            data_collection["Запрос"] = self.decrypting_data_from_cell(
+                data=data_tools,
+                data_collection=data_collection,
+                key_for_decrypted="Запрос",
+            )
+
+            # расшифровка данных по ключу Специалист - ее содержимое пойдет в system
+            data_collection["Специалист"] = self._decrypting_info_from_cell(
+                data=data_tools,
+                data_collection=data_collection,
+                key_for_decrypted="Специалист",
+            )
 
         return data_collection

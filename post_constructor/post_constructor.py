@@ -151,9 +151,64 @@ class PostConstructor:
             task: str,
     ) -> str:
         """
+        Вызывает нужный метод для формирования поста в зависимости от того,
+        учитываются ли данные пользователя или нет
+
+        :param data: словарь с данными о пользователе и косметических средствах
+        :param path_to_result_recommend: путь до json-файла, в котором находится
+        ответ от GPT по подборке
+        :param task: код задачи по текущей подборке
+
+        :return: строка с данными о пользователе, его потребностях, итог.рекомендацией
+        """
+        if data['Параметры'].strip().lower() == 'учитывать':
+            return self.create_text_for_post_with_user_parameters(
+                data=data,
+                path_to_result_recommend=path_to_result_recommend,
+                task=task,
+            )
+        return self.create_text_for_post_without_user_parameters(
+            data=data,
+            path_to_result_recommend=path_to_result_recommend,
+        )
+
+    def create_text_for_post_without_user_parameters(
+            self,
+            data: dict,
+            path_to_result_recommend: str,
+    ) -> str:
+        """
         Метод с общей информацией для поста:
-        1) Формирует текст для поста с информацией о пользователе,
-        его потребностях и итоговой рекомендации по средствам.
+        Формирует текст для поста с информацией о пользователе,
+        его потребностях и итоговой рекомендации по средствам БЕЗ УЧЁТА данных пользователя
+
+        :param data: словарь с данными о пользователе и косметических средствах
+        :param path_to_result_recommend: путь до json-файла, в котором находится
+        ответ от GPT по подборке
+
+        :return: строка с данными о пользователе, его потребностях, итог.рекомендацией
+        """
+
+        # Забираем ключ 'result'
+        result_recommend = self.load_result_recommendation(result_dir=path_to_result_recommend).strip()
+
+        # Формируем содержимое поста
+        return f"""**🏆 Итоговая рекомендация по текущей подборке**:
+        
+{result_recommend}
+
+{data['Хештег']}"""
+
+    def create_text_for_post_with_user_parameters(
+            self,
+            data: dict,
+            path_to_result_recommend: str,
+            task: str,
+    ) -> str:
+        """
+        Метод с общей информацией для поста:
+        Формирует текст для поста с информацией о пользователе,
+        его потребностях и итоговой рекомендации по средствам С УЧЁТОМ данных пользователя
 
         :param data: словарь с данными о пользователе и косметических средствах
         :param path_to_result_recommend: путь до json-файла, в котором находится
@@ -164,14 +219,14 @@ class PostConstructor:
         """
 
         # Забираем ключ 'result'
-        result_recommend = self.load_result_recommendation(result_dir=path_to_result_recommend)
+        result_recommend = self.load_result_recommendation(result_dir=path_to_result_recommend).strip()
 
         # формируем содержимое пользовательского запроса
         user_request = self.post_for_task[task](data=data)
         gender = data["Пол"]
         # 4. Формируем содержимое поста
         return f"""**📌 Подборка средств для**:
-    
+
 **{get_smile_for_key(gender)} Пол:** {gender}  
 **🎂 Возраст:** {data["Возраст"]} года/лет
 {data["Тип"]}

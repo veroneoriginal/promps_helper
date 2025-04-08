@@ -1,6 +1,7 @@
 import copy
 import hashlib
 
+from control_manager.utils import is_collection_without_user_parameters
 from excel_process_data.process_data import ExcelManager
 
 
@@ -48,18 +49,18 @@ def counting_hash(
 
     # Создаем копию словаря с данными по текущей подборке, чтобы не изменять оригинал
     data_copy = copy.deepcopy(data)
-
-    # приводим к кортежу
-    data_copy['Средства'] = get_values(data_copy['Средства'])
-    # приводим к спискам
-    data_copy['Тип'] = normalize_list_string(data['Тип'])
-    data_copy['Запрос'] = normalize_list_string(data['Запрос'])
+    if not is_collection_without_user_parameters(collection_data=data):
+        # приводим к кортежу
+        data_copy['Средства'] = get_values(data_copy['Средства'])
+        # приводим к спискам
+        data_copy['Тип'] = normalize_list_string(data['Тип'])
+        data_copy['Запрос'] = normalize_list_string(data['Запрос'])
 
     # Сбор значений для хеша
-    exclude_keys = {"Категория", "Группа", "Путь", "Хеш", "Пересоздать PDF"}
+    include_keys = {"Пол", "Возраст", "Тип", "Запрос", "Задача", "Специалист", "Средства"}
     list_for_hash = []
     for key, value in data_copy.items():
-        if key in exclude_keys:
+        if key not in include_keys:
             continue
         if isinstance(value, (list, tuple)):
             # Разворачиваем список или кортеж
