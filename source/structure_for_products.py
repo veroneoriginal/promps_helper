@@ -108,7 +108,6 @@ laundry_care = {
     "suitable_for_baby_clothes": ("string", "Подходит для детской одежды (да/нет)"),  # 'Подходит для детской одежды'
     "concentrated": ("string", "Концентрированная формула (да/нет)"),  # 'Концентрированный кондиционер'
     "biodegradable_formula": ("string", "Биоразлагаемая формула (да/нет)"),  # 'Биоразлагаемая формула'
-
     # Порошки и гели
     "suitable_fabrics": ("string", "Подходит для типов ткани (хлопок, синтетика и т.д.)"),  # 'Типы тканей'
     "wash_temperature_range": ("string", "Температурный режим стирки (например, 30–90°C)"),  # 'Температурный режим'
@@ -167,6 +166,44 @@ _MAPPING_KEYS = {
     "hair_feel": "Ощущение на волосах",
     "main_notes": "Основные ноты",
     "scent_evolution": "Раскрытие аромата",
+    # Уход за зубами и полостью рта
+    "whitening_effect": "Отбеливающий эффект",
+    "sensitivity_level": "Уровень чувствительности",
+    "freshness_duration": "Длительность свежести дыхания",
+    "abrasiveness": "Абразивность",
+    "fluoride_content": "Содержание фтора",
+    "antibacterial_effect": "Антибактериальный эффект",
+    "alcohol_free": "Без содержания спирта",
+    "rinse_duration": "Время полоскания",
+    "flavor_type": "Тип вкуса/аромата",
+    "burning_sensation": "Ощущение жжения",
+    # Уход за губами
+    "moisturizing_effect": "Увлажняющий эффект",
+    "sun_protection": "Наличие SPF",
+    "repair_effect": "Восстанавливающий эффект",
+    "finish_type": "Тип финиша",
+    "flavor_or_scent": "Аромат или вкус",
+    "tint_presence": "Наличие оттенка",
+    # Кондиционеры
+    "softening_level": "Степень смягчения ткани",
+    "fragrance_type": "Тип аромата",
+    "fragrance_intensity": "Интенсивность аромата",
+    "static_reduction": "Снижение статического эффекта",
+    "easy_ironing_effect": "Эффект лёгкой глажки",
+    "suitable_for_baby_clothes": "Подходит для детской одежды",
+    "concentrated": "Концентрированный кондиционер",
+    "biodegradable_formula": "Биоразлагаемая формула",
+    # Порошки и гели
+    "suitable_fabrics": "Типы тканей",
+    "wash_temperature_range": "Температурный режим",
+    "stain_removal_level": "Удаление пятен",
+    "color_protection": "Защита цвета",
+    "suitable_for_white_laundry": "Для белого белья",
+    "hypoallergenic": "Гипоаллергенность",
+    # Ополаскиватели после стирки (если используются отдельно от кондиционеров)
+    "residue_removal": "Удаление остатков моющего средства",
+    "extra_rinse_needed": "Нужно ли дополнительное полоскание",
+    "fabric_freshness_boost": "Дополнительная свежесть ткани",
 }
 
 MAPPING_KEYS = MappingProxyType(_MAPPING_KEYS)
@@ -179,5 +216,8 @@ PARAMETERS_DIF_PRODUCT_CATEGORIES = {
     "Макияж": makeup,
     "Парфюмерия": perfumery,
     "Стайлинг волос": hair_styling,
+    "Уход за зубами и полостью рта": oral_care,
+    "Уход за губами": lip_care,
+    "Стирка и уход за бельём": laundry_care,
     "Маппинг": MAPPING_KEYS,
 }
