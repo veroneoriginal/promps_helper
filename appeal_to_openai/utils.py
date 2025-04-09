@@ -48,7 +48,7 @@ def _formation_context(
 def _generate_text_content_openai(
         api_key: str,
         context: list,
-        model: Literal["gpt-4o", "gpt-4o-mini", "gpt-3.5-turbo"],
+        model: Literal["gpt-4o", "gpt-4o-mini", "gpt-4.5-preview"],
         json_scheme: dict,
 ) -> ChatCompletion:
     """
