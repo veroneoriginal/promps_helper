@@ -1,3 +1,5 @@
+# pylint: disable=E0611: no-name-in-module
+
 import re
 
 from reportlab.lib.enums import TA_JUSTIFY
