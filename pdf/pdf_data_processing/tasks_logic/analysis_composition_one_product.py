@@ -355,9 +355,10 @@ class AnalisisCompositionProductPDFTemplateCreator:
         """
 
         product_name = self.rus_selection_result['Название средства']
+        product_name_lower = product_name.lower().strip()
         product_article = one_product_data['Артикул в Золотом Яблоке']
 
-        product_data_in_data_tools = self.info_data['Средства'][product_name][product_article]
+        product_data_in_data_tools = self.info_data['Средства'][product_name_lower][product_article]
 
         template_data = {  # отличается:
             'Плюсы': one_product_data['Плюсы'],
