@@ -27,7 +27,7 @@ def build_description(
     result_lines = []
     for key, values in grouped.items():
         smile = get_smile_for_key(key)
-        line = f"**{smile} {key}:**" + ",".join(values)
+        line = f"{smile} **{key}:**" + ",".join(values)
         result_lines.append(line)
 
     return "\n".join(result_lines)
@@ -45,11 +45,11 @@ def get_smile_for_key(key: str) -> str:
         # Запрос
         'волосы': '🙆',
         'кожа головы': '💆',
-        'кожа лица': '🥽',
+        'кожа лица': '😊',
         # Тип
         'тип волос': '🙆',
         'тип кожи головы': '💆',
-        'тип кожи лица': '🥽',
+        'тип кожи лица': '😊',
     }
 
     return SMILES.get(key.lower(), '🔹')
