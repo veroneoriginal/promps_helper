@@ -208,6 +208,14 @@ class ExcelManager:
         else:
             self.wb.save(file_path)
 
+    def close_wb(self) -> None:
+        """
+        Метод для для закрытия книги эксель
+
+        :return: None
+        """
+        self.wb.close()
+
     def load_type_data(
             self,
             ws_title: str,

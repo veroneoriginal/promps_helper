@@ -345,15 +345,13 @@ class ControlManager:
             print('Считаем хеш и проверяем подборку на уникальность.')
             hash_collection = str(counting_hash(data=collection_data))
             result = is_hash_unique(
-                ws_title='Подборки',
                 file_path_collection=file_path_collection,
                 hash_collection=hash_collection,
                 row_number=row_number,
             )
             # если не уникальная подборка
             if result:
-                print(f'При проверке хеша подборки в строке {row_number} нашли такой же хеш'
-                      f' в строке {result} и выделили её красным')
+                print(result)
                 return None
             print('Подборка уникальна, продолжаем.')
 

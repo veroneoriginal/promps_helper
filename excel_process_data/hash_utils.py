@@ -6,34 +6,86 @@ from excel_process_data.process_data import ExcelManager
 
 
 def is_hash_unique(
-        ws_title: str,
         file_path_collection: str,
         hash_collection: str,
         row_number: int,
-) -> int | None:
+) -> str | None:
     """
     Проверяет хеш подборки на уникальность.
+    Сначала проверяет совпадения в новых подборках, потом в архиве.
     Возвращает номер строки, если подборка не уникальна
 
     :param file_path_collection: путь до таблицы с подборками
-    :param ws_title: имя листа с подборками
     :param hash_collection: хеш подборки
     :param row_number: нмоер строки с проверяемой подборкой
     """
+    # проверяет совпадения в новых подборках
+    un_unique_in_new_collection = check_hash_in_collection(
+        ws_title='Подборки',
+        file_path_collection=file_path_collection,
+        hash_collection=hash_collection,
+    )
+    if un_unique_in_new_collection:
+        excel_manager = ExcelManager(file_path=file_path_collection)
+        excel_manager.fill_row_color(
+            ws_title='Подборки',
+            row_nums=(un_unique_in_new_collection, row_number),
+        )
+        excel_manager.save_wb()
+        excel_manager.close_wb()
+        return (
+            f'При проверке хеша подборки в строке {row_number} '
+            f'⚠ нашли такой же хеш в новых подборках ⚠'
+            f' в строке {un_unique_in_new_collection} и выделили её красным'
+        )
+    # проверяет совпадения в архивных подборках
+    un_unique_in_arhiv_collection = check_hash_in_collection(
+        ws_title='Архив',
+        file_path_collection=file_path_collection,
+        hash_collection=hash_collection,
+    )
+    if un_unique_in_arhiv_collection:
+        excel_manager = ExcelManager(file_path=file_path_collection)
+        excel_manager.fill_row_color(
+            ws_title='Подборки',
+            row_nums=(row_number,),
+        )
+        excel_manager.fill_row_color(
+            ws_title='Архив',
+            row_nums=(un_unique_in_arhiv_collection,),
+        )
+        excel_manager.save_wb()
+        excel_manager.close_wb()
+        return (
+            f'При проверке хеша подборки в строке {row_number} '
+            f'⚠ нашли такой же хеш в архиве подборок ⚠'
+            f' в строке {un_unique_in_arhiv_collection} и выделили её красным'
+        )
+
+    return None
+
+
+def check_hash_in_collection(
+        ws_title: str,
+        file_path_collection: str,
+        hash_collection: str,
+):
+    """
+    Проверяет хеш на уникальность.
+    Кортеж хешей формирует из столбца "Хеш" из указанного листа
+    :param file_path_collection: путь до книги эксель
+    :param ws_title: имя листа
+    :param hash_collection: хеш подборки
+    """
 
     excel_manager = ExcelManager(file_path=file_path_collection)
+
     all_collection_hash = excel_manager.get_column_values(
         ws_title=ws_title,
         column_title='Хеш'
     )
-    un_unique_row_number = all_collection_hash.get(hash_collection)
-    if un_unique_row_number:
-        excel_manager.fill_row_color(
-            ws_title=ws_title,
-            row_nums=(un_unique_row_number, row_number),
-        )
-        excel_manager.save_wb()
-
+    un_unique_row_number = all_collection_hash.get(hash_collection, None)
+    excel_manager.close_wb()
     return un_unique_row_number
 
 
