@@ -1,7 +1,9 @@
-from copy import deepcopy
 from pathlib import Path
 
-from pdf.creator_logic.creator.document_creator import PDFBaseDocTemplateWithBrandLine, PDFPageTemplateandFrameBuilder
+from pdf.creator_logic.creator.document_creator import (
+    PDFBaseDocTemplateWithBrandLine,
+    PDFPageTemplateandFrameBuilder,
+)
 from pdf.textpost_pdf_creator.utils import create_emodji_flowables
 
 
@@ -50,7 +52,8 @@ class PDFTextPostProcessor:
         page_frames = {
             'template_1':
                 (
-                    (0, (110, 0), (850, 1250)),  # Номер, Координаты левого нижнего угла, ширина и высота фрейма
+                    # Номер, Координаты левого нижнего угла, ширина и высота фрейма
+                    (0, (110, 0), (850, 1250)),
                 ),
         }
         # Создаём шаблоны страниц с фреймами

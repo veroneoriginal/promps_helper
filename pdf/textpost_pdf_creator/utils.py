@@ -1,6 +1,7 @@
+import re
+
 from reportlab.lib.enums import TA_JUSTIFY
 
-from emojipy import Emoji
 from reportlab.platypus import (
     Paragraph,
     Spacer,
@@ -11,7 +12,7 @@ from reportlab.lib.styles import (
 )
 from reportlab.lib.units import mm
 
-import re
+from emojipy import Emoji
 
 
 def convert_markdown_to_html(text: str) -> str:
