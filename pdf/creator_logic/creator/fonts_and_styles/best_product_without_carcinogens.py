@@ -9,20 +9,20 @@ BEST_PRODUCT_WITHOUT_CARCINOGENS_STYLES = {
     'BPWC_title_1': ParagraphStyle(
         'BPWC_title_1',
         fontName="Montserrat-Bold",
-        fontSize=25,
+        fontSize=23,
         alignment=TA_CENTER,
-        leading=35,
+        leading=25,
     ),
     'BPWC_base_price_1': ParagraphStyle(
         'BPWC_base_price_1',
-        fontName="Montserrat-Bold",
+        fontName="Montserrat-SemiBold",
         fontSize=18,
         alignment=TA_RIGHT,
     ),
     'BPWC_bold_1': ParagraphStyle(
         'BPWC_bold_1',
         fontName="Montserrat-Bold",
-        fontSize=21,
+        fontSize=18,
         alignment=TA_LEFT,
     ),
 
@@ -38,7 +38,7 @@ BEST_PRODUCT_WITHOUT_CARCINOGENS_STYLES = {
         'BPWC_normal_2',
         fontName="Montserrat-Regular",
         alignment=TA_CENTER,
-        fontSize=20,
-        leading=20,
+        fontSize=15,
+        leading=17,
     ),
 }
