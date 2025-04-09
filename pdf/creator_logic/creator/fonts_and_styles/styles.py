@@ -11,6 +11,7 @@ from pdf.creator_logic.creator.fonts_and_styles.best_product import BEST_PRODUCT
 from pdf.creator_logic.creator.fonts_and_styles.best_product_without_carcinogens import (
     BEST_PRODUCT_WITHOUT_CARCINOGENS_STYLES,
 )
+from pdf.creator_logic.creator.fonts_and_styles.textpost import TEXTPOST_STYLES
 
 FONTS = (
     ("DejaVuSans", "00_base/source/fonts/DejaVuSans.ttf"),
@@ -19,6 +20,7 @@ FONTS = (
     ("Montserrat-Bold", "00_base/source/fonts/Montserrat-Bold.ttf"),
     ("Montserrat-Regular", "00_base/source/fonts/Montserrat-Regular.ttf"),
     ("Montserrat-SemiBold", "00_base/source/fonts/Montserrat-SemiBold.ttf"),
+    ("Symbola", "00_base/source/fonts/Symbola.ttf"),
 )
 
 for font in FONTS:
@@ -37,6 +39,7 @@ PDF_ADDITIONAL_STYLES = (
     BEST_COMBINATION_STYLES,
     BEST_COUPLE_STYLES,
     ANALOGUE_STYLES,
+    TEXTPOST_STYLES,
 )
 for style in PDF_ADDITIONAL_STYLES:
     PDF_STYLE.update(style)

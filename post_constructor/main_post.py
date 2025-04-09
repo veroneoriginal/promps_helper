@@ -3,7 +3,9 @@
 """
 import re
 from copy import deepcopy
+from pathlib import Path
 
+from pdf.main import create_textpost_pdf
 from post_constructor.post_constructor import PostConstructor
 from post_constructor.post_processing_data import build_description
 from utils.utils import save_file_in_process_work
@@ -76,6 +78,7 @@ def create_post(
     """
     Универсальный генератор постов (короткая/подробная версия)
     """
+
     if collection_data['Параметры'].lower().strip() == 'учитывать':
         collection_data['Тип'] = build_description(
             code_string=collection_data['Тип'],
@@ -174,6 +177,11 @@ def forming_text_for_posts(
         path_to_result_recommend=path_to_result_recommend,
         path_for_save=path_for_save,
     )
+    # здесь сохраняем пост в PDF
+    create_textpost_pdf(
+        path_to_text_post_file=str(Path(path_for_save) / 'text_for_post_short.md'),
+        path_for_save_pdf_file=str(Path(path_for_save) / 'text_for_post_short.pdf'),
+    )
 
     if collection_data['Параметры'].lower().strip() == 'учитывать':
         create_post_detailed(
@@ -181,4 +189,9 @@ def forming_text_for_posts(
             collection_data=deepcopy(collection_data),
             path_to_result_recommend=path_to_result_recommend,
             path_for_save=path_for_save,
+        )
+        # здесь сохраняем пост в PDF
+        create_textpost_pdf(
+            path_to_text_post_file=str(Path(path_for_save) / 'text_for_post_detailed.md'),
+            path_for_save_pdf_file=str(Path(path_for_save) / 'text_for_post_detailed.pdf'),
         )
