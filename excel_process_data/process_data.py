@@ -175,7 +175,7 @@ class ExcelManager:
 
         # Обработка строк
         for row in sheet.iter_rows(min_row=2, values_only=True):
-            name = row[product_name_idx]
+            name = row[product_name_idx].lower().strip()
             article = str(row[product_article_idx]).strip()
 
             # Создаем словарь данных по текущей строке

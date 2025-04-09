@@ -52,7 +52,8 @@ def create_hashtag(
     hashtag = []
 
     for product_title, product_article in products:
-        brand = data_tools['Средства'][product_title][product_article]['Бренд']
+        product_title_lower = product_title.lower().strip()
+        brand = data_tools['Средства'][product_title_lower][product_article]['Бренд']
         if brand:
             brand_no_space = re.sub(r'[^\wа-яА-ЯёЁ]+', '_', brand)
             hashtag.append(f"#{brand_no_space}")

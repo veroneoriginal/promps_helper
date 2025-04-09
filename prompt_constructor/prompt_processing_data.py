@@ -155,7 +155,7 @@ class PromptProcessingData:
 
         :return: словарь с расшифрованным средством
         """
-
+        product_name = product_name.lower().strip()
         product_data = data[list_name][product_name][product_article]
 
         return {

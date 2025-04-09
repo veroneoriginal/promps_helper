@@ -20,7 +20,8 @@ def get_base_info_by_product(
 
     """
     list_name = 'Средства'
-    product_data = info_data[list_name][product_name][product_article]
+    product_name_lower = product_name.lower().strip()
+    product_data = info_data[list_name][product_name_lower][product_article]
 
     return {
         # одинаково для всех средств:

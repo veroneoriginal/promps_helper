@@ -95,7 +95,10 @@ class ControlManager:
         # Превращаем строку с средствами в словарь
         for row_number, row_data in collections_data.items():
             products = row_data.get("Средства")
-            row_data["Средства"] = create_dict_from_str(_str=products)
+            row_data["Средства"] = create_dict_from_str(
+                _str=products,
+                row_number=row_number
+            )
 
         return collections_data
 
@@ -389,7 +392,6 @@ class ControlManager:
                 file_name='prompt',
                 file_extension='.json',
             )
-
             print('Отправка запроса в OpenAI.')
             self.request_to_openai(
                 prompt_for_convert=prompt,
