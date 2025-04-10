@@ -18,6 +18,7 @@ class PromptProcessingData:
         self.data_tools = data_tools
         self.data_collection = data_collection
         self.method_for_task_code = {
+            'Подробный анализ состава': self.decrypting_info_code_detailed_analysis_composition,
             'Лучшее средство': self.decrypting_info_code_best_product,
             'Лучшее средство без канцерогенов': self.decrypting_info_code_best_product,
             'Разбор состава одного средства': self.decrypting_info_code_best_product,
@@ -191,6 +192,71 @@ class PromptProcessingData:
                 product_article=product_article,
             )
 
+            formated_products[product_name_article]["Номер"] = product_key
+
+        return formated_products
+
+    def decrypting_info_code_detailed_analysis_composition(
+            self,
+            data: dict,
+            data_collection: dict,
+            key_for_decrypted: str,
+    ) -> str:
+        """
+        Метод для расшифровки данных из блока Средства для кода задачи 'Подробный анализ состава'
+
+        :param data: словарь со всеми данными
+        :param data_collection: словарь с подборкой
+        :param key_for_decrypted: категория, с которой работаем
+        :return: словарь со средствами, их типом и составом
+        """
+
+        # получение словаря из ключа Средства из текущей подборки
+        products: dict = data_collection[key_for_decrypted]
+        composition_elements = data_collection['Элементы состава для шага задачи']
+
+        formated_products = self.decryption_product_detailed_analysis_composition(
+            data=data,
+            products=products,
+            composition_elements=composition_elements
+        )
+        # преобразование словаря со средствами в строку
+
+        return self._conversion_products(cosmetic_products=formated_products)
+
+    def decryption_product_detailed_analysis_composition(
+            self,
+            data: dict,
+            products: dict,
+            composition_elements: list
+    ) -> dict:
+        """
+        Метод, с помощью которого расшифровываем словарь со средствами из текущй подборки для
+        задачи 'Подробный анализ состава'. Здесь расшифровка отличается, потому что мы
+        берем состав не из базы, а из словаря с подборкой, в ней уже есть информация.
+        Так делаем, потому что задача 'Подробный анализ состава' состоит из нескольких шагов.
+
+        :param data: словарь со всеми данными
+        :param products: словарь из ключа Средства из текущей подборки
+        :param composition_elements: список с элементами из состава
+
+        :return: расшифрованный словарь со средствами
+        """
+        # формируем словарь
+        formated_products = {}
+
+        for product_key, product_name_article in products.items():
+            product_name = product_name_article[0]
+            product_article = product_name_article[1]
+
+            # ищем данные по product_name в основном data словаре
+            formated_products[product_name_article] = self.decryped_dict_with_one_product(
+                data=data,
+                product_name=product_name,
+                product_article=product_article,
+            )
+            # Заменяем "Состав" на определённое количество элементов
+            formated_products[product_name_article]['Состав'] = ', '.join(composition_elements)
             formated_products[product_name_article]["Номер"] = product_key
 
         return formated_products

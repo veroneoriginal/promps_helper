@@ -1,6 +1,6 @@
 # запуск линтера на ubuntu
 lint:
-	pylint $(shell git ls-files '*.py')
+	pylint $(filter-out emojipy/%,$(shell git ls-files '*.py'))
 
 run_tests:
 	pytest -s

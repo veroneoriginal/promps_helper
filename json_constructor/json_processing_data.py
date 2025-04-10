@@ -9,10 +9,13 @@ class JsonProcessingData:
 
     def __init__(
             self,
+            data_tools: dict,
             data_collection: dict,
     ):
+        self.data_tools = data_tools
         self.data_collection = data_collection
         self.method_for_task_code = {
+            'Подробный анализ состава': self.decryption_task_detailed_analysis_composition,
             'Лучшее средство': self.decryption_task_best_product,
             'Лучшее средство без канцерогенов': self.decryption_task_best_product,
             'Разбор состава одного средства': self.decryption_task_one_product,
@@ -28,9 +31,30 @@ class JsonProcessingData:
         """
         С помощью этого метода определяю какую функцию для расшифровки вызывать
         """
+
         task = self.data_collection['Задача']
         result_function = self.method_for_task_code[task]
         return result_function(self.data_collection)
+
+    def decryption_task_detailed_analysis_composition(
+            self,
+            data_collection: dict,
+    ) -> dict:
+        """
+        Метод для преобразования словаря по коду задачи - 'Подробный анализ состава'.
+        Считаем количество элементов состава по ключу
+        'Список элементов состава' и обновляем исходный словарь.
+
+        :param data_collection: словарь с текущей подборкой
+        :return: словарь с текущей подборкой с добавленным ключом
+        'Количество элементов состава'
+        """
+
+        data_collection['Количество элементов состава'] = len(
+            data_collection['Элементы состава для шага задачи']
+        )
+
+        return data_collection
 
     def decryption_analogue_product(
             self,

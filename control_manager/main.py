@@ -1,11 +1,8 @@
 """
 В этом модуле - класс, управляющий логикой всего проекта
 """
-import os
 from pathlib import Path
 
-from dotenv import load_dotenv
-from appeal_to_openai.main import main as appeal_to_openai_main
 from appeal_to_openai.utils import checking_file_with_response
 from control_manager.utils import (
     create_dict_from_str,
@@ -14,11 +11,9 @@ from control_manager.utils import (
 from dirs_structure_constructor.main import DirsConstructor
 from excel_process_data.hash_utils import counting_hash, is_hash_unique
 from excel_process_data.process_data import ExcelManager
-from json_constructor.main import get_json_scheme
 from post_constructor.main_post import forming_text_for_posts
-from prompt_constructor.main import get_prompt
 from pdf.main import create_pdf
-from utils.utils import save_file_in_process_work
+from task_processing.main import TaskProcessing
 
 
 # from utils.utils import copy_jpg_files
@@ -29,12 +24,10 @@ class ControlManager:
     Класс, управляющий логикой всего проекта
     """
 
-    def __init__(self, param_dif_products_categories):
+    def __init__(self):
         """
-        :param param_dif_products_categories: особенности для подборок, учитываются в промптах
         """
         self.paths_to_folders = {}
-        self.param_dif_products_categories = param_dif_products_categories
 
     def _take_data_from_table_tool(
             self,
@@ -99,39 +92,7 @@ class ControlManager:
                 _str=products,
                 row_number=row_number
             )
-
         return collections_data
-
-    def request_to_openai(
-            self,
-            prompt_for_convert: dict,
-            json_scheme: dict,
-            folder_name: str,
-    ) -> str:
-        """
-        В этом методе осуществляется вызов ключевой функции по:
-        1) созданию готового контекста, который передается в OpenAI,
-        2) отправке самого запроса в OpenAI,
-        3) сохранение результата
-
-        :param prompt_for_convert: промпт для преобразования его в контекст
-        :param json_scheme: схема с названиями папок
-        :param folder_name: папка, в которую будет сохраняться ответ openai
-        :return: путь до json файла с анализом средств
-        """
-
-        load_dotenv()
-        openai_api_key = os.getenv('OPENAI_API_KEY')
-
-        file_path_to_saving_json = appeal_to_openai_main(
-            prompt=prompt_for_convert['prompt'],
-            system_prompt=prompt_for_convert['system_prompt'],
-            api_key=openai_api_key,
-            json_scheme=json_scheme,
-            folder_name=folder_name,
-        )
-
-        return file_path_to_saving_json
 
     # pylint: disable=R0913: too-many-arguments
     # pylint: disable=R0917: too-many-positional-arguments
@@ -362,40 +323,13 @@ class ControlManager:
             ).get_output_folders(
                 prefix=collection_data['Группа'],
             )
-
-            # Определяю json-схему
-            json_scheme = get_json_scheme(
-                data_collection=collection_data,
-                product_categories=self.param_dif_products_categories,
-            )
-
-            # Сохраняем json-схему в папку
-            save_file_in_process_work(
-                what_save=json_scheme,
-                path_to_folder=self.paths_to_folders['00_source_00_json_scheme'],
-                file_name='json_scheme',
-                file_extension='.json',
-            )
-
-            # Собираю промпт
-            prompt = get_prompt(
+            # Выполняем задачу пошагово
+            task_processing = TaskProcessing(
                 data_tools=data_tools,
-                data_collection=collection_data,
+                collection_data=collection_data,
+                paths_to_save_folders=self.paths_to_folders
             )
-
-            # Сохраняем prompt в папку
-            save_file_in_process_work(
-                what_save=prompt,
-                path_to_folder=self.paths_to_folders['00_source_01_prompt'],
-                file_name='prompt',
-                file_extension='.json',
-            )
-            print('Отправка запроса в OpenAI.')
-            self.request_to_openai(
-                prompt_for_convert=prompt,
-                json_scheme=json_scheme,
-                folder_name=self.paths_to_folders["00_source_02_answer_gpt"],
-            )
+            task_processing.run_task_processing()
 
             print('Создание PDF и изображений со средствами для постов в соц.сети.')
             self._create_pdf_jpg(

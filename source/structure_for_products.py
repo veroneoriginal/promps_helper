@@ -147,6 +147,11 @@ _MAPPING_KEYS = {
     "best_combination_product": "Подобранное средство",
     "best_set": "Лучший набор",
     "influence_of_carcinogens": "Влияние канцерогенов",
+    "element_title": "Название элемента",
+    "what_is_element_used_for": "Для чего элемент",
+    "element_danger_text": "Чем опасен элемент",
+    "element_danger_level_number": "Уровень опасности элемента (числом)",
+    "element_stop_in_country": "Элемент запрещён в странах",
 
     # Расширенные поля из категорий
     "skin_type_impact": "Влияние на тип кожи",
