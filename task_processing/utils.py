@@ -47,7 +47,7 @@ def get_list_composition_elements(
     )
     list_composition_elements.sort()
     numbered_composition_elements_list = [
-        (f'{num}_{element}') for num, element in enumerate(list_composition_elements, start=1)
+        element.strip(' .') for element in list_composition_elements
     ]
 
     return numbered_composition_elements_list

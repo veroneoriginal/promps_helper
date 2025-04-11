@@ -25,6 +25,7 @@ from pdf.creator_logic.creator.custom_flowables import (
     FreeText,
 )
 from pdf.creator_logic.creator.fonts_and_styles.styles import PDF_STYLE
+from pdf.utils import replace_emoji_html
 
 
 def _pixels_to_points(
@@ -247,8 +248,11 @@ class PDFFlowablesCreator:
         :param upper: сделать заглавными
         :return: None
         """
+
+        text_with_smile = replace_emoji_html(text)
+
         paragraph = Paragraph(
-            text=text.upper() if upper else text,
+            text=text_with_smile.upper() if upper else text_with_smile,
             style=style,
         )
         self.flowables.append(paragraph)

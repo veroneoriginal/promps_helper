@@ -183,9 +183,11 @@ class DetailedAnalysisCompositionPDFTemplateCreator:
             ('Paragraph', {'Ключ в подборке': f'{element_name}_Название элемента', 'Стиль': 'ACOP_bold_1'}),
             ('Spacer', {'width': 1, 'height': 13}),
             ('Paragraph', {'Ключ в подборке': f'{element_name}_Для чего элемент', 'Стиль': 'ACOP_normal_3'}),
+            ('Spacer', {'width': 1, 'height': -20}),
+            ('Paragraph', {'Ключ в подборке': f'{element_name}_Опасность элемента', 'Стиль': 'ACOP_normal_3'}),
             # ('Paragraph', {'Ключ в подборке': f'{element_name}_Чем опасен элемент', 'Стиль': 'ACOP_normal_3'}),
             # ('Paragraph',
-             # {'Ключ в подборке': f'{element_name}_Уровень опасности элемента (числом)', 'Стиль': 'ACOP_bold_1'}),
+            # {'Ключ в подборке': f'{element_name}_Уровень опасности элемента (числом)', 'Стиль': 'ACOP_bold_1'}),
             ('Spacer', {'width': 1, 'height': 13}),
         ]
 
@@ -221,19 +223,35 @@ class DetailedAnalysisCompositionPDFTemplateCreator:
         """
         element_title = one_element_data.get("Название элемента", "Без названия")
         what_is_element_used_for = one_element_data.get("Для чего элемент", "Нет описания")
+        is_element_danger = one_element_data.get("Опасен элемент или нет", False)
         element_danger_text = one_element_data.get("Чем опасен элемент", "Нет описания")
+        danger_level_smile = self.get_danger_level_smile(is_element_danger=is_element_danger)
+        element_danger_text = f'{danger_level_smile} {element_danger_text}'
         element_stop_in_country = one_element_data.get("Элемент запрещён в странах", "").strip()
-        # element_danger_level_number = str(one_element_data.get("Уровень опасности элемента (числом)", 0))
 
         is_not_banned = element_stop_in_country.lower() == "не запрещён."
         ban_text = "" if is_not_banned else element_stop_in_country
-
-        what_is_element_used_for_with_ban = [what_is_element_used_for, element_danger_text]
+        what_is_element_used_for_with_ban = [what_is_element_used_for]
         if ban_text:
             what_is_element_used_for_with_ban.append(ban_text)
 
         return {
             f'{element_name}_Название элемента': element_title,
             f'{element_name}_Для чего элемент': '\n'.join(what_is_element_used_for_with_ban),
-            # f'{element_name}_Уровень опасности элемента (числом)': element_danger_level_number,
+            f'{element_name}_Опасность элемента': element_danger_text,
         }
+
+    def get_danger_level_smile(
+            self,
+            is_element_danger: bool,
+    ):
+        """
+        Возвращает смайлик уровня опасности элемента
+        """
+
+        DANGER_SMILES = {
+            True: '⚠',
+            False: '✅'
+        }
+
+        return DANGER_SMILES[is_element_danger]

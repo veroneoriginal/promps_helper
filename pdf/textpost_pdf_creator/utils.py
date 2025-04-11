@@ -1,7 +1,5 @@
 # pylint: disable=E0611: no-name-in-module
 
-import re
-
 from reportlab.lib.enums import TA_JUSTIFY
 
 from reportlab.platypus import (
@@ -14,21 +12,7 @@ from reportlab.lib.styles import (
 )
 from reportlab.lib.units import mm
 
-from emojipy import Emoji
-
-
-def convert_markdown_to_html(text: str) -> str:
-    # **жирный** → <b>жирный</b>
-    return re.sub(r'\*\*(.+?)\*\*', r'<font name="Montserrat-Bold">\1</font>', text)
-
-
-def replace_emoji_html(text: str, size=16) -> str:
-    """Преобразует emoji в <img ...> с цветными PNG."""
-    Emoji.unicode_alt = False
-    html = Emoji.to_image(text)
-    html = html.replace('class="emojione"', f'height="{size}" width="{size}"')
-    html = re.sub(r'alt="[^"]+"', '', html)  # Удаляем alt=""
-    return html
+from pdf.utils import convert_markdown_to_html, replace_emoji_html
 
 
 def create_emodji_flowables(text) -> list[Spacer | Paragraph]:

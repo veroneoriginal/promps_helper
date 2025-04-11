@@ -115,11 +115,11 @@ class JsonCreator:
                         "type": "string",
                         "description": f"Опасен ли элемент № {element_number}"
                     },
-                    "element_danger_level_number": {
-                        "type": "integer",
-                        "description": f"Уровень опасности элемента № {element_number} по 10-бальной "
-                                       f"шкале. Абсолютно безопасен - 0, "
-                                       f"очень опасен - 10."
+                    "is_element_danger": {
+                        "type": "boolean",
+                        "description": f"Если элемент № {element_number} выызвает аллергию, яляется "
+                                       f"канцерогеном или опасен по другой причине - поставь True, "
+                                       f"иначе - False"
                     },
                     "element_stop_in_country": {
                         "type": "string",
@@ -132,7 +132,7 @@ class JsonCreator:
                     "element_title",
                     "what_is_element_used_for",
                     "element_danger_text",
-                    "element_danger_level_number",
+                    "is_element_danger",
                     "element_stop_in_country",
                 ],
                 "additionalProperties": False

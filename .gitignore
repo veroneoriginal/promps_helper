@@ -1,4 +1,10 @@
-00_base/
+# Игнорировать всё в 00_base
+00_base/*
+
+# Но НЕ игнорировать папку source и всё, что в ней
+!00_base/source/
+!00_base/source/**
+
 pay_attention/
 code_example.py
 

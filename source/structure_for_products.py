@@ -150,7 +150,7 @@ _MAPPING_KEYS = {
     "element_title": "Название элемента",
     "what_is_element_used_for": "Для чего элемент",
     "element_danger_text": "Чем опасен элемент",
-    "element_danger_level_number": "Уровень опасности элемента (числом)",
+    "is_element_danger": "Опасен элемент или нет",
     "element_stop_in_country": "Элемент запрещён в странах",
 
     # Расширенные поля из категорий
