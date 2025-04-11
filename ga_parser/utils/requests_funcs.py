@@ -14,11 +14,15 @@ from selenium.webdriver.support.ui import WebDriverWait
 from webdriver_manager.chrome import ChromeDriverManager
 
 
+
 def get_page_v2(
         url: str,
         timeout: int = 10,
         headless: bool = True,
 ) -> str | None:
+    # Пауза после скрола страницы вниз (секунд)
+    SLEEP_AUTO_SCROLL_PAGE_DOWN = 8
+
     # Настраиваем Chrome
     chrome_options = Options()
     if headless:
@@ -37,7 +41,7 @@ def get_page_v2(
 
         # Скроллим вниз, чтобы элементы стали видимыми
         driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
-        time.sleep(5)
+        time.sleep(SLEEP_AUTO_SCROLL_PAGE_DOWN)
 
         # Получаем HTML после кликов
         html = driver.page_source

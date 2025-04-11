@@ -21,7 +21,10 @@ def parse_product(
     :return: dict
     """
 
-    html = get_page_v2(url=url)
+    html = get_page_v2(
+        url=url,
+        timeout=13,
+    )
     product_data_dict = get_product_data_dict(html=html, image_dir_path=image_dir_path)
 
     download_image(
