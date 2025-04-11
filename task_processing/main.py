@@ -63,12 +63,14 @@ class TaskProcessing:
 
         load_dotenv()
         openai_api_key = os.getenv('OPENAI_API_KEY')
+        openai_model = os.getenv('OPENAI_MODEL')
 
         return send_request_to_openai(
             prompt=prompt_for_convert['prompt'],
             system_prompt=prompt_for_convert['system_prompt'],
             api_key=openai_api_key,
             json_scheme=json_scheme,
+            model=openai_model,
         )
 
     def run_task_processing(self):
@@ -106,7 +108,7 @@ class TaskProcessing:
         # Сохраняем json-схему в папку
         save_file_in_process_work(
             data=json_scheme,
-            path_to_folder=self.paths_to_save_folders['00_source_00_json_scheme'],
+            path_to_folder=self.paths_to_save_folders['00_json_scheme'],
             file_name=f'{task_step_number}_step_json_scheme',
             file_extension='.json',
         )
@@ -119,7 +121,7 @@ class TaskProcessing:
         # Сохраняем prompt в папку
         save_file_in_process_work(
             data=prompt,
-            path_to_folder=self.paths_to_save_folders['00_source_01_prompt'],
+            path_to_folder=self.paths_to_save_folders['01_prompt'],
             file_name=f'{task_step_number}_step_prompt',
             file_extension='.json',
         )
@@ -132,7 +134,7 @@ class TaskProcessing:
         # Сохраняем ответ OpenAI в папку
         save_file_in_process_work(
             data=answer_openai,
-            path_to_folder=self.paths_to_save_folders["00_source_02_answer_gpt"],
+            path_to_folder=self.paths_to_save_folders["02_answer_gpt"],
             file_name=f'{task_step_number}_step_answer_gpt',
             file_extension='.json',
         )
@@ -153,7 +155,7 @@ class TaskProcessing:
             )
         # объединяем ответы OpenAI в один json-файл
         merge_json_files(
-            folder_path=self.paths_to_save_folders["00_source_02_answer_gpt"],
+            folder_path=self.paths_to_save_folders["02_answer_gpt"],
             output_filename='Анализ_средств.json',
         )
 

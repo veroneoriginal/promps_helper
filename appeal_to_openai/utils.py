@@ -6,7 +6,10 @@
 import re
 import json
 from pathlib import Path
-from typing import Literal, Optional, Any
+from typing import (
+    Optional,
+    Any,
+)
 from openai import OpenAI
 from openai.types.chat import ChatCompletion
 
@@ -47,7 +50,7 @@ def _formation_context(
 def _generate_text_content_openai(
         api_key: str,
         context: list,
-        model: Literal["gpt-4o", "gpt-4o-mini",],
+        model: str,
         json_scheme: dict,
 ) -> ChatCompletion:
     """
@@ -55,7 +58,7 @@ def _generate_text_content_openai(
 
     :param api_key: ключ для подключения к OpenAI,
     :param context: сформированный контекст запроса,
-    :param model: название используемой модели OpenAI
+    :param model: название используемой модели OpenAI "gpt-4o", "gpt-4o-mini"
     :param json_scheme: json_scheme запроса (определяется в зависимости
      от количества анализируемых средств)
 

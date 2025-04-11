@@ -2,7 +2,6 @@
 В этом модуде управляющая функция для реализации процесса отправки запроса в openai,
 получение результата и сохранение итогового файла
 """
-
 from appeal_to_openai.utils import (
     _formation_context,
     _generate_text_content_openai,
@@ -15,6 +14,7 @@ def send_request_to_openai(
         system_prompt: str,
         api_key: str,
         json_scheme: dict,
+        model: str,
 ) -> str:
     """
     Уравляющая функция для реализации процесса отправки запроса в openai,
@@ -25,6 +25,7 @@ def send_request_to_openai(
     :param api_key: ключ для отправки запроса
     :param json_scheme: json_scheme запроса (определяется в зависимости
      от количества анализируемых средств)
+    :param model: название используемой модели OpenAI "gpt-4o", "gpt-4o-mini"
 
     :return: путь до json файла с анализом средств
     """
@@ -39,7 +40,7 @@ def send_request_to_openai(
     result = _generate_text_content_openai(
         api_key=api_key,
         context=context,
-        model="gpt-4o-mini",
+        model=model,
         json_scheme=json_scheme,
     )
 

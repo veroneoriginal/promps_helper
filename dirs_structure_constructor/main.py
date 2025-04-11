@@ -29,7 +29,6 @@ class DirsConstructor:
         # формируемый словарь с путями
         self.paths_to_folders = {}
 
-
     def get_output_folders(
             self,
             prefix: str,
@@ -170,19 +169,11 @@ class DirsConstructor:
         :return: self.paths_to_folders
         """
 
-        for service, folders in self.scheme_for_folders_name.items():
-            service_path = category_folder / service
-
-            # Если список подпапок пустой или отсутствует, добавляем только базовый путь сервиса
-            if not folders or not isinstance(folders, list):
-                self.paths_to_folders[service] = str(service_path)
-
-            for folder in folders:
-                key = f"{service}_{folder}"
-                # Получаем полный путь и преобразуем в строку
-                full_path = str(service_path / folder)
-                # записываем в словарь
-                self.paths_to_folders[key] = full_path
+        for folder in self.scheme_for_folders_name:
+            inner_path = category_folder / folder
+            # Получаем полный путь и преобразуем в строку
+            # записываем в словарь
+            self.paths_to_folders[folder] = inner_path
 
         return self.paths_to_folders
 
@@ -192,7 +183,6 @@ class DirsConstructor:
 
         :return: None
         """
-
         for folder_path in self.paths_to_folders.values():
             # Преобразуем путь в объект Path
             path = Path(folder_path)
