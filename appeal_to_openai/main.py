@@ -39,7 +39,7 @@ def send_request_to_openai(
     result = _generate_text_content_openai(
         api_key=api_key,
         context=context,
-        model="gpt-4o",
+        model="gpt-4o-mini",
         json_scheme=json_scheme,
     )
 
