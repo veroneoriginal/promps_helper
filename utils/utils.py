@@ -44,39 +44,39 @@ def copy_jpg_files(
 
 def save_to_json_file(
         path_to_file: str,
-        what_save: dict,
+        data: dict,
 ) -> None:
     """
     Метод для сохранения json-файлов
 
     :param path_to_file: путь к файлу внутри папки, куда идет сохранение
-    :param what_save: объект сохранения (что сохраняем)
+    :param data: объект сохранения (что сохраняем)
     :return None: ничего не возвращает, просто сохраняет и всё
     """
 
     # Сохраняем JSON
     with open(path_to_file, 'w', encoding='utf-8') as file:
-        json.dump(what_save, file, ensure_ascii=False, indent=4)
+        json.dump(data, file, ensure_ascii=False, indent=4)
 
 
 def save_dif_extension_to_file(
         path_to_file: str,
-        what_save: str,
+        data: str,
 ) -> None:
     """
     Метод для сохранения файлов разного расширения
 
     :param path_to_file: путь к файлу внутри папки, куда идет сохранение
-    :param what_save: объект сохранения (что сохраняем)
+    :param data: объект сохранения (что сохраняем)
     :return None: ничего не возвращает, просто сохраняет и всё
     """
 
     with open(path_to_file, 'w', encoding='utf-8') as file:
-        file.write(what_save)
+        file.write(data)
 
 
 def save_file_in_process_work(
-        what_save: dict | str,
+        data: dict | str,
         path_to_folder: str,
         file_name: str,
         file_extension: str,
@@ -84,7 +84,7 @@ def save_file_in_process_work(
     """
     Метод для сохранения json-схемы / промпта или чего-то еще
 
-    :param what_save: объект, который нужно сохранить
+    :param data: объект, который нужно сохранить
     :param path_to_folder: путь к нужной папке из словаря с путями
     :param file_name: название файла, в который сохраняем инфу
     :param file_extension: расширение файла, в котором сохраняется информация
@@ -97,10 +97,10 @@ def save_file_in_process_work(
     if file_extension == ".json":
         save_to_json_file(
             path_to_file=path_to_file,
-            what_save=what_save,
+            data=data,
         )
     else:
         save_dif_extension_to_file(
             path_to_file=path_to_file,
-            what_save=what_save,
+            data=data,
         )

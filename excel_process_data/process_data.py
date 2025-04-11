@@ -184,6 +184,10 @@ class ExcelManager:
                 # Пропускаем сам ключевой столбец, так как он уже ключ
                 if header and header != product_name_idx:
                     entry[header] = row[index]
+                    if header == 'Состав':
+                        entry['Список элементов состава'] = (
+                            [i.strip() for i in entry['Состав'].split(',')]
+                        )
 
             # Строим структуру
             if name not in data:

@@ -1,9 +1,11 @@
+# pylint: disable=E0611: no-name-in-module
 """
 В этом модуле тестируем выбор json-схемы
 """
 
 import unittest
 
+from dev_helpers.data_tools_for_test import ALL_DATA_TOOLS_FOR_TEST
 from json_constructor.json_creator import JsonCreator
 from json_constructor.json_processing_data import JsonProcessingData
 from json_constructor.test.constants import (
@@ -52,7 +54,11 @@ class TestJsonScheme(unittest.TestCase):
         original_keys_count = len(data_collection.keys())
 
         # Инициализация объекта и вызов метода
-        json_proc_data = JsonProcessingData(data_collection=data_collection)
+        json_proc_data = JsonProcessingData(
+            data_tools=ALL_DATA_TOOLS_FOR_TEST,
+            data_collection=data_collection
+
+        )
         result = json_proc_data.decryption_task_best_product(data_collection=data_collection)
         # pprint(result)
 
@@ -206,7 +212,10 @@ class TestJsonScheme(unittest.TestCase):
         }
 
         # на этом этапе по этому ключу ничего не происходит в функции
-        json_proc_data = JsonProcessingData(data_collection=data_collection)
+        json_proc_data = JsonProcessingData(
+            data_tools=ALL_DATA_TOOLS_FOR_TEST,
+            data_collection=data_collection
+        )
         update_data_collection = json_proc_data.distribution_on_task()
 
         # Создание экземпляра класса по созданию json-схемы

@@ -1,6 +1,6 @@
 [MASTER]
 init-hook='import os, sys; sys.path.insert(0, os.getcwd())"
-
+ignore=emojipy
 
 disable=
     C0114, # Missing module docstring

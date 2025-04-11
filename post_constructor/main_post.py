@@ -108,7 +108,7 @@ def create_post(
 
     # сохраняем
     save_file_in_process_work(
-        what_save=info_for_post,
+        data=info_for_post,
         path_to_folder=path_for_save,
         file_name=file_name,
         file_extension='.md',

@@ -6,17 +6,15 @@
 from appeal_to_openai.utils import (
     _formation_context,
     _generate_text_content_openai,
-    _save,
     _processing_content_from_openai,
 )
 
 
-def main(
+def send_request_to_openai(
         prompt: str,
         system_prompt: str,
         api_key: str,
         json_scheme: dict,
-        folder_name: str,
 ) -> str:
     """
     Уравляющая функция для реализации процесса отправки запроса в openai,
@@ -27,7 +25,6 @@ def main(
     :param api_key: ключ для отправки запроса
     :param json_scheme: json_scheme запроса (определяется в зависимости
      от количества анализируемых средств)
-    :param folder_name: папка, в которую будет сохраняться ответ openai
 
     :return: путь до json файла с анализом средств
     """
@@ -49,10 +46,4 @@ def main(
     # Обрабатываю контент полученный от OpenAI
     data = _processing_content_from_openai(result=result)
 
-    # Сохраняю ответ, полученный от OpenAI
-    file_path_to_saving_json = _save(
-        data=data,
-        folder_name=folder_name,
-    )
-
-    return file_path_to_saving_json
+    return data

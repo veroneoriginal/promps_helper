@@ -15,11 +15,11 @@ class JsonCreator:
             data_collection: dict,
             product_categories: dict,
     ):
-
         self.data_collection = data_collection
         self.product_categories = product_categories
 
         self.method_for_task_code = {
+            'Подробный анализ состава': self.create_json_scheme_detailed_analysis_composition,
             'Лучшее средство': self.create_json_scheme_for_best_product,
             'Лучшее средство без канцерогенов':
                 self.create_json_scheme_for_best_product_carcinogen_free,
@@ -38,6 +38,113 @@ class JsonCreator:
         """
         task = self.data_collection['Задача']
         return self.method_for_task_code[task]()
+
+    def create_json_scheme_detailed_analysis_composition(
+            self,
+    ) -> dict:
+        """
+        Метод для динамического формирования json-схемы для кода задачи 'Подробный анализ состава'
+
+        :return: json-схема для заданного количества средств
+        """
+
+
+        schema = {
+            "name": "detailed_analysis_composition",
+            "strict": True,
+            "schema": {
+                "type": "object",
+                "properties": {
+                    "result": {
+                        "type": "string",
+                        "description": "Итоговая рекомендация, вывод"
+                    },
+                },
+                "required": ["result"],
+                "additionalProperties": False
+            }
+        }
+
+        products = {
+            'origin_product': {
+                "type": "object",
+                "properties": {
+                    "title": {
+                        "type": "string",
+                        "description": "Название средства"
+                    },
+                    "article": {
+                        "type": "string",
+                        "description": "Артикул средства, только цифры."
+                    },
+                },
+                "required": ["title", "article"],
+                "additionalProperties": False
+            },
+        }
+
+        # Добавляем продукт в свойства схемы
+        schema["schema"]["properties"].update(products)
+
+        # Добавляем продукт в список `required`
+        schema["schema"]["required"].extend(products.keys())
+
+        # Вычисляем
+        numbered_composition_elements_list = self.data_collection['Элементы состава для шага задачи']
+
+        # Добавляем количество элементов состава
+        elements = {}
+        for element in numbered_composition_elements_list:
+            element_number = element.split('_', maxsplit=1)[0]
+
+            element_key = f"element_{element_number}"
+            elements[element_key] = {
+                "type": "object",
+                "properties": {
+                    "element_title": {
+                        "type": "string",
+                        "description": f"Название {element_number}-го элемента"
+                    },
+                    "what_is_element_used_for": {
+                        "type": "string",
+                        "description": f"Что такое элемент № {element_number} и для чего он "
+                                       f"используется в составе средства."
+                                       f"Является ли элемент канцерогеном. Опасен ли этот элемент?"
+                    },
+                    "element_danger_text": {
+                        "type": "string",
+                        "description": f"Опасен ли элемент № {element_number}"
+                    },
+                    "element_danger_level_number": {
+                        "type": "integer",
+                        "description": f"Уровень опасности элемента № {element_number} по 10-бальной "
+                                       f"шкале. Абсолютно безопасен - 0, "
+                                       f"очень опасен - 10."
+                    },
+                    "element_stop_in_country": {
+                        "type": "string",
+                        "description": f"Если элемент № {element_number} запрещён в каких-то странах "
+                                       f"(или регулируется) - сообщи об этом, если нет - "
+                                       f"просто напиши 'Не запрещён.'  "
+                    }
+                },
+                "required": [
+                    "element_title",
+                    "what_is_element_used_for",
+                    "element_danger_text",
+                    "element_danger_level_number",
+                    "element_stop_in_country",
+                ],
+                "additionalProperties": False
+            }
+
+        # Добавляем элементы в свойства схемы
+        schema["schema"]["properties"].update(elements)
+
+        # Добавляем продукты в список `required`
+        schema["schema"]["required"].extend(elements.keys())
+
+        return schema
 
     def create_json_scheme_for_analogue_product(
             self,
@@ -106,7 +213,8 @@ class JsonCreator:
                 },
                 "required": ["title", "article"],
                 "additionalProperties": False
-            }}
+            }
+        }
 
         # Добавляем продукты в свойства схемы
         schema["schema"]["properties"].update(products)
@@ -354,7 +462,8 @@ class JsonCreator:
                                        " если нет, то False"
                     }
                 },
-                "required": ["title", "article", "plus", "minus", "best_product", "carcinogen", "influence_of_carcinogens"],
+                "required": ["title", "article", "plus", "minus", "best_product", "carcinogen",
+                             "influence_of_carcinogens"],
                 "additionalProperties": False
             }
 

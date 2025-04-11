@@ -23,7 +23,6 @@ from PyQt6.QtWidgets import QProgressBar
 
 from control_manager.main import ControlManager
 from ga_parser.main import start_parser
-from source.structure_for_products import PARAMETERS_DIF_PRODUCT_CATEGORIES
 
 FILE_PATH_TOOLS = '00_base/Средства_АКТУАЛЬНАЯ.xlsx'
 FILE_PATH_COLLECTION = '00_base/Подборки_мои.xlsx'
@@ -181,7 +180,7 @@ class MainWindow(QWidget):
         Запуск создания подборок
         """
         self.worker_collection = self.start_worker(
-            ControlManager(PARAMETERS_DIF_PRODUCT_CATEGORIES).create_collection,
+            ControlManager().create_collection,
             "▶️ Запуск генерации подборок...\n",
             file_path_tools=FILE_PATH_TOOLS,
             file_path_collection=FILE_PATH_COLLECTION,
@@ -193,7 +192,7 @@ class MainWindow(QWidget):
         Запуск перегенерации постов и PDF
         """
         self.worker_pdf = self.start_worker(
-            ControlManager(PARAMETERS_DIF_PRODUCT_CATEGORIES).recreate_pdf_and_posts,
+            ControlManager().recreate_pdf_and_posts,
             "▶️ Запуск перегенерации PDF и постов...\n",
             file_path_tools=FILE_PATH_TOOLS,
             file_path_collection=FILE_PATH_COLLECTION,

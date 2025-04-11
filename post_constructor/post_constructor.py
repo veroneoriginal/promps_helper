@@ -15,6 +15,7 @@ class PostConstructor:
             self,
     ):
         self.post_for_task = {
+            'Подробный анализ состава': self.create_text_for_post_code_detailed_analysis_composition,
             'Лучшее средство': self.create_text_for_post_code_best_product,
             'Лучшее средство без канцерогенов':
                 self.create_text_for_post_code_best_product_canc_free,
@@ -73,6 +74,23 @@ class PostConstructor:
         return f"""🔍 **С помощью данного средства решаем следующие задачи:**\n{data["Запрос"]}.
     
 ⭐ Проводим максимально детальный анализ состава каждого компонента.
+"""
+
+    def create_text_for_post_code_detailed_analysis_composition(
+            self,
+            data: dict,
+    ) -> str:
+        """
+        Метод возвращает строку с типами и запросом пользователя
+        для кода задачи "Подробный анализ состава".
+
+        :param data: словарь с данными о пользователе и косметических средствах
+        :return: строка с данными о потребностях пользователя
+        """
+
+        return f"""🔍 **С помощью данного средства решаем следующие задачи:**\n{data["Запрос"]}.
+
+⭐ Разбираем каждый элемент состава.
 """
 
     def create_text_for_post_code_best_couple(

@@ -13,6 +13,9 @@ from pdf.pdf_data_processing.tasks_logic.best_product import BestProductPDFTempl
 from pdf.pdf_data_processing.tasks_logic.best_product_without_carcinogens import (
     BestProductWithOutConcerogensPDFTemplateCreator,
 )
+from pdf.pdf_data_processing.tasks_logic.detailed_analysis_composition import (
+    DetailedAnalysisCompositionPDFTemplateCreator,
+)
 from pdf.pdf_data_processing.tasks_utils import translate_keys_to_rus
 
 
@@ -44,6 +47,7 @@ class PDFDataProcessor:
         self.path_to_output_folder_pdf_file = path_to_output_folder_pdf_file
 
         self.method_for_task_code = {
+            'Подробный анализ состава': self._detailed_analysis_composition,
             'Лучшее средство': self._best_product,
             'Лучшее средство без канцерогенов': self._best_product_without_carcinogens,
             'Разбор состава одного средства': self._analysis_composition_one_product,
@@ -118,3 +122,8 @@ class PDFDataProcessor:
         """ Задача "Лучшее средство" """
 
         return BestProductPDFTemplateCreator
+
+    def _detailed_analysis_composition(self) -> callable:
+        """ Задача "Подробный анализ состава" """
+
+        return DetailedAnalysisCompositionPDFTemplateCreator

@@ -95,8 +95,13 @@ def calculate_price_per_standard_unit(
     else:
         raise ValueError(f"Неизвестная единица измерения: {unit}")
 
-    # Определяем стандартное количество
-    standard_quantity = 100 if base_quantity >= 100 else 50
+    # Выбор стандартного количества:
+    if base_quantity <= 50:
+        standard_quantity = 10
+    elif base_quantity < 100:
+        standard_quantity = 50
+    else:
+        standard_quantity = 100
 
     # Рассчитываем цену за стандартное количество
     price_per_standard = (price_rub / base_quantity) * standard_quantity
