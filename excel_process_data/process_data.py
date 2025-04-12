@@ -2,7 +2,7 @@
 В этом модуле реализована логика загрузки данных из таблицы
 и добавление данных из json в таблицу
 """
-
+import ast
 from datetime import datetime
 
 from openpyxl import load_workbook
@@ -184,9 +184,9 @@ class ExcelManager:
                 # Пропускаем сам ключевой столбец, так как он уже ключ
                 if header and header != product_name_idx:
                     entry[header] = row[index]
-                    if header == 'Состав':
-                        entry['Список элементов состава'] = (
-                            [i.strip() for i in entry['Состав'].split(',')]
+                    if header == 'Элементы состава списком':
+                        entry['Элементы состава списком'] = (
+                            ast.literal_eval(entry['Элементы состава списком'])
                         )
 
             # Строим структуру

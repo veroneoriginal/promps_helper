@@ -243,18 +243,18 @@ class ControlManager:
                 collection_data=collection_data,
                 info_data=data_tools,
                 selection_result=checking_file_with_response(
-                    json_file_path=self.paths_to_folders["00_source_02_answer_gpt"]
+                    json_file_path=self.paths_to_folders["02_answer_gpt"]
                 ),
-                path_to_output_folder_pdf_file=self.paths_to_folders["00_source_03_pdf"],
-                path_to_output_folder_jpg_file=self.paths_to_folders["00_source_04_jpg"],
+                path_to_output_folder_pdf_file=self.paths_to_folders["04_pdf"],
+                path_to_output_folder_jpg_file=self.paths_to_folders["05_jpg"],
             )
 
             print('Пересоздание текстовой части постов.')
             forming_text_for_posts(
                 data_tools=data_tools,
                 collection_data=collection_data,
-                path_to_result_recommend=self.paths_to_folders["00_source_02_answer_gpt"],
-                path_for_save=self.paths_to_folders['00_source_05_text'],
+                path_to_result_recommend=self.paths_to_folders["02_answer_gpt"],
+                path_for_save=self.paths_to_folders['06_text'],
             )
 
             # Вызов колбэка для обновления прогресс бара

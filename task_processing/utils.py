@@ -99,7 +99,7 @@ def get_list_composition_elements(
         collection_data: dict,
 ) -> list:
     """
-    Возвращает списко элементов состава средства
+    Возвращает список элементов состава средства
     """
     # Получаем ('EAU THERMALE AVENE SUN', '19000077114')
     product_title_article = collection_data['Средства']['Средство_1']
@@ -107,11 +107,11 @@ def get_list_composition_elements(
     product_article = product_title_article[1]
 
     list_composition_elements = (
-        data_tools['Средства'][product_title_lower][product_article]['Список элементов состава']
+        data_tools['Средства'][product_title_lower][product_article]['Элементы состава списком']
     )
-    list_composition_elements.sort()
     numbered_composition_elements_list = [
-        element.strip(' .') for element in list_composition_elements
+        f"{i}_{element.strip(' .')}"
+        for i, element in enumerate(list_composition_elements, start=1)
     ]
 
     return numbered_composition_elements_list

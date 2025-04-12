@@ -22,6 +22,7 @@ from PyQt6.QtCore import (
 from PyQt6.QtWidgets import QProgressBar
 
 from control_manager.main import ControlManager
+from ga_parser.clean_product_composition.main import process_excel_and_fill_composition
 from ga_parser.main import start_parser
 
 FILE_PATH_TOOLS = '00_base/Средства_АКТУАЛЬНАЯ.xlsx'
@@ -94,28 +95,39 @@ class MainWindow(QWidget):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("Генерация подборок")
-        self.setGeometry(100, 100, 600, 400)
+        self.setGeometry(100, 100, 600, 800)
         self.center_on_screen()
 
         layout = QVBoxLayout()
 
+        button_width = 40
         # Кнопка "Спарсить средства"
         self.button_parse = QPushButton("🎬 Спарсить средства")
+        self.button_parse.setMinimumHeight(button_width)
         self.button_parse.clicked.connect(self.start_parse)
         layout.addWidget(self.button_parse)
 
+        # Кнопка "Спарсить средства"
+        self.button_check_composition = QPushButton("🗽 Обработать элементы составов")
+        self.button_check_composition.setMinimumHeight(button_width)
+        self.button_check_composition.clicked.connect(self.start_check_compositions)
+        layout.addWidget(self.button_check_composition)
+
         # Кнопка "Создать подборку"
         self.button_generate = QPushButton("🔥 Генерировать подборки")
+        self.button_generate.setMinimumHeight(button_width)
         self.button_generate.clicked.connect(self.start_create_collection)
         layout.addWidget(self.button_generate)
 
         # Кнопка "Перегенерировать PDF и посты"
         self.button_pdf = QPushButton("🔃 Перегенерировать PDF и посты")
+        self.button_pdf.setMinimumHeight(button_width)
         self.button_pdf.clicked.connect(self.start_recreate_pdf)
         layout.addWidget(self.button_pdf)
 
         # Кнопка "Очистить лог"
         self.button_clear_log = QPushButton("🧹 Очистить лог")
+        self.button_clear_log.setMinimumHeight(button_width)
         self.button_clear_log.clicked.connect(self.clear_log)
         layout.addWidget(self.button_clear_log)
 
@@ -181,7 +193,7 @@ class MainWindow(QWidget):
         """
         self.worker_collection = self.start_worker(
             ControlManager().create_collection,
-            "▶️ Запуск генерации подборок...\n",
+            log_message="▶️ Запуск генерации подборок...\n",
             file_path_tools=FILE_PATH_TOOLS,
             file_path_collection=FILE_PATH_COLLECTION,
             path_to_output_folder=PATH_TO_OUTPUT_FOLDER
@@ -193,7 +205,7 @@ class MainWindow(QWidget):
         """
         self.worker_pdf = self.start_worker(
             ControlManager().recreate_pdf_and_posts,
-            "▶️ Запуск перегенерации PDF и постов...\n",
+            log_message="▶️ Запуск перегенерации PDF и постов...\n",
             file_path_tools=FILE_PATH_TOOLS,
             file_path_collection=FILE_PATH_COLLECTION,
             path_to_output_folder=PATH_TO_OUTPUT_FOLDER
@@ -205,11 +217,25 @@ class MainWindow(QWidget):
         """
         self.worker_parse = self.start_worker(
             start_parser,
-            "▶️ Запуск парсера...\n",
+            log_message="▶️ Запуск парсера...\n",
             table_path=FILE_PATH_TOOLS,
             ws_title='Средства',
             image_dir_path='00_base/products/00_img',
             base_delay=3
+        )
+
+    def start_check_compositions(self):
+        """
+        Запуск обработки составов средств
+        """
+        self.worker_check_compositions = self.start_worker(
+            process_excel_and_fill_composition,
+            log_message="▶️ Начинаем обработку составов...\n",
+            file_path_tools='00_base/Средства_АКТУАЛЬНАЯ.xlsx',
+            sheet_name='Средства',
+            source_column_name='Состав',
+            target_column_name='Элементы состава списком',
+            target_len_column_name='Количество элементов состава',
         )
 
     def append_log(self, text: str) -> None:

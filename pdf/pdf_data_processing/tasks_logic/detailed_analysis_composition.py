@@ -199,24 +199,31 @@ class DetailedAnalysisCompositionPDFTemplateCreator:
         :param one_product_data: данные ответа нейронки
         """
         result_data = {}
-        for element, data in one_product_data.items():
-            if element.startswith('element_'):
-                result_data.update(
-                    self.get_one_element_data(
-                        element_name=element,
-                        one_element_data=data
-                    )
+        # Оставляем только ключи, начинающиеся с "element_"
+        element_only_data = {
+            k: v for k, v in one_product_data.items()
+            if k.startswith("element_")
+        }
+        for index, (element, data) in enumerate(element_only_data.items(), start=1):
+            result_data.update(
+                self.get_one_element_data(
+                    element_name=element,
+                    element_index=index,
+                    one_element_data=data
                 )
+            )
         return result_data
 
     def get_one_element_data(
             self,
             element_name: str,
+            element_index: int,
             one_element_data: dict
     ) -> dict:
         """
         Возвращает словарь с информацией об элементе из состава
         :param element_name: имя элемента из ответа ("element_1", "element_777")
+        :param element_index: индекс элемента
         :param one_element_data: словарь с информацией по элементу
         :return: {'Aqua (Water)': 'Вода используется как растворител ...', ...}
         """
@@ -237,7 +244,7 @@ class DetailedAnalysisCompositionPDFTemplateCreator:
             what_is_element_used_for_with_ban.append(ban_text)
 
         return {
-            f'{element_name}_Название элемента': element_title,
+            f'{element_name}_Название элемента': f'{element_index}.  {element_title}',
             f'{element_name}_Для чего элемент': '\n'.join(what_is_element_used_for_with_ban),
             f'{element_name}_Опасность элемента': element_danger_text,
         }
