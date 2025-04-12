@@ -179,9 +179,9 @@ class TaskProcessing:
         """
 
         step_data = self.collection_data
-        task_steps = [
-            (0, step_data)
-        ]
+        step_data['Номер шага задачи'] = 0
+        step_data['Шаг задачи последний или нет'] = True
+        task_steps = [step_data,]
 
         self.run_all_task_steps(all_task_steps=task_steps)
 
