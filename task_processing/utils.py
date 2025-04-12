@@ -1,5 +1,69 @@
 import os
 import json
+from decimal import Decimal
+
+
+def recursive_add(target: dict, source: dict) -> None:
+    """
+    Рекурсивно обходит словарь `source` и добавляет значения в `target`.
+    Все значения считаются как Decimal, включая count.
+    :param target: словарь, в который добавляются значения
+    :param source: словарь-источник данных
+    """
+    for key, value in source.items():
+        if isinstance(value, dict):
+            if key not in target:
+                target[key] = {}
+            recursive_add(target[key], value)
+        else:
+            if key not in target:
+                target[key] = Decimal("0")
+            target[key] += Decimal(value)
+
+
+def convert(obj: dict) -> dict | str:
+    """
+    Рекурсивно преобразует все значения типа Decimal в строки для корректного сохранения в JSON.
+
+    :param obj: вложенный словарь (или значение), содержащий Decimal-объекты
+    :return: словарь/значение с Decimal, преобразованными в строки
+    """
+    if isinstance(obj, dict):
+        return {k: convert(v) for k, v in obj.items()}
+    if isinstance(obj, Decimal):
+        return str(obj)
+    return obj
+
+
+def sum_token_price_in_folder(
+        folder_path: str,
+        output_filename: str
+
+):
+    """
+    Складывает значения всех JSON-файлов в папке, сохраняя структуру.
+    Все значения (включая count) обрабатываются как Decimal.
+    Результат сохраняется в указанный JSON-файл.
+    :param folder_path: путь к папке с файлами информации по стоимости токенов
+    :param output_filename: имя итогового файла
+    :return: dict с суммированной информацией
+    """
+    target = {}
+    try:
+        for filename in os.listdir(folder_path):
+            if filename.endswith(".json"):
+                path = os.path.join(folder_path, filename)
+                with open(path, "r", encoding="utf-8") as f:
+                    data = json.load(f)
+                    recursive_add(target=target, source=data)
+        result = convert(target)
+        # Сохраняем
+        output_path = os.path.join(folder_path, output_filename)
+        with open(output_path, "w", encoding="utf-8") as file:
+            json.dump(result, file, ensure_ascii=False, indent=4)
+    except Exception as exc:
+        print(f"❌ Ошибка при подсчёте общей стоимости токенов: {exc}")
+        raise
 
 
 def merge_json_files(
@@ -11,7 +75,7 @@ def merge_json_files(
     Повторяющиеся ключи перезаписываются.
 
     :param folder_path: Путь к папке с JSON-файлами.
-    :param output_filename: Имя итогового файла (по умолчанию "merged_result.json").
+    :param output_filename: Имя итогового файла
     """
     merged_data = {}
 

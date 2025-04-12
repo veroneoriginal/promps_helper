@@ -5,7 +5,7 @@
 from appeal_to_openai.utils import (
     _formation_context,
     _generate_text_content_openai,
-    _processing_content_from_openai,
+    _processing_answer_from_openai,
 )
 
 
@@ -15,7 +15,7 @@ def send_request_to_openai(
         api_key: str,
         json_scheme: dict,
         model: str,
-) -> str:
+) -> dict:
     """
     Уравляющая функция для реализации процесса отправки запроса в openai,
     получение результата и сохранение итогового файла
@@ -27,7 +27,7 @@ def send_request_to_openai(
      от количества анализируемых средств)
     :param model: название используемой модели OpenAI "gpt-4o", "gpt-4o-mini"
 
-    :return: путь до json файла с анализом средств
+    :return: контент, информация по токенам
     """
 
     # Формирование контекста
@@ -36,7 +36,7 @@ def send_request_to_openai(
         system_prompt=system_prompt,
     )
 
-    # Передаю контекст в OpenAI
+    # Передаю контекст и отправляю запрос в OpenAI
     result = _generate_text_content_openai(
         api_key=api_key,
         context=context,
@@ -45,6 +45,7 @@ def send_request_to_openai(
     )
 
     # Обрабатываю контент полученный от OpenAI
-    data = _processing_content_from_openai(result=result)
-
-    return data
+    return _processing_answer_from_openai(
+        result=result,
+        model=model,
+    )

@@ -106,7 +106,6 @@ class DetailedAnalysisCompositionPDFTemplateCreator:
         :param one_product_data: данные одного средства из ответа нейронки
         :return: словарь с информацией для создания PDF-документа
         """
-
         product_name = one_product_data['Исходное средство']['Название средства']
         product_name_lower = product_name.lower().strip()
 
@@ -222,7 +221,9 @@ class DetailedAnalysisCompositionPDFTemplateCreator:
         :return: {'Aqua (Water)': 'Вода используется как растворител ...', ...}
         """
         element_title = one_element_data.get("Название элемента", "Без названия")
+        element_title = element_title[0].upper() + element_title[1:]
         what_is_element_used_for = one_element_data.get("Для чего элемент", "Нет описания")
+        what_is_element_used_for = what_is_element_used_for[0].upper() + what_is_element_used_for[1:]
         is_element_danger = one_element_data.get("Опасен элемент или нет", False)
         element_danger_text = one_element_data.get("Чем опасен элемент", "Нет описания")
         danger_level_smile = self.get_danger_level_smile(is_element_danger=is_element_danger)

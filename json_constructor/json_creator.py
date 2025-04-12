@@ -48,22 +48,25 @@ class JsonCreator:
         :return: json-схема для заданного количества средств
         """
 
-
         schema = {
             "name": "detailed_analysis_composition",
             "strict": True,
             "schema": {
                 "type": "object",
-                "properties": {
-                    "result": {
-                        "type": "string",
-                        "description": "Итоговая рекомендация, вывод"
-                    },
-                },
-                "required": ["result"],
+                "properties": {},
+                "required": [],
                 "additionalProperties": False
             }
         }
+
+        result = {
+            "type": "string",
+            "description": "Итоговая рекомендация, вывод"
+        }
+        # Если это последний шаг в задачу - просим вывод
+        if self.data_collection['Шаг задачи последний или нет']:
+            schema['schema']['properties']['result'] = result
+            schema['schema']['required'].append('result')
 
         products = {
             'origin_product': {

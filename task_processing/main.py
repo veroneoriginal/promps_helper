@@ -7,7 +7,10 @@ from dotenv import load_dotenv
 from appeal_to_openai.main import send_request_to_openai
 from json_constructor.main import get_json_scheme
 from prompt_constructor.main import get_prompt
-from task_processing.utils import merge_json_files, get_list_composition_elements
+from task_processing.utils import (
+    merge_json_files,
+    get_list_composition_elements, sum_token_price_in_folder,
+)
 from utils.utils import save_file_in_process_work
 
 
@@ -49,7 +52,7 @@ class TaskProcessing:
             self,
             prompt_for_convert: dict,
             json_scheme: dict,
-    ) -> str:
+    ) -> dict:
         """
         В этом методе осуществляется вызов ключевой функции по:
         1) созданию готового контекста, который передается в OpenAI,
@@ -65,13 +68,14 @@ class TaskProcessing:
         openai_api_key = os.getenv('OPENAI_API_KEY')
         openai_model = os.getenv('OPENAI_MODEL')
 
-        return send_request_to_openai(
+        response = send_request_to_openai(
             prompt=prompt_for_convert['prompt'],
             system_prompt=prompt_for_convert['system_prompt'],
             api_key=openai_api_key,
             json_scheme=json_scheme,
             model=openai_model,
         )
+        return response
 
     def run_task_processing(self):
         """
@@ -84,7 +88,6 @@ class TaskProcessing:
     def run_task_step(
             self,
             step_collection_data: dict,
-            task_step_number: int,
     ) -> None:
         """
         Выполняем один шаг задачи.
@@ -95,9 +98,9 @@ class TaskProcessing:
         4) Отправка запроса в OpenAI и сохранение ответа
 
         :param step_collection_data: подготовленные данные подборки для шага задачи
-        :param task_step_number: номер шага задачи
 
         """
+        task_step_number = step_collection_data['Номер шага задачи']
 
         # Определяю json-схему
         json_scheme = get_json_scheme(
@@ -131,11 +134,18 @@ class TaskProcessing:
             prompt_for_convert=prompt,
             json_scheme=json_scheme,
         )
-        # Сохраняем ответ OpenAI в папку
+        # Сохраняем контент из ответа OpenAI в папку
         save_file_in_process_work(
-            data=answer_openai,
+            data=answer_openai['content'],
             path_to_folder=self.paths_to_save_folders["02_answer_gpt"],
             file_name=f'{task_step_number}_step_answer_gpt',
+            file_extension='.json',
+        )
+        # Сохраняем информацию по стоимости токенов из ответа OpenAI в папку
+        save_file_in_process_work(
+            data=answer_openai['token_price'],
+            path_to_folder=self.paths_to_save_folders["03_token_price"],
+            file_name=f'{task_step_number}_step_token_price',
             file_extension='.json',
         )
 
@@ -148,15 +158,19 @@ class TaskProcessing:
         :param all_task_steps: все шаги задачи в виде списка
         """
 
-        for step_number, step_data in all_task_steps:
+        for step_data in all_task_steps:
             self.run_task_step(
                 step_collection_data=step_data,
-                task_step_number=step_number
             )
         # объединяем ответы OpenAI в один json-файл
         merge_json_files(
             folder_path=self.paths_to_save_folders["02_answer_gpt"],
             output_filename='Анализ_средств.json',
+        )
+        # объединяем стоимости токенов в один json-файл
+        sum_token_price_in_folder(
+            folder_path=self.paths_to_save_folders["03_token_price"],
+            output_filename='Токены_итог.json',
         )
 
     def task_with_one_step(self):
@@ -197,8 +211,10 @@ class TaskProcessing:
             step_collection_data['Элементы состава для шага задачи'] = (
                 numbered_composition_elements_list[start_index:end_index]
             )
-            # Добавляем шаг
-            task_steps.append(
-                (step_number, step_collection_data)
+            step_collection_data['Номер шага задачи'] = step_number
+            step_collection_data['Шаг задачи последний или нет'] = (
+                    step_number == task_steps_count - 1
             )
+            # Добавляем шаг
+            task_steps.append(step_collection_data)
         self.run_all_task_steps(all_task_steps=task_steps)
