@@ -12,7 +12,7 @@ from openpyxl.worksheet.worksheet import Worksheet
 
 # Настройки
 load_dotenv()
-API_KEY = os.getenv('OPENAI_API_KEY')
+API_KEY = os.getenv('OPENAI_API_TECHNICAL_KEY')
 MODEL = os.getenv('OPENAI_MODEL')
 
 # Список допустимых аббревиатур, которые должны быть UPPERCASE
@@ -78,7 +78,6 @@ def get_filtered_elements(composition_text: str) -> tuple:
     """
 
     content = ask_openai_about_composition(composition_text=composition_text)
-    print(f'{content}')
     _list = parse_list_from_string(content)
     count_list = len(_list)
     capitalize_str = fix_ingredient_string(_list)
