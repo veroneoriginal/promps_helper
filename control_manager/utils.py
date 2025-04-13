@@ -15,7 +15,7 @@ def parse_collection_products_data(raw: str) -> dict:
     lines = [line.strip() for line in raw.splitlines() if line.strip()]
 
     group_header_pattern = re.compile(r'^(Набор_\d+)\s*:?\s*$')
-    entry_pattern = re.compile(r'^(Средство_\d+)\s*:\s*(.+?),\s*(\d+)$')
+    entry_pattern = re.compile(r'^([\wА-Яа-яёЁ_]+)\s*:\s*(.+?),\s*(\d+)$')
 
     for line in lines:
         group_match = group_header_pattern.match(line)

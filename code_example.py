@@ -32,6 +32,10 @@ data4 = """
 Средство_1  :  KEVIN.MURPHY KILLER.CURLS WASH,19000260883
 Средство_2 :  KEVIN.MURPHY KILLER.CURLS RINSE,19000260882
 """
+data5 = """
+Исходное_средство : K18 leave-in molecular repair hair mask, 19000041719
+Аналог_средство : LIMBA COSMETICS Instant Transformation, 19000279301
+"""
 
 
 def parse_collection_products_data(raw: str) -> dict:
@@ -47,7 +51,7 @@ def parse_collection_products_data(raw: str) -> dict:
     lines = [line.strip() for line in raw.splitlines() if line.strip()]
 
     group_header_pattern = re.compile(r'^(Набор_\d+)\s*:?\s*$')
-    entry_pattern = re.compile(r'^(Средство_\d+)\s*:\s*(.+?),\s*(\d+)$')
+    entry_pattern = re.compile(r'^([\wА-Яа-яёЁ_]+)\s*:\s*(.+?),\s*(\d+)$')
 
     for line in lines:
         group_match = group_header_pattern.match(line)
@@ -86,3 +90,7 @@ print(type(res_3))
 res_4 = parse_collection_products_data(data4)
 print(res_4)
 print(type(res_4))
+
+res_5 = parse_collection_products_data(data5)
+print(res_5)
+print(type(res_5))

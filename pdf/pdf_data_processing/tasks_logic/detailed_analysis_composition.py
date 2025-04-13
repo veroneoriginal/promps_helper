@@ -110,10 +110,10 @@ class DetailedAnalysisCompositionPDFTemplateCreator:
         :param one_product_data: данные одного средства из ответа нейронки
         :return: словарь с информацией для создания PDF-документа
         """
-        product_name = one_product_data['Исходное средство']['Название средства']
+        product_name = one_product_data['Исходное_средство']['Название средства']
         product_name_lower = product_name.lower().strip()
 
-        product_article = one_product_data['Исходное средство']['Артикул в Золотом Яблоке']
+        product_article = one_product_data['Исходное_средство']['Артикул в Золотом Яблоке']
 
         product_data_in_data_tools = self.info_data['Средства'][product_name_lower][product_article]
 

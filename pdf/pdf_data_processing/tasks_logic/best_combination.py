@@ -174,7 +174,7 @@ class BestCombinationProductPDFTemplateCreator:
         """
 
         source_product_template = self.get_source_product_template(
-            one_product_data=self.rus_selection_result['Исходное средство']
+            one_product_data=self.rus_selection_result['Исходное_средство']
         )
         self.pdf_docs_data.append(source_product_template)
 
