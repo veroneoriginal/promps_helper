@@ -78,7 +78,7 @@ def get_filtered_elements(composition_text: str) -> tuple:
     """
 
     content = ask_openai_about_composition(composition_text=composition_text)
-
+    print(f'{content}')
     _list = parse_list_from_string(content)
     count_list = len(_list)
     capitalize_str = fix_ingredient_string(_list)
@@ -95,14 +95,17 @@ def ask_openai_about_composition(composition_text: str) -> str:
     messages = [
         {
             "role": "system",
-            "content": "Верни строку с элементами, готовую к "
-                       "конвертации в Python-список."
+            "content": "Не пиши ничего лишнего, пиши только названия элементов. Если есть какие-то пояснения - убирай их."
         },
         {
             "role": "user",
             "content": f"Вот состав:\n{composition_text}\n\nВерни только "
-                       f"список элементов, разделённых запятыми."
-                       f"Не нужно писать никаких описаний, пояснений и прочего"
+                       f"список элементов состава в виде строки, в которой каждый элемент в кавычках."
+                       f"В начале строки стоит [ и в конце стоит ]."
+                       f"Если элемент один, например, 'Сульфат магния', значит "
+                       f"делаешь список из одного элемента, но не раскладываешь элемент на несколько."
+                       f"Не нужно писать никаких описаний, пояснений к элементам и прочего, "
+                       f"только их названия."
         }
     ]
 
@@ -142,7 +145,9 @@ def get_rows_for_check_composition(
         target_len_cell = row[col_index[target_len_column_name] - 1]
 
         if not target_cell.value and source_cell.value:
-            rows_to_process.append((source_cell.value, target_cell, target_len_cell))
+            rows_to_process.append(
+                (source_cell.value, target_cell, target_len_cell, source_cell.row)
+            )
     total = len(rows_to_process)
     if total:
         print(f"🔍 Найдено строк для обработки: {total}")
@@ -188,7 +193,12 @@ def process_excel_and_fill_composition(
     total = len(rows_to_process)
 
     # 2. Обрабатываем
-    for index, (composition, target_cell, target_len_cell) in enumerate(rows_to_process, start=1):
+    for index, (
+            composition,
+            target_cell,
+            target_len_cell,
+            row_number
+    ) in enumerate(rows_to_process, start=1):
         print(f" Обрабатываем: {composition[:40]}...")
         try:
             parsed, count = get_filtered_elements(composition)
@@ -202,7 +212,7 @@ def process_excel_and_fill_composition(
                 return
         except Exception as exc:
             wb.save(file_path_tools)
-            print(f"❌ Ошибка: {exc}")
+            print(f"❌ Ошибка в строке № {row_number}: {exc}")
             raise
 
         if progress_callback:
