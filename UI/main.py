@@ -254,6 +254,7 @@ class MainWindow(QWidget):
         self.button_pdf.setEnabled(True)
         self.button_generate.setEnabled(True)
         self.button_clear_log.setEnabled(True)
+        self.button_check_composition.setEnabled(True)
 
     def on_process_start(self):
         """
@@ -263,6 +264,7 @@ class MainWindow(QWidget):
         self.button_pdf.setEnabled(False)
         self.button_generate.setEnabled(False)
         self.button_clear_log.setEnabled(False)
+        self.button_check_composition.setEnabled(False)
 
 
 if __name__ == "__main__":
