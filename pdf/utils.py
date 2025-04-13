@@ -5,7 +5,7 @@ import re
 
 import emoji
 
-EMOJI_IMAGE_DIR = Path("./00_base/source/emoji/")
+from source.structure_folders import EMOJI_IMAGE_DIR
 
 
 def _get_pdf_file_paths(

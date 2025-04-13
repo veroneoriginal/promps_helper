@@ -12,16 +12,19 @@ from pdf.creator_logic.creator.fonts_and_styles.best_product_without_carcinogens
     BEST_PRODUCT_WITHOUT_CARCINOGENS_STYLES,
 )
 from pdf.creator_logic.creator.fonts_and_styles.textpost import TEXTPOST_STYLES
+from source.structure_folders import FONTS_DIR
 
-FONTS = (
-    ("DejaVuSans", "00_base/source/fonts/DejaVuSans.ttf"),
-    ("DejaVuSansBold", "00_base/source/fonts/DejaVuSans-Bold.ttf"),
-    ("Montserrat-Medium", "00_base/source/fonts/Montserrat-Medium.ttf"),
-    ("Montserrat-Bold", "00_base/source/fonts/Montserrat-Bold.ttf"),
-    ("Montserrat-Regular", "00_base/source/fonts/Montserrat-Regular.ttf"),
-    ("Montserrat-SemiBold", "00_base/source/fonts/Montserrat-SemiBold.ttf"),
-    ("Symbola", "00_base/source/fonts/Symbola.ttf"),
-)
+FONTS_NAME = [
+    "DejaVuSans",
+    "DejaVuSans-Bold",
+    "Montserrat-Medium",
+    "Montserrat-Bold",
+    "Montserrat-Regular",
+    "Montserrat-SemiBold",
+    "Symbola",
+]
+
+FONTS = tuple((fontname, f"{FONTS_DIR}/{fontname}.ttf") for fontname in FONTS_NAME)
 
 for font in FONTS:
     pdfmetrics.registerFont(

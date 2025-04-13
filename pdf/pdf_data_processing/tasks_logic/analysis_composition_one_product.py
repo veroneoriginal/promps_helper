@@ -7,6 +7,7 @@ from pathlib import Path
 
 from pdf.pdf_data_processing.tasks_logic.base_task import get_base_info_by_product
 from pdf.pdf_data_processing.tasks_utils import get_path_for_save_pdf, calculate_price_per_standard_unit
+from source.structure_folders import GREEN_VERTICAL_BRAND_LINE_PATH
 
 ADDITIONAL_ELEMENTS_BY_PRODUCT_CATEGORY = {
     "Уход за кожей лица": [
@@ -369,7 +370,7 @@ class AnalisisCompositionProductPDFTemplateCreator:
                 unit=product_data_in_data_tools['Юниты меры (мл/шт)'],
                 price_rub=product_data_in_data_tools['Стоимость руб'],
             ),
-            'Путь к изображению бренд-линии': Path("00_base/source/imagine_border/border_green.jpg"),
+            'Путь к изображению бренд-линии': GREEN_VERTICAL_BRAND_LINE_PATH,
             'Путь для сохранения pdf-файла': Path(get_path_for_save_pdf(
                 product_title=product_name,
                 path_to_output_folder_pdf_file=self.path_to_output_folder_pdf_file,

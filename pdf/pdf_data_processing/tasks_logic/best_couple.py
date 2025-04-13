@@ -3,11 +3,13 @@
 """
 Создание PDF-документов для задачи 'Лучая пара'
 """
-from pathlib import Path
-
 from pdf.pdf_data_processing.tasks_logic.base_task import get_base_info_by_product
 from pdf.pdf_data_processing.tasks_utils import (
     get_path_for_save_pdf,
+)
+from source.structure_folders import (
+    GREEN_ACCEPT_CHECK_IMAGE_PATH,
+    GREEN_HORISONTAL_BRAND_LINE_PATH, FIOLET_HORISONTAL_BRAND_LINE_PATH,
 )
 
 PDF_STRUCTURE = {
@@ -213,8 +215,8 @@ class BestCouplePDFTemplateCreator:
         :return: список с шаблонами
         """
         template_data = self.get_couple_products_data(all_data=all_data)
-        template_data['Путь к изображению галочки'] = Path('00_base/source/check/v2.png')
-        template_data['Путь к изображению бренд-линии'] = Path('00_base/source/imagine_border/border_green_horizontal.jpg')
+        template_data['Путь к изображению галочки'] = GREEN_ACCEPT_CHECK_IMAGE_PATH
+        template_data['Путь к изображению бренд-линии'] = GREEN_HORISONTAL_BRAND_LINE_PATH
         template_data.update(PDF_STRUCTURE['Лучшая пара'])
 
         return template_data
@@ -230,7 +232,6 @@ class BestCouplePDFTemplateCreator:
         """
         template_data = self.get_couple_products_data(all_data=all_data)
         template_data.update(PDF_STRUCTURE['Не лучшая пара'])
-        template_data['Путь к изображению бренд-линии'] = Path(
-            '00_base/source/imagine_border/border_fiolet_horizontal.jpg')
+        template_data['Путь к изображению бренд-линии'] = FIOLET_HORISONTAL_BRAND_LINE_PATH
 
         return template_data

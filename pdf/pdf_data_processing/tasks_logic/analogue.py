@@ -3,12 +3,11 @@
 """
 Создание PDF-документов для задачи 'Аналог'
 """
-from pathlib import Path
-
 from pdf.pdf_data_processing.tasks_logic.base_task import get_base_info_by_product
 from pdf.pdf_data_processing.tasks_utils import (
     get_path_for_save_pdf,
 )
+from source.structure_folders import ORANGE_LIGHT_VERTICAL_BRAND_LINE_PATH
 
 PDF_STRUCTURE = {
     'Исходный шаблон': {
@@ -157,7 +156,7 @@ class AnaloguePDFTemplateCreator:
             'Артикул 2': product_2_base_data["Артикул"],
             'Количество мера / цена 2': product_2_base_data['Количество мера / цена'],
 
-            'Путь к изображению бренд-линии': Path("00_base/source/imagine_border/border_orange_light.jpg"),
+            'Путь к изображению бренд-линии': ORANGE_LIGHT_VERTICAL_BRAND_LINE_PATH,
             'Путь для сохранения pdf-файла': get_path_for_save_pdf(
                 product_title=product_1_name,
                 path_to_output_folder_pdf_file=self.path_to_output_folder_pdf_file,

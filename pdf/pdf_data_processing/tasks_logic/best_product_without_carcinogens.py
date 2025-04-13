@@ -3,10 +3,13 @@
 """
 Создание PDF-документов для задачи 'Лучшее средство без канцерогенов'
 """
-from pathlib import Path
-
 from pdf.pdf_data_processing.tasks_logic.base_task import get_base_info_by_product
 from pdf.pdf_data_processing.tasks_utils import get_path_for_save_pdf
+from source.structure_folders import (
+    GREEN_VERTICAL_BRAND_LINE_PATH,
+    GREEN_ACCEPT_CHECK_IMAGE_PATH,
+    FIOLET_VERTICAL_BRAND_LINE_PATH,
+)
 
 PDF_STRUCTURE = {
     'Лучшее средство':
@@ -233,8 +236,8 @@ class BestProductWithOutConcerogensPDFTemplateCreator:
         """
 
         template = self.get_base_template(one_product_data=one_product_data)
-        template['Путь к изображению галочки'] = Path("00_base/source/check/v2.png")
-        template['Путь к изображению бренд-линии'] = Path('00_base/source/imagine_border/border_green.jpg')
+        template['Путь к изображению галочки'] = GREEN_ACCEPT_CHECK_IMAGE_PATH
+        template['Путь к изображению бренд-линии'] = GREEN_VERTICAL_BRAND_LINE_PATH
         template.update(PDF_STRUCTURE['Лучшее средство'])
 
         return template
@@ -250,7 +253,7 @@ class BestProductWithOutConcerogensPDFTemplateCreator:
         """
 
         template = self.get_base_template(one_product_data=one_product_data)
-        template['Путь к изображению бренд-линии'] = Path('00_base/source/imagine_border/border_fiolet.jpg')
+        template['Путь к изображению бренд-линии'] = FIOLET_VERTICAL_BRAND_LINE_PATH
         template.update(PDF_STRUCTURE['Не лучшее средство'])
 
         return template

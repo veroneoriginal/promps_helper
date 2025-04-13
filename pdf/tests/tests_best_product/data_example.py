@@ -5,6 +5,8 @@
 """
 from pathlib import Path
 
+from source.structure_folders import GREEN_ACCEPT_CHECK_IMAGE_PATH
+
 TEST_BEST_PRODUCT_PATH_PDF_FILE = '01_test_base/00_info_for_post/22_22_2222/100_Шампуни/00_source/03_pdf'
 TEST_BEST_PRODUCT_PATH_JPG_FILE = '01_test_base/00_info_for_post/22_22_2222/100_Шампуни/00_source/04_jpg'
 FILE_PATH_TOOLS = '01_test_base/Средства для тестов.xlsx'
@@ -132,7 +134,7 @@ TEST_BEST_PRODUCT_EXPECTED_RESULT = [
      'Шаблоны страниц с фреймами': best_page_frames,
      'Элементы и стили': no_best_elem},
     {'Артикул': 'артикул: 19000146259',
-     'Путь к изображению галочки': Path("00_base/source/check/v2.png"),
+     'Путь к изображению галочки': GREEN_ACCEPT_CHECK_IMAGE_PATH,
      'Количество мера / цена': '300 мл / 2450 руб',
      'Минусы': 'Содержит сульфаты, которые могут сушить волосы и вызывать '
                'раздражение кожи головы.',

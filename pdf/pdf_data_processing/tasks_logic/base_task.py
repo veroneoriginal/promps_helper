@@ -2,7 +2,9 @@
 from pathlib import Path
 
 from pdf.pdf_data_processing.tasks_utils import (
-    calc_base_price_ratio, extract_product_name, capitalize_first_letter,
+    calc_base_price_ratio,
+    extract_product_name,
+    capitalize_first_letter,
 )
 
 

@@ -1,10 +1,9 @@
-from pathlib import Path
-
 from pdf.creator_logic.creator.document_creator import (
     PDFBaseDocTemplateWithBrandLine,
     PDFPageTemplateandFrameBuilder,
 )
 from pdf.textpost_pdf_creator.utils import create_emodji_flowables
+from source.structure_folders import GREEN_VERTICAL_BRAND_LINE_PATH
 
 
 class PDFTextPostProcessor:
@@ -44,7 +43,7 @@ class PDFTextPostProcessor:
         text = self.read_text_post(file_path=self.path_to_text_post_file)
         doc = PDFBaseDocTemplateWithBrandLine(
             filename=self.path_for_save_pdf_file,
-            path_to_brandline_file=Path("00_base/source/imagine_border/border_green.jpg"),
+            path_to_brandline_file=GREEN_VERTICAL_BRAND_LINE_PATH,
             doc_width_height=(1024, 1280),
             brand_line_width_height=(85, 1280),
             brand_line_coords=[(0, 0), ],

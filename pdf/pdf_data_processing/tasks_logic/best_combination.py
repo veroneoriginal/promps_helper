@@ -3,11 +3,14 @@
 """
 Создание PDF-документов для задачи 'Лучшее сочетание'
 """
-from pathlib import Path
-
 from pdf.pdf_data_processing.tasks_logic.base_task import get_base_info_by_product
 from pdf.pdf_data_processing.tasks_utils import (
     get_path_for_save_pdf,
+)
+from source.structure_folders import (
+    GREEN_ACCEPT_CHECK_IMAGE_PATH,
+    GREEN_VERTICAL_BRAND_LINE_PATH,
+    FIOLET_VERTICAL_BRAND_LINE_PATH,
 )
 
 PDF_STRUCTURE = {
@@ -228,7 +231,7 @@ class BestCombinationProductPDFTemplateCreator:
         template_data = {
             # исходное средство
             'Вывод': one_product_data['Вывод'],
-            'Путь к изображению бренд-линии': Path("00_base/source/imagine_border/border_fiolet.jpg"),
+            'Путь к изображению бренд-линии': FIOLET_VERTICAL_BRAND_LINE_PATH,
             'Путь для сохранения pdf-файла': get_path_for_save_pdf(
                 product_title=product_name,
                 path_to_output_folder_pdf_file=self.path_to_output_folder_pdf_file,
@@ -261,8 +264,8 @@ class BestCombinationProductPDFTemplateCreator:
         template_data = {
             # исходное средство
             'Вывод': one_product_data['Вывод'],
-            'Путь к изображению бренд-линии': Path("00_base/source/imagine_border/border_green.jpg"),
-            'Путь к изображению галочки': Path("00_base/source/check/v2.png"),
+            'Путь к изображению бренд-линии': GREEN_VERTICAL_BRAND_LINE_PATH,
+            'Путь к изображению галочки': GREEN_ACCEPT_CHECK_IMAGE_PATH,
             'Путь для сохранения pdf-файла': get_path_for_save_pdf(
                 product_title=product_name,
                 path_to_output_folder_pdf_file=self.path_to_output_folder_pdf_file,
@@ -298,8 +301,8 @@ class BestCombinationProductPDFTemplateCreator:
             # исходное средство
             'Плюсы': one_product_data['Плюсы'],
             'Минусы': one_product_data['Минусы'],
-            'Путь к изображению бренд-линии': Path("00_base/source/imagine_border/border_green.jpg"),
-            'Путь к изображению галочки': Path("00_base/source/check/v2.png"),
+            'Путь к изображению бренд-линии': GREEN_VERTICAL_BRAND_LINE_PATH,
+            'Путь к изображению галочки': GREEN_ACCEPT_CHECK_IMAGE_PATH,
             'Путь для сохранения pdf-файла': get_path_for_save_pdf(
                 product_title=product_name,
                 path_to_output_folder_pdf_file=self.path_to_output_folder_pdf_file,
