@@ -1,7 +1,42 @@
-import ast
 import re
 import traceback
 
+
+def parse_collection_products_data(raw: str) -> dict:
+    """
+    Парсит средства подборки из строки
+    :param raw: строка с средствами
+    :return: словарь с средствами и артикулами
+    """
+    result = {}
+    current_group = None
+    raw = raw.strip().replace("«", "\"").replace("»", "\"")
+
+    lines = [line.strip() for line in raw.splitlines() if line.strip()]
+
+    group_header_pattern = re.compile(r'^(Набор_\d+)\s*:?\s*$')
+    entry_pattern = re.compile(r'^(Средство_\d+)\s*:\s*(.+?),\s*(\d+)$')
+
+    for line in lines:
+        group_match = group_header_pattern.match(line)
+        entry_match = entry_pattern.match(line)
+
+        if group_match:
+            current_group = group_match.group(1)
+            result[current_group] = {}
+        elif entry_match:
+            key, name, code = entry_match.groups()
+            item = (name.strip(), code.strip())
+            if current_group:
+                result[current_group][key] = item
+            else:
+                result[key] = item
+        else:
+            message = f"⚠️ Не смог спарсить средство из подборки: {line}"
+            print(message)
+            raise ValueError(message)
+
+    return result
 
 def create_dict_from_str(
         _str: str,
@@ -21,12 +56,7 @@ def create_dict_from_str(
             f"ожидалась строка, но получено: {type(_str)} -> {_str}"
         )
     try:
-        # Заменяем кавычки «» на стандартные "
-        normalized = _str.replace('«', '"').replace('»', '"')
-
-        # Заменяем круглые скобки на кортежный формат с квадратными (для ast.literal_eval)
-        normalized = re.sub(r'\(\s*"([^"]+)"\s*,\s*"([^"]+)"\s*\)', r'("\1", "\2")', normalized)
-        return ast.literal_eval(normalized)
+        return parse_collection_products_data(_str)
     except Exception as exc:
         print(
             f"⚠ Подборка в строке № {row_number}: ошибка при конвертации "

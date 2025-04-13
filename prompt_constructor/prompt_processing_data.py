@@ -156,8 +156,17 @@ class PromptProcessingData:
 
         :return: словарь с расшифрованным средством
         """
+        source_product_name = product_name
         product_name = product_name.lower().strip()
-        product_data = data[list_name][product_name][product_article]
+        try:
+            product_data = data[list_name][product_name][product_article]
+        except KeyError:
+            print(
+                f'⚠ В подборке есть средство {source_product_name}. '
+                f'Или такого средства нет в базе или у него не правильно '
+                f'указан артикул {product_article}'
+            )
+            raise
 
         return {
             "Тип продукта": product_data.get("Тип продукта", "Не указан"),
