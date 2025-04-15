@@ -1,4 +1,5 @@
 import os
+import re
 from pathlib import Path
 
 import markdown2
@@ -74,7 +75,6 @@ def md_to_telegram_html(md_text: str) -> str:
     clean_html = clean_html.replace('[[[NL]]]', '\n')
 
     # 9. Чистим лишние пустые строки
-    import re
     clean_html = re.sub(r'\n{3,}', '\n\n', clean_html)
 
     return clean_html.strip()
@@ -83,7 +83,7 @@ def md_to_telegram_html(md_text: str) -> str:
 def send_images_and_text(
         images: list[str],
         chat_id: str,
-        bot: telebot.TeleBot,
+        _bot: telebot.TeleBot,
         chunk_size: int = 10
 ) -> None:
     """
@@ -91,7 +91,7 @@ def send_images_and_text(
 
     :param images: список путей к изображениям
     :param chat_id: ID чата Telegram
-    :param bot: экземпляр TeleBot
+    :param _bot: экземпляр TeleBot
     :param chunk_size: максимальное количество изображений за один вызов send_media_group
     """
 
@@ -104,7 +104,7 @@ def send_images_and_text(
                 media = InputMediaPhoto(img_file.read())
                 media_group.append(media)
 
-        bot.send_media_group(chat_id, media_group)
+        _bot.send_media_group(chat_id, media_group)
 
 
 def send_post_from_folder(
@@ -136,6 +136,6 @@ def send_post_from_folder(
             if file.lower().endswith('.jpg')
         ])
 
-        send_images_and_text(images=images, chat_id=CHAT_ID, bot=bot)
+        send_images_and_text(images=images, chat_id=CHAT_ID, _bot=bot)
 
         bot.send_message(CHAT_ID, telegram_ready_text, parse_mode='HTML')
