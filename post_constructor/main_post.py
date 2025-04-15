@@ -1,6 +1,7 @@
 """
 Главный модуль пост-конструктора.
 """
+import os
 import re
 from copy import deepcopy
 from pathlib import Path
@@ -32,6 +33,37 @@ def get_products_list(
             products_list.append(value)
 
     return products_list
+
+
+def create_products_info(
+        data: dict,
+        data_tools: dict,
+        products_with_links: bool = False,
+) -> str:
+    """
+    Получаем готовый абзац с названиями средств и их артикулами
+    :param data: нерасшифрованный словарь с текущей подборкой
+    :param products_with_links: названия средств с ссылками или нет
+    :param data_tools: словарь со всеми данными по средствам
+
+    :return: строку с информацией о псредствах и их артикулах
+    """
+    # получаем список из кортежей с названием средства и артикулом из текущей подборки
+    products = get_products_list(data['Средства'])
+
+    # список, в котором будут строки с информацией о продуктах
+    products_info = []
+
+    for product_title, product_article in products:
+        if products_with_links:
+            product_title_lower = product_title.lower().strip()
+            poduct_data = data_tools['Средства'][product_title_lower][product_article]
+            product_link = poduct_data['Ссылка в Золотом Яблоке']
+            info = f'[{product_title}]({product_link}): арт. {product_article}\n'
+        else:
+            info = f'{product_title}: арт. {product_article}\n'
+        products_info.append(info)
+    return ''.join(products_info)
 
 
 def create_hashtag(
@@ -74,9 +106,19 @@ def create_post(
         path_for_save: str,
         detailed: bool,
         file_name: str,
+        products_with_links: bool = False,
 ) -> None:
     """
     Универсальный генератор постов (короткая/подробная версия)
+    :param data_tools: словарь со всеми данными по средствам
+    :param collection_data: нерасшифрованный словарь с текущей подборкой
+    :param path_to_result_recommend: путь до json-файла, в котором находится
+    ответ от GPT по подборке
+    :param path_for_save: путь, по которому сохранять пост
+    :param detailed: детализированная информация о пользователе или нет
+    :param file_name: имя файла для сохранения
+    :param products_with_links: вставлять в пост названия средств с ссылками или нет
+    :return: None
     """
 
     if collection_data['Параметры'].lower().strip() == 'учитывать':
@@ -96,6 +138,14 @@ def create_post(
     collection_data['Хештег'] = create_hashtag(
         data=collection_data,
         data_tools=data_tools,
+    )
+
+    # добавляем информацию о средствах и  артикулах
+    collection_data['Средства и артикулы'] = create_products_info(
+        data=collection_data,
+        data_tools=data_tools,
+        products_with_links=products_with_links,
+
     )
 
     # создаём текст поста
@@ -123,6 +173,11 @@ def create_post_detailed(
 ) -> None:
     """
     Формирует длинную версию поста
+    :param data_tools: словарь со всеми данными по средствам
+    :param collection_data: нерасшифрованный словарь с текущей подборкой
+    :param path_to_result_recommend: путь до json-файла, в котором находится
+    ответ от GPT по подборке
+    :param path_for_save: путь, по которому сохранять пост
     """
     create_post(
         data_tools=data_tools,
@@ -131,6 +186,49 @@ def create_post_detailed(
         path_for_save=path_for_save,
         detailed=True,
         file_name='text_for_post_detailed',
+        products_with_links=False,
+    )
+
+
+def create_text_post_for_telegram(
+        data_tools: dict,
+        collection_data: dict,
+        path_to_result_recommend: str,
+        path_for_save: str,
+) -> None:
+    """
+    Формирует текст для постинга в проверочныый канал
+    1) Короткую версию
+    1) Длинную версию
+
+    :param data_tools: словарь со всеми данными по средствам
+    :param collection_data: нерасшифрованный словарь с текущей подборкой
+    :param path_to_result_recommend: путь до json-файла, в котором находится
+    ответ от GPT по подборке
+    :param path_for_save: путь, по которому сохранять пост
+    """
+    result_path_for_save = str(Path(path_for_save) / 'telegram_review/')
+    os.makedirs(result_path_for_save, exist_ok=True)
+
+    # Создаём короткую версию
+    create_post(
+        data_tools=data_tools,
+        collection_data=deepcopy(collection_data),
+        path_to_result_recommend=path_to_result_recommend,
+        path_for_save=result_path_for_save,
+        detailed=False,
+        file_name='text_for_review_post_short',
+        products_with_links=True,
+    )
+    # Создаём длинную версию
+    create_post(
+        data_tools=data_tools,
+        collection_data=deepcopy(collection_data),
+        path_to_result_recommend=path_to_result_recommend,
+        path_for_save=result_path_for_save,
+        detailed=True,
+        file_name='text_for_review_post_detailed',
+        products_with_links=True,
     )
 
 
@@ -142,6 +240,11 @@ def create_post_short(
 ) -> None:
     """
     Формирует короткую версию поста
+    :param data_tools: словарь со всеми данными по средствам
+    :param collection_data: нерасшифрованный словарь с текущей подборкой
+    :param path_to_result_recommend: путь до json-файла, в котором находится
+    ответ от GPT по подборке
+    :param path_for_save: путь, по которому сохранять пост
     """
     create_post(
         data_tools=data_tools,
@@ -150,6 +253,7 @@ def create_post_short(
         path_for_save=path_for_save,
         detailed=False,
         file_name='text_for_post_short',
+        products_with_links=False,
     )
 
 
@@ -177,7 +281,8 @@ def forming_text_for_posts(
         path_to_result_recommend=path_to_result_recommend,
         path_for_save=path_for_save,
     )
-    # здесь сохраняем пост в PDF
+
+    # создаём из поста в Markdown пост в виде JPG
     create_textpost_pdf(
         path_to_text_post_file=str(Path(path_for_save) / 'text_for_post_short.md'),
         path_for_save_pdf_file=str(Path(path_for_save) / 'text_for_post_short.pdf'),
@@ -190,8 +295,15 @@ def forming_text_for_posts(
             path_to_result_recommend=path_to_result_recommend,
             path_for_save=path_for_save,
         )
-        # здесь сохраняем пост в PDF
+        # создаём из поста в Markdown пост в виде JPG
         create_textpost_pdf(
             path_to_text_post_file=str(Path(path_for_save) / 'text_for_post_detailed.md'),
             path_for_save_pdf_file=str(Path(path_for_save) / 'text_for_post_detailed.pdf'),
         )
+
+    create_text_post_for_telegram(
+        data_tools=data_tools,
+        collection_data=deepcopy(collection_data),
+        path_to_result_recommend=path_to_result_recommend,
+        path_for_save=path_for_save,
+    )

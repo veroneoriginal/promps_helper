@@ -1,7 +1,10 @@
 """
 В этом модуле - класс, управляющий логикой всего проекта
 """
+import os
 from pathlib import Path
+
+from dotenv import load_dotenv
 
 from appeal_to_openai.utils import checking_file_with_response
 from control_manager.utils import (
@@ -14,10 +17,13 @@ from excel_process_data.process_data import ExcelManager
 from post_constructor.main_post import forming_text_for_posts
 from pdf.main import create_pdf
 from task_processing.main import TaskProcessing
+from telegram.repost_for_review.main import send_post_from_folder
 
 
 # from utils.utils import copy_jpg_files
+load_dotenv()
 
+REPOST_TO_TEST_CHANNEL = os.getenv('REPOST_TO_TEST_CHANNEL')
 
 class ControlManager:
     """
@@ -256,6 +262,12 @@ class ControlManager:
                 path_to_result_recommend=self.paths_to_folders["02_answer_gpt"],
                 path_for_save=self.paths_to_folders['06_text'],
             )
+            if REPOST_TO_TEST_CHANNEL:
+                print('Отправка постов в тестовый канал')
+                send_post_from_folder(
+                    path_to_markdown_folder=self.paths_to_folders['06_text'],
+                    images_folder=self.paths_to_folders["05_jpg"]
+                )
 
             # Вызов колбэка для обновления прогресс бара
             if progress_callback:
@@ -349,6 +361,13 @@ class ControlManager:
                 path_to_result_recommend=self.paths_to_folders["02_answer_gpt"],
                 path_for_save=self.paths_to_folders['06_text'],
             )
+
+            if REPOST_TO_TEST_CHANNEL:
+                print('Отправка постов в тестовый канал')
+                send_post_from_folder(
+                    path_to_markdown_folder=self.paths_to_folders['06_text'],
+                    images_folder=self.paths_to_folders["05_jpg"]
+                )
 
             # Обновляем "Путь" подборки в таблице
             self.update_collection_data_in_database(

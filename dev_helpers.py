@@ -12,6 +12,8 @@ from dev_helpers.get_data_tools import get_data_tools_for_test
 import requests
 import os
 
+from source.structure_folders import EMOJI_IMAGE_DIR
+
 
 def download_smiles():
     """
@@ -50,10 +52,10 @@ def download_smiles():
         '1f50d': 'magnifying_glass',  # 🔍
         '2b50': 'star',  # ⭐
         '1f3c6': 'trophy',  # 🏆
-        '26a0-fe0f': 'warning_colored',  # ⚠️ (emoji version с FE0F)
+        '1f484': 'lipstick',  # 💄
     }
 
-    output_dir = '00_base/source/emoji/'
+    output_dir = EMOJI_IMAGE_DIR
     os.makedirs(output_dir, exist_ok=True)
 
     base_url = 'https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/'

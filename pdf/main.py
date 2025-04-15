@@ -1,5 +1,7 @@
 # pylint: disable=E0611: no-name-in-module
 import copy
+import os
+
 from pdf.creator_logic.creator.document_creator import PDFConverterToImage
 from pdf.creator_logic.main import PDFCreator
 from pdf.pdf_data_processing.main import PDFDataProcessor
@@ -85,3 +87,6 @@ def create_textpost_pdf(
         file_paths=convert_pdf_data,
     )
     pdf_converter.convert_to_image()
+
+    # удаляем pdf
+    os.remove(path_for_save_pdf_file)

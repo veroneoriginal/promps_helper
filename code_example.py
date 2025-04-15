@@ -1,96 +1,39 @@
-# pylint: skip-file
-import re
+import os
 
-data1 = """
-Средство_1 : NATURA ,@#$%^&*:SIBERICA Био. S.O.S ВОССТАНОВЛЕНИЕ и УВЛАЖНЕНИЕ, 19000111815
-Средство_2 : VICHY DERCOS DENSI-SOLUTIONS, 19760303700
-Средство_3 : («DERMEDIC DERMEDIC CAPILARTE soothing shampoo for sensitive and irritated scalp, 19000023112
-Средство_4 : OLLIN PROFESSIONAL BASIC LINE, 19000027320
-Средство_5 : ARAVIA PROFESSIONAL Sensitive Skin Shampoo, 19000032946
-Средство_6 : DAVINES LOVE CURL shampoo, 28140200002
+import telebot
+from dotenv import load_dotenv
+# создаём список InputMediaPhoto
+from telebot.types import InputMediaPhoto
+
+load_dotenv()
+BOT_TOKEN = os.getenv('BH_POST_FOR_REVIEW_BOT_TOKEN')
+CHAT_ID = os.getenv('REVIEW_POST_CHAT_ID')
+
+bot = telebot.TeleBot(BOT_TOKEN)
+
+# список картинок (можно использовать file_id, URL или путь к локальному файлу)
+images = [
+    '00_base/00_info_for_post/13_04_25/18_шампуни_кондиционеры_бесплатная/05_jpg/r_co_atlantis_moisturizing_b5_conditioner_24320200016_page_1.jpg',
+    '00_base/00_info_for_post/13_04_25/18_шампуни_кондиционеры_бесплатная/05_jpg/r_co_atlantis_moisturizing_b5_shampoo_24320200015_page_1.jpg',
+    '00_base/00_info_for_post/13_04_25/18_шампуни_кондиционеры_бесплатная/05_jpg/r_co_television_perfect_hair_conditioner_24320100036_page_1.jpg',
+    '00_base/00_info_for_post/13_04_25/18_шампуни_кондиционеры_бесплатная/05_jpg/r_co_television_perfect_hair_masque_19760310342_page_1.jpg',
+]
+
+media_group = [
+    InputMediaPhoto(open(image_path, 'rb')) for image_path in images
+]
+
+post = """
+💄 Средства из подборки:
+[R+CO Atlantis Moisturizing B5 Shampoo](https://dzen.ru/?yredirect=true): арт. 24320200015
+R+CO Television Perfect Hair Conditioner: арт. 24320100036
+R+CO Atlantis Moisturizing B5 Conditioner: арт. 24320200016
+R+CO TELEVISION Perfect Hair Masque: арт. 19760310342
 """
 
-data2 = """
-Набор_1 :
-Средство_1 : KEVIN.MURPHY KILLER.CURLS WASH,  19000260883
-Средство_2 : KEVIN.MURPHY KILLER.CURLS RINSE,  19000260882
-Набор_2 :
-Средство_1 : KEVIN.MURPHY PLUMPING, 19760327053
-Средство_2 : KEVIN.MURPHY PLUMPING, 19760327054
-"""
+# необязательно, можно добавить подпись только к первому изображению
+media_group[0].caption = post
+media_group[0].parse_mode = 'MARKDOWN'
 
-data3 = """
-Набор_1:
-Средство_1: KEVIN.MURPHY KILLER.CURLS WASH,  19000260883
-Средство_2: KEVIN.MURPHY KILLER.CURLS RINSE,  19000260882
-Набор_2:
-Средство_1: KEVIN.MURPHY PLUMPING, 19760327053
-Средство_2: KEVIN.MURPHY PLUMPING, 19760327054
-"""
-
-data4 = """
-Средство_1  :  KEVIN.MURPHY KILLER.CURLS WASH,19000260883
-Средство_2 :  KEVIN.MURPHY KILLER.CURLS RINSE,19000260882
-"""
-data5 = """
-Исходное_средство : K18 leave-in molecular repair hair mask, 19000041719
-Аналог_средство : LIMBA COSMETICS Instant Transformation, 19000279301
-"""
-
-
-def parse_collection_products_data(raw: str) -> dict:
-    """
-    Парсит средства подборки из строки
-    :param raw: строка с средствами
-    :return: словарь с средствами и артикулами
-    """
-    result = {}
-    current_group = None
-    raw = raw.strip().replace("«", "\"").replace("»", "\"")
-
-    lines = [line.strip() for line in raw.splitlines() if line.strip()]
-
-    group_header_pattern = re.compile(r'^(Набор_\d+)\s*:?\s*$')
-    entry_pattern = re.compile(r'^([\wА-Яа-яёЁ_]+)\s*:\s*(.+?),\s*(\d+)$')
-
-    for line in lines:
-        group_match = group_header_pattern.match(line)
-        entry_match = entry_pattern.match(line)
-
-        if group_match:
-            current_group = group_match.group(1)
-            result[current_group] = {}
-        elif entry_match:
-            key, name, code = entry_match.groups()
-            item = (name.strip(), code.strip())
-            if current_group:
-                result[current_group][key] = item
-            else:
-                result[key] = item
-        else:
-            message = f"⚠️ Не смог спарсить средство из подборки: {line}"
-            print(message)
-            raise ValueError(message)
-
-    return result
-
-
-res_1 = parse_collection_products_data(data1)
-print(res_1)
-print(type(res_1))
-
-res_2 = parse_collection_products_data(data2)
-print(res_2)
-print(type(res_2))
-
-res_3 = parse_collection_products_data(data3)
-print(res_3)
-print(type(res_3))
-
-res_4 = parse_collection_products_data(data4)
-print(res_4)
-print(type(res_4))
-
-res_5 = parse_collection_products_data(data5)
-print(res_5)
-print(type(res_5))
+# отправляем альбом
+bot.send_media_group(CHAT_ID, media_group)
