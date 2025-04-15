@@ -11,7 +11,6 @@ from telebot.types import InputMediaPhoto
 load_dotenv()
 BOT_TOKEN = os.getenv('BH_POST_FOR_REVIEW_BOT_TOKEN')
 CHAT_ID = os.getenv('REVIEW_POST_CHAT_ID')
-REPOST_DETAILED_TEXT = os.getenv('REPOST_DETAILED_TEXT')
 
 bot = telebot.TeleBot(BOT_TOKEN)
 
@@ -80,14 +79,14 @@ def md_to_telegram_html(md_text: str) -> str:
     return clean_html.strip()
 
 
-def send_images_and_text(
+def send_images_to_channel(
         images: list[str],
         chat_id: str,
         _bot: telebot.TeleBot,
         chunk_size: int = 10
 ) -> None:
     """
-    Отправляет изображения чанками по 10 и текст в конце.
+    Отправляет изображения чанками по 10.
 
     :param images: список путей к изображениям
     :param chat_id: ID чата Telegram
@@ -107,6 +106,7 @@ def send_images_and_text(
         _bot.send_media_group(chat_id, media_group)
 
 
+# pylint: disable=W0718: broad-exception-caught
 def send_post_from_folder(
         path_to_markdown_folder: str,
         images_folder: str
@@ -117,25 +117,26 @@ def send_post_from_folder(
     :param path_to_markdown_folder: путь к .md-файлу с текстом поста
     :param images_folder: путь к папке с изображениями
     """
+    file_names = [
+        'text_for_review_post_detailed.md',
+        'text_for_review_post_short.md',
+    ]
+    # собираем список всех .jpg файлов в указанной папке
+    images = sorted([
+        os.path.join(images_folder, file)
+        for file in os.listdir(images_folder)
+        if file.lower().endswith('.jpg')
+    ])
+    # отправляем изображения в канал
+    send_images_to_channel(images=images, chat_id=CHAT_ID, _bot=bot)
+    for file_name in file_names:
+        markdown_file_path = Path(path_to_markdown_folder) / 'telegram_review' / file_name
+        try:
+            with open(markdown_file_path, 'r', encoding='utf-8') as f:
+                post_text = f.read()
+                telegram_ready_text = md_to_telegram_html(post_text)
 
-    if REPOST_DETAILED_TEXT:
-        file_name = 'text_for_review_post_detailed.md'
-    else:
-        file_name = 'text_for_review_post_short.md'
-
-    markdown_file_path = Path(path_to_markdown_folder) / 'telegram_review' / file_name
-    # читаем текст из markdown-файла
-    with open(markdown_file_path, 'r', encoding='utf-8') as f:
-        post_text = f.read()
-        telegram_ready_text = md_to_telegram_html(post_text)
-
-        # собираем список всех .jpg файлов в указанной папке
-        images = sorted([
-            os.path.join(images_folder, file)
-            for file in os.listdir(images_folder)
-            if file.lower().endswith('.jpg')
-        ])
-
-        send_images_and_text(images=images, chat_id=CHAT_ID, _bot=bot)
-
-        bot.send_message(CHAT_ID, telegram_ready_text, parse_mode='HTML')
+                bot.send_message(CHAT_ID, telegram_ready_text, parse_mode='HTML')
+        except Exception as exc:
+            print(f'⚠ При отправке постов в тестовый канал ошибка: {exc}')
+            return
