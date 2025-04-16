@@ -361,11 +361,14 @@ class ExcelManager:
             cell_value = row[target_col_index]
 
             if target_column_value == "":
-                if cell_value is None or str(cell_value).strip() == "":
-                    collections[row_num] = row
+                is_match = cell_value is None or str(cell_value).strip() == ""
             else:
-                if str(cell_value).strip().lower() == target_column_value.lower():
-                    collections[row_num] = row
+                is_match = str(cell_value).strip().lower() == target_column_value.lower()
+
+            if is_match:
+                collections[row_num] = row
+                if return_one_collection:
+                    break
 
         return collections
 

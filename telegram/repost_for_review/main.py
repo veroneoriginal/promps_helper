@@ -127,16 +127,16 @@ def send_post_from_folder(
         for file in os.listdir(images_folder)
         if file.lower().endswith('.jpg')
     ])
-    # отправляем изображения в канал
-    send_images_to_channel(images=images, chat_id=CHAT_ID, _bot=bot)
-    for file_name in file_names:
-        markdown_file_path = Path(path_to_markdown_folder) / 'telegram_review' / file_name
-        try:
+    try:
+        # отправляем изображения в канал
+        send_images_to_channel(images=images, chat_id=CHAT_ID, _bot=bot)
+        for file_name in file_names:
+            markdown_file_path = Path(path_to_markdown_folder) / 'telegram_review' / file_name
             with open(markdown_file_path, 'r', encoding='utf-8') as f:
                 post_text = f.read()
                 telegram_ready_text = md_to_telegram_html(post_text)
 
                 bot.send_message(CHAT_ID, telegram_ready_text, parse_mode='HTML')
-        except Exception as exc:
-            print(f'⚠ При отправке постов в тестовый канал ошибка: {exc}')
-            return
+    except Exception as exc:
+        print(f'⚠ При отправке постов в тестовый канал ошибка: {exc}')
+        return

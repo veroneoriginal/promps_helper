@@ -1,4 +1,5 @@
 # pylint: disable=E0611: no-name-in-module
+import os
 import sys
 from typing import Callable
 
@@ -12,6 +13,7 @@ from PyQt6.QtWidgets import (
     QVBoxLayout,
     QPushButton,
     QTextEdit,
+    QCheckBox, QHBoxLayout,
 )
 from PyQt6.QtCore import (
     QThread,
@@ -20,6 +22,7 @@ from PyQt6.QtCore import (
 )
 
 from PyQt6.QtWidgets import QProgressBar
+from dotenv import load_dotenv
 
 from control_manager.main import ControlManager
 from ga_parser.clean_product_composition.main import process_excel_and_fill_composition
@@ -28,6 +31,10 @@ from ga_parser.main import start_parser
 FILE_PATH_TOOLS = '00_base/Средства_АКТУАЛЬНАЯ.xlsx'
 FILE_PATH_COLLECTION = '00_base/Подборки_мои.xlsx'
 PATH_TO_OUTPUT_FOLDER = '00_base/00_info_for_post'
+
+load_dotenv()
+
+CREATE_ONE_COLLECTION = bool(os.getenv('CREATE_ONE_COLLECTION'))
 
 
 class EmittingStream(QObject):
@@ -99,6 +106,15 @@ class MainWindow(QWidget):
         self.center_on_screen()
 
         layout = QVBoxLayout()
+
+        # Вложенный горизонтальный лэйаут для центрирования чекбокса
+        checkbox_layout = QHBoxLayout()
+        checkbox_layout.addStretch(1)
+        self.checkbox_create_one_collection = QCheckBox("🔘 Генерировать по одной подборке")
+        self.checkbox_create_one_collection.setChecked(CREATE_ONE_COLLECTION)
+        checkbox_layout.addWidget(self.checkbox_create_one_collection)
+        checkbox_layout.addStretch(1)
+        layout.addLayout(checkbox_layout)
 
         button_width = 40
         # Кнопка "Спарсить средства"
@@ -191,12 +207,15 @@ class MainWindow(QWidget):
         """
         Запуск создания подборок
         """
+        create_one_collection = self.checkbox_create_one_collection.isChecked()
+
         self.worker_collection = self.start_worker(
             ControlManager().create_collection,
             log_message="▶️ Запуск генерации подборок...\n",
             file_path_tools=FILE_PATH_TOOLS,
             file_path_collection=FILE_PATH_COLLECTION,
-            path_to_output_folder=PATH_TO_OUTPUT_FOLDER
+            path_to_output_folder=PATH_TO_OUTPUT_FOLDER,
+            create_one_collection=create_one_collection,
         )
 
     def start_recreate_pdf(self):

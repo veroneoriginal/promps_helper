@@ -62,6 +62,7 @@ class ControlManager:
             file_path_collection: str,
             target_column_title: str,
             target_column_value: str | None,
+            return_one_collection: bool = False,
     ) -> dict:
         """
         Метод для получения подборок, у которых определённое
@@ -71,6 +72,7 @@ class ControlManager:
         :param file_path_collection: путь до документа Подборки.xlsx
         :param target_column_title: название целевого столбца
         :param target_column_value: значение, которое должно быть в целевом столбце
+        :param return_one_collection: если True - возвращает одну подборку
         :return: словарь с ключом - номер строки и вложенный словарь с данными
         подборки с заголовками столбцов
         """
@@ -81,6 +83,7 @@ class ControlManager:
             ws_title=ws_title,
             target_column_title=target_column_title,
             target_column_value=target_column_value,
+            return_one_collection=return_one_collection
         )
 
         # Добавляем к данным названия столбцов для удобства
@@ -280,7 +283,9 @@ class ControlManager:
             file_path_tools: str,
             file_path_collection: str,
             path_to_output_folder: str,
+            create_one_collection: bool,
             progress_callback=None,
+
     ) -> None:
         """
         Метод для генерации новых подборок
@@ -289,6 +294,7 @@ class ControlManager:
         :param file_path_collection: путь до таблицы с подборками
         :param path_to_output_folder: путь до папки, в которую идет сохранение ответа от OpenAI,
         промпта, картинок и текста.
+        :param create_one_collection: генерировать по одной подборке
         :param progress_callback: колл-бек для отрисовки прогресс-бара
 
         :return: None
@@ -304,6 +310,7 @@ class ControlManager:
             file_path_collection=file_path_collection,
             target_column_title='Путь',
             target_column_value="",
+            return_one_collection=create_one_collection,
         )
         total = len(collections)
         for i, (row_number, collection_data) in enumerate(collections.items(), start=1):
