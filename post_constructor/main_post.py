@@ -89,6 +89,7 @@ def create_hashtag(
 
     # список, в котором будут хештеги
     hashtag = []
+    hashtag.append('#BEAUTYHELPER #BEAUTY_HELPER_RU')
 
     for product_title, product_article in products:
         product_title_lower = product_title.lower().strip()
