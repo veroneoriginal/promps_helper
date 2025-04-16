@@ -39,11 +39,13 @@ def create_products_info(
         data: dict,
         data_tools: dict,
         products_with_links: bool = False,
+        products_with_articles: bool = False,
 ) -> str:
     """
     Получаем готовый абзац с названиями средств и их артикулами
     :param data: нерасшифрованный словарь с текущей подборкой
     :param products_with_links: названия средств с ссылками или нет
+    :param products_with_articles: средства с артикулами
     :param data_tools: словарь со всеми данными по средствам
 
     :return: строку с информацией о псредствах и их артикулах
@@ -54,15 +56,18 @@ def create_products_info(
     # список, в котором будут строки с информацией о продуктах
     products_info = []
 
-    for product_title, product_article in products:
+    for title, article in products:
+        display_title = title
         if products_with_links:
-            product_title_lower = product_title.lower().strip()
-            poduct_data = data_tools['Средства'][product_title_lower][product_article]
-            product_link = poduct_data['Ссылка в Золотом Яблоке']
-            info = f'[{product_title}]({product_link}): арт. {product_article}\n'
-        else:
-            info = f'{product_title}: арт. {product_article}\n'
-        products_info.append(info)
+            product_data = data_tools['Средства'][title.lower().strip()][article]
+            product_link = product_data.get('Ссылка в Золотом Яблоке')
+            display_title = f'🔸 [{title}]({product_link})'
+
+        line = display_title
+        if products_with_articles:
+            line += f': арт. {article}'
+        products_info.append(f'{line}\n')
+
     return ''.join(products_info)
 
 

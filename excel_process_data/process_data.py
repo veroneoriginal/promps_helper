@@ -338,6 +338,7 @@ class ExcelManager:
             target_column_title: str,
             target_column_value: str | None,
             ws_title: str,
+            return_one_collection: bool = False,
     ) -> dict:
         """
         Возвращает все строки, у которых в определённом столбце стоит
@@ -346,6 +347,7 @@ class ExcelManager:
         :param ws_title: лист, с которого берем информацию
         :param target_column_title: название целевого столбца
         :param target_column_value: значение, которое должно быть в столбце
+        :param return_one_collection: если True - возвращает одну подборку
         """
         sheet = self.wb[ws_title]
 
