@@ -56,6 +56,8 @@ class ControlManager:
             "Специалист": excel_manager.load_specialists_data(ws_title='Специалист'),
         }
 
+    # pylint: disable=R0913: too-many-arguments
+    # pylint: disable=R0917: too-many-positional-arguments
     def _get_collections(
             self,
             ws_title: str,
@@ -283,7 +285,7 @@ class ControlManager:
             file_path_tools: str,
             file_path_collection: str,
             path_to_output_folder: str,
-            create_one_collection: bool,
+            create_one_collection: bool = False,
             progress_callback=None,
 
     ) -> None:

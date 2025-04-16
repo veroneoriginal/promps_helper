@@ -139,4 +139,3 @@ def send_post_from_folder(
                 bot.send_message(CHAT_ID, telegram_ready_text, parse_mode='HTML')
     except Exception as exc:
         print(f'⚠ При отправке постов в тестовый канал ошибка: {exc}')
-        return
