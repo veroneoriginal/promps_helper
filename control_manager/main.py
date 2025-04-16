@@ -19,11 +19,11 @@ from pdf.main import create_pdf
 from task_processing.main import TaskProcessing
 from telegram.repost_for_review.main import send_post_from_folder
 
-
 # from utils.utils import copy_jpg_files
 load_dotenv()
 
-REPOST_TO_TEST_CHANNEL = os.getenv('REPOST_TO_TEST_CHANNEL')
+REPOST_TO_TEST_CHANNEL = bool(os.getenv('REPOST_TO_TEST_CHANNEL'))
+
 
 class ControlManager:
     """
@@ -210,6 +210,7 @@ class ControlManager:
             file_path_tools: str,
             file_path_collection: str,
             path_to_output_folder: str,
+            repost_to_test_channel: bool = False,
             progress_callback=None,
     ) -> None:
         """
@@ -219,6 +220,7 @@ class ControlManager:
         :param file_path_collection: путь до таблицы с подборками
         :param path_to_output_folder: путь до папки, в которую идет сохранение ответа от OpenAI,
         промпта, картинок и текста.
+        repost_to_test_channel: bool = False,
         :param progress_callback: колл-бек для отрисовки прогресс-бара
 
         :return: None
@@ -267,7 +269,7 @@ class ControlManager:
                 path_to_result_recommend=self.paths_to_folders["02_answer_gpt"],
                 path_for_save=self.paths_to_folders['06_text'],
             )
-            if REPOST_TO_TEST_CHANNEL:
+            if repost_to_test_channel:
                 print('Отправка постов в тестовый канал')
                 send_post_from_folder(
                     path_to_markdown_folder=self.paths_to_folders['06_text'],
@@ -280,12 +282,14 @@ class ControlManager:
 
             print(f"Подборка из строки {row_number} готова 🌀\n")
 
+    # pylint: disable=R0914: too-many-locals
     def create_collection(
             self,
             file_path_tools: str,
             file_path_collection: str,
             path_to_output_folder: str,
             create_one_collection: bool = False,
+            repost_to_test_channel: bool = False,
             progress_callback=None,
 
     ) -> None:
@@ -297,6 +301,7 @@ class ControlManager:
         :param path_to_output_folder: путь до папки, в которую идет сохранение ответа от OpenAI,
         промпта, картинок и текста.
         :param create_one_collection: генерировать по одной подборке
+        :param repost_to_test_channel: отправлять подборки в тестовый канал
         :param progress_callback: колл-бек для отрисовки прогресс-бара
 
         :return: None
@@ -371,7 +376,7 @@ class ControlManager:
                 path_for_save=self.paths_to_folders['06_text'],
             )
 
-            if REPOST_TO_TEST_CHANNEL:
+            if repost_to_test_channel:
                 print('Отправка постов в тестовый канал')
                 send_post_from_folder(
                     path_to_markdown_folder=self.paths_to_folders['06_text'],

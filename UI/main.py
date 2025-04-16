@@ -35,6 +35,7 @@ PATH_TO_OUTPUT_FOLDER = '00_base/00_info_for_post'
 load_dotenv()
 
 CREATE_ONE_COLLECTION = bool(os.getenv('CREATE_ONE_COLLECTION'))
+REPOST_TO_TEST_CHANNEL = bool(os.getenv('REPOST_TO_TEST_CHANNEL'))
 
 
 class EmittingStream(QObject):
@@ -110,9 +111,19 @@ class MainWindow(QWidget):
         # Вложенный горизонтальный лэйаут для центрирования чекбокса
         checkbox_layout = QHBoxLayout()
         checkbox_layout.addStretch(1)
+        # Чекбокс "Генерировать по одной подборке"
         self.checkbox_create_one_collection = QCheckBox("🔘 Генерировать по одной подборке")
         self.checkbox_create_one_collection.setChecked(CREATE_ONE_COLLECTION)
         checkbox_layout.addWidget(self.checkbox_create_one_collection)
+
+        # Небольшой отступ между чекбоксами
+        checkbox_layout.addSpacing(20)
+
+        # Чекбокс "Отправлять посты в тестовый канал"
+        self.checkbox_send_to_test_channel = QCheckBox("📤 Отправлять посты в тестовый канал")
+        self.checkbox_send_to_test_channel.setChecked(REPOST_TO_TEST_CHANNEL)
+        checkbox_layout.addWidget(self.checkbox_send_to_test_channel)
+
         checkbox_layout.addStretch(1)
         layout.addLayout(checkbox_layout)
 
@@ -208,6 +219,7 @@ class MainWindow(QWidget):
         Запуск создания подборок
         """
         create_one_collection = self.checkbox_create_one_collection.isChecked()
+        repost_to_test_channel = self.checkbox_send_to_test_channel.isChecked()
 
         self.worker_collection = self.start_worker(
             ControlManager().create_collection,
@@ -216,18 +228,22 @@ class MainWindow(QWidget):
             file_path_collection=FILE_PATH_COLLECTION,
             path_to_output_folder=PATH_TO_OUTPUT_FOLDER,
             create_one_collection=create_one_collection,
+            repost_to_test_channel=repost_to_test_channel
         )
 
     def start_recreate_pdf(self):
         """
         Запуск перегенерации постов и PDF
         """
+        repost_to_test_channel = self.checkbox_send_to_test_channel.isChecked()
+
         self.worker_pdf = self.start_worker(
             ControlManager().recreate_pdf_and_posts,
             log_message="▶️ Запуск перегенерации PDF и постов...\n",
             file_path_tools=FILE_PATH_TOOLS,
             file_path_collection=FILE_PATH_COLLECTION,
-            path_to_output_folder=PATH_TO_OUTPUT_FOLDER
+            path_to_output_folder=PATH_TO_OUTPUT_FOLDER,
+            repost_to_test_channel=repost_to_test_channel
         )
 
     def start_parse(self):
