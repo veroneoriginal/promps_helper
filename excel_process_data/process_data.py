@@ -305,6 +305,29 @@ class ExcelManager:
 
         return self._load_data(ws_title=ws_title, column_name="Код")
 
+    def get_row_values(
+            self,
+            ws_title: str,
+            row_number: int,
+            skip_empty: bool = True,
+    ) -> dict[int, tuple]:
+        """
+        Возвращает строку в виде словаря {номер_строки: кортеж_значений}
+        :param ws_title: название листа
+        :param row_number: номер строки (начиная с 1)
+        :param skip_empty: если True — пропускает строку, если она вся пустая
+        """
+        if ws_title not in self.wb.sheetnames:
+            raise ValueError(f"Лист '{ws_title}' не найден в книге.")
+
+        sheet = self.wb[ws_title]
+        row = list(sheet.iter_rows(min_row=row_number, max_row=row_number, values_only=True))[0]
+
+        if skip_empty and all(cell is None or str(cell).strip() == "" for cell in row):
+            return {}
+
+        return {row_number: row}
+
     def get_column_values(
             self,
             column_title: str,
@@ -395,7 +418,6 @@ class ExcelManager:
 
         :return: словарь с информацией о подборке
         """
-
         # Открытие файла Excel на нужном листе
         sheet = self.wb[ws_title]
 

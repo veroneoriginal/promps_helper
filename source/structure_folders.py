@@ -27,3 +27,16 @@ FIOLET_HORISONTAL_BRAND_LINE_PATH = BRAND_LINE_BASE_PATH / 'border_fiolet_horizo
 EMOJI_IMAGE_DIR = BASE_PATH_TO_ASSETS / 'emoji/'
 # Папка с шрифтами
 FONTS_DIR = BASE_PATH_TO_ASSETS / 'fonts/'
+
+# Логотипы
+LOGO_PATH = BASE_PATH_TO_ASSETS / 'logo/'
+# Изображения с подпишись
+SUBSCRIBE_IMAGE_PATH = BASE_PATH_TO_ASSETS / 'subscribe/'
+SUBSCRIBE_GREEN_VERTICAL_IMAGE_PATH = (
+        SUBSCRIBE_IMAGE_PATH
+        / 'green_vertical_subscribe_to_social_network.jpg/'
+)
+SUBSCRIBE_ORANGE_VERTICAL_IMAGE_PATH = (
+        SUBSCRIBE_IMAGE_PATH
+        / 'orange_vertical_subscribe_to_social_network.jpg/'
+)

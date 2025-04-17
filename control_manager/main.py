@@ -3,6 +3,7 @@
 """
 import os
 from pathlib import Path
+from typing import Optional
 
 from dotenv import load_dotenv
 
@@ -19,7 +20,6 @@ from pdf.main import create_pdf
 from task_processing.main import TaskProcessing
 from telegram.repost_for_review.main import send_post_from_folder
 
-# from utils.utils import copy_jpg_files
 load_dotenv()
 
 REPOST_TO_TEST_CHANNEL = bool(os.getenv('REPOST_TO_TEST_CHANNEL'))
@@ -55,6 +55,46 @@ class ControlManager:
             "Задача": excel_manager.load_tasks_data(ws_title='Задача'),
             "Специалист": excel_manager.load_specialists_data(ws_title='Специалист'),
         }
+
+    def _get_one_collection(
+            self,
+            ws_title: str,
+            file_path_collection: str,
+            collection_number: int,
+    ) -> dict:
+        """
+        Метод для получения подборки по номеру строки
+
+        :param ws_title: имя листа с подборками
+        :param file_path_collection: путь до документа Подборки.xlsx
+        :param collection_number: номер подборки
+        :return: словарь с ключом - номер строки и вложенный словарь с данными
+        подборки с заголовками столбцов
+        """
+
+        excel_manager = ExcelManager(file_path=file_path_collection)
+        # Получаем словарь с подборками вида (номер строки: (кортеж с ячейками с данными))
+        collections_data = excel_manager.get_row_values(
+            ws_title=ws_title,
+            row_number=collection_number,
+        )
+
+        # Добавляем к данным названия столбцов для удобства
+        for row_number, row_data in collections_data.items():
+            data_with_row_title = excel_manager.load_info_about_collection(
+                ws_title=ws_title,
+                row=row_data,
+            )
+
+            products = data_with_row_title.get("Средства")
+            products_decrypted = create_dict_from_str(
+                _str=products,
+                row_number=row_number
+            )
+            data_with_row_title['Средства'] = products_decrypted
+
+            collections_data[row_number] = data_with_row_title
+        return collections_data
 
     # pylint: disable=R0913: too-many-arguments
     # pylint: disable=R0917: too-many-positional-arguments
@@ -162,18 +202,6 @@ class ControlManager:
             path_to_output_folder_jpg_file=path_to_output_folder_jpg_file,
         )
 
-        # # копируем файлы из папки telegram jpg в instagram jpg
-        # copy_jpg_files(
-        #     where_copy_from=paths_by_task[task_name]['jpg'],
-        #     where_copy_to=self.paths_to_folders['instagram_jpg'],
-        # )
-        #
-        # # копируем файлы из папки telegram jpg в pinterest jpg
-        # copy_jpg_files(
-        #     where_copy_from=paths_by_task[task_name]['jpg'],
-        #     where_copy_to=self.paths_to_folders['pinterest_jpg'],
-        # )
-
     def check_user_parameters_in_collection(
             self,
             collection_data: dict,
@@ -211,7 +239,8 @@ class ControlManager:
             file_path_collection: str,
             path_to_output_folder: str,
             repost_to_test_channel: bool = False,
-            progress_callback=None,
+            progress_callback: Optional[callable] = None,
+            collection_number: int | None = None,
     ) -> None:
         """
         Метод для перегенерации PDF и постов
@@ -220,7 +249,8 @@ class ControlManager:
         :param file_path_collection: путь до таблицы с подборками
         :param path_to_output_folder: путь до папки, в которую идет сохранение ответа от OpenAI,
         промпта, картинок и текста.
-        repost_to_test_channel: bool = False,
+        :param repost_to_test_channel: репостить или нет подборки в тестовый канал,
+        :param collection_number: номер подборки для перегенерации,
         :param progress_callback: колл-бек для отрисовки прогресс-бара
 
         :return: None
@@ -231,13 +261,16 @@ class ControlManager:
             file_path_tools_table=file_path_tools,
         )
         # Захожу в "Подборки" и получаю все подборки для пересоздания постов и PDF
-        collections = self._get_collections(
+        collections = self._get_one_collection(
             ws_title='Подборки',
             file_path_collection=file_path_collection,
-            target_column_title='Пересоздать PDF',
-            target_column_value="да",
+            collection_number=collection_number,
         )
+
         total = len(collections)
+        if total == 0:
+            print(f'⚠ Подборка № {collection_number} для пересоздания PDF и изображений не найдена')
+
         for i, (row_number, collection_data) in enumerate(collections.items(), start=1):
             print(f'Готовим подборку из строки № {row_number}.')
             # Формирую пути для сохранения данных
@@ -290,7 +323,7 @@ class ControlManager:
             path_to_output_folder: str,
             create_one_collection: bool = False,
             repost_to_test_channel: bool = False,
-            progress_callback=None,
+            progress_callback: Optional[callable] = None,
 
     ) -> None:
         """

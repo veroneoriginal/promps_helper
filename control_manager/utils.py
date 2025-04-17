@@ -38,6 +38,7 @@ def parse_collection_products_data(raw: str) -> dict:
 
     return result
 
+
 def create_dict_from_str(
         _str: str,
         row_number: int,
@@ -73,3 +74,18 @@ def is_collection_without_user_parameters(collection_data: dict):
     """
 
     return collection_data['Параметры'].lower().strip() == 'не учитывать'
+
+
+def filter_dict_keys(
+        _dict: dict,
+        keys_to_keep: set | list | tuple
+) -> dict:
+    """
+    Возвращает новый словарь, содержащий только указанные ключи.
+
+    :param _dict: Исходный словарь
+    :param keys_to_keep: Ключи, которые нужно оставить
+    :return: Новый словарь с выбранными ключами
+    """
+    keys_to_keep = set(keys_to_keep)
+    return {k: v for k, v in _dict.items() if k in keys_to_keep}

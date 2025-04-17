@@ -1,11 +1,50 @@
 # pylint: disable=E0611: no-name-in-module
+import shutil
 from pathlib import Path
 
 import re
 
 import emoji
 
-from source.structure_folders import EMOJI_IMAGE_DIR
+from source.structure_folders import EMOJI_IMAGE_DIR, SUBSCRIBE_GREEN_VERTICAL_IMAGE_PATH, \
+    SUBSCRIBE_ORANGE_VERTICAL_IMAGE_PATH
+
+
+def copy_image_if_needed(
+        folder_path: str | Path,
+        task: str,
+) -> None:
+    """
+    Копирует изображение в папку, если в ней сейчас 3 или 5 изображений.
+
+    :param folder_path: путь к папке
+    :param task: задача подборки
+    """
+    folder = Path(folder_path)
+
+    green = {
+        'Разбор состава одного средства': SUBSCRIBE_GREEN_VERTICAL_IMAGE_PATH,
+        'Подробный анализ состава': SUBSCRIBE_ORANGE_VERTICAL_IMAGE_PATH,
+        'Лучшее сочетание': SUBSCRIBE_GREEN_VERTICAL_IMAGE_PATH,
+        'Лучшее средство': SUBSCRIBE_GREEN_VERTICAL_IMAGE_PATH,
+    }
+
+    image_path = green.get(task)
+
+    if image_path is None:
+        return
+
+    image = Path(image_path)
+
+    PAGE_COUNT_FOR_COPY = (3, 5, 7, 8)
+
+    # Считаем только изображения (фильтр по расширениям)
+    image_exts = {".png", ".jpg", ".jpeg", ".gif", ".bmp", ".webp"}
+    images_in_folder = [f for f in folder.iterdir() if f.suffix.lower() in image_exts]
+
+    if len(images_in_folder) in PAGE_COUNT_FOR_COPY:
+        target_path = folder / image.name
+        shutil.copy(image, target_path)
 
 
 def _get_pdf_file_paths(

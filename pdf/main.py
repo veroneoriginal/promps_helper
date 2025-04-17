@@ -6,7 +6,7 @@ from pdf.creator_logic.creator.document_creator import PDFConverterToImage
 from pdf.creator_logic.main import PDFCreator
 from pdf.pdf_data_processing.main import PDFDataProcessor
 from pdf.textpost_pdf_creator.main import PDFTextPostProcessor
-from pdf.utils import _get_pdf_file_paths
+from pdf.utils import _get_pdf_file_paths, copy_image_if_needed
 
 
 def create_pdf(
@@ -55,6 +55,10 @@ def create_pdf(
 
     )
     pdf_converter.convert_to_image()
+    copy_image_if_needed(
+        folder_path=path_to_output_folder_jpg_file,
+        task=collection_data['Задача']
+    )
 
 
 def create_textpost_pdf(

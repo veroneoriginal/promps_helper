@@ -152,7 +152,7 @@ TEST_BEST_PRODUCT_WITHOUT_CARCINOGENS_EXPECTED_RESULT = [
                  'увлажнению и питанию волос.',
         'Путь для сохранения pdf-файла': Path(
             '01_test_base/00_info_for_post/22_22_2222/100_Шампуни/00_source/03_pdf/alterego_italy_scalpego_balancing_19000222491.pdf'),
-        'Путь к изображению бренд-линии': Path('00_base/source/imagine_border/border_fiolet.jpg'),
+        'Путь к изображению бренд-линии': Path('source/assets/imagine_border/border_fiolet.jpg'),
         'Путь к изображению средства': Path(
             '00_base/products/00_img/alterego_italy_scalpego_balancing_19000222491.jpg'),
         'Размеры бренд-линии': (85, 1280),
@@ -174,8 +174,8 @@ TEST_BEST_PRODUCT_WITHOUT_CARCINOGENS_EXPECTED_RESULT = [
               'кожу головы и укреплять волосы.',
      'Путь для сохранения pdf-файла': Path(
          '01_test_base/00_info_for_post/22_22_2222/100_Шампуни/00_source/03_pdf/loreal_professionnel_serioxyl_advanced_19000146259.pdf'),
-     'Путь к изображению бренд-линии': Path('00_base/source/imagine_border/border_green.jpg'),
-     'Путь к изображению галочки': Path('00_base/source/check/v2.png'),
+     'Путь к изображению бренд-линии': Path('source/assets/imagine_border/border_green.jpg'),
+     'Путь к изображению галочки': Path('source/assets/check/v2.png'),
      'Путь к изображению средства': Path(
          '00_base/products/00_img/loreal_professionnel_serioxyl_advanced_19000146259.jpg'),
      'Класс шаблона': 'PDFBaseDocTemplateWithBrandLine',
@@ -201,7 +201,7 @@ TEST_BEST_PRODUCT_WITHOUT_CARCINOGENS_EXPECTED_RESULT = [
                  'питают и увлажняют волосы, укрепляют их структуру.',
         'Путь для сохранения pdf-файла': Path(
             '01_test_base/00_info_for_post/22_22_2222/100_Шампуни/00_source/03_pdf/natura_siberica_oblepikha_19000141580.pdf'),
-        'Путь к изображению бренд-линии': Path('00_base/source/imagine_border/border_fiolet.jpg'),
+        'Путь к изображению бренд-линии': Path('source/assets/imagine_border/border_fiolet.jpg'),
         'Путь к изображению средства': Path('00_base/products/00_img/natura_siberica_oblepikha_19000141580.jpg'),
         'Класс шаблона': 'PDFBaseDocTemplateWithBrandLine',
         'Размеры бренд-линии': (85, 1280),

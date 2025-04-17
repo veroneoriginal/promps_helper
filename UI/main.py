@@ -34,8 +34,8 @@ PATH_TO_OUTPUT_FOLDER = '00_base/00_info_for_post'
 
 load_dotenv()
 
-CREATE_ONE_COLLECTION = bool(os.getenv('CREATE_ONE_COLLECTION'))
-REPOST_TO_TEST_CHANNEL = bool(os.getenv('REPOST_TO_TEST_CHANNEL'))
+CREATE_ONE_COLLECTION = os.getenv('CREATE_ONE_COLLECTION', '').lower() == 'true'
+REPOST_TO_TEST_CHANNEL = os.getenv('REPOST_TO_TEST_CHANNEL', '').lower() == 'true'
 
 
 class EmittingStream(QObject):
@@ -95,6 +95,7 @@ class FunctionWorkerThread(QThread):
 
 
 # pylint: disable=R0902: too-many-instance-attributes
+# pylint: disable=R0915: too-many-statements
 class MainWindow(QWidget):
     """
     Главное окно UI
@@ -146,11 +147,34 @@ class MainWindow(QWidget):
         self.button_generate.clicked.connect(self.start_create_collection)
         layout.addWidget(self.button_generate)
 
-        # Кнопка "Перегенерировать PDF и посты"
-        self.button_pdf = QPushButton("🔃 Перегенерировать PDF и посты")
-        self.button_pdf.setMinimumHeight(button_width)
-        self.button_pdf.clicked.connect(self.start_recreate_pdf)
-        layout.addWidget(self.button_pdf)
+        # Нижний горизонтальный лэйаут для ввода номера подборки и кнопки
+        # для перегенерации одной подборки
+        recreate_layout = QHBoxLayout()
+
+        # Поле для ввода номера подборки
+        self.collection_number_input = QTextEdit()
+        self.collection_number_input.setPlaceholderText("Номер подборки")
+        self.collection_number_input.setMaximumHeight(30)
+        self.collection_number_input.setMaximumWidth(100)
+        recreate_layout.addWidget(self.collection_number_input)
+
+        # Кнопка "Перегенерировать подборку"
+        self.button_recreate_one_collection_pdf = (
+            QPushButton("🎯 Перегенерировать PDF одной подборки")
+        )
+        self.button_recreate_one_collection_pdf.setMinimumHeight(button_width)
+        (
+            self.button_recreate_one_collection_pdf.clicked
+            .connect(self.start_recreate_one_collection_pdf)
+        )
+        recreate_layout.addWidget(self.button_recreate_one_collection_pdf)
+        layout.addLayout(recreate_layout)
+
+        # # Кнопка "Перегенерировать PDF и посты"
+        # self.button_pdf = QPushButton("🔃 Перегенерировать PDF и посты")
+        # self.button_pdf.setMinimumHeight(button_width)
+        # self.button_pdf.clicked.connect(self.start_recreate_pdf)
+        # layout.addWidget(self.button_pdf)
 
         # Кнопка "Очистить лог"
         self.button_clear_log = QPushButton("🧹 Очистить лог")
@@ -246,6 +270,26 @@ class MainWindow(QWidget):
             repost_to_test_channel=repost_to_test_channel
         )
 
+    def start_recreate_one_collection_pdf(self):
+        """
+        Запуск перегенерации постов и PDF
+        """
+        repost_to_test_channel = self.checkbox_send_to_test_channel.isChecked()
+        collection_number = int(self.collection_number_input.toPlainText().strip())
+
+        self.worker_pdf = self.start_worker(
+            ControlManager().recreate_pdf_and_posts,
+            log_message=(
+                f"▶️ Запуск перегенерации PDF и постов для подборки "
+                f"№ {collection_number}\n"
+            ),
+            file_path_tools=FILE_PATH_TOOLS,
+            file_path_collection=FILE_PATH_COLLECTION,
+            path_to_output_folder=PATH_TO_OUTPUT_FOLDER,
+            repost_to_test_channel=repost_to_test_channel,
+            collection_number=collection_number,
+        )
+
     def start_parse(self):
         """
         Запуск Парсера
@@ -286,8 +330,10 @@ class MainWindow(QWidget):
         """
         self.text_log.append("\n✅ Работа завершена.")
         self.button_parse.setEnabled(True)
-        self.button_pdf.setEnabled(True)
+        # self.button_pdf.setEnabled(True)
         self.button_generate.setEnabled(True)
+        self.collection_number_input.setEnabled(True)
+        self.button_recreate_one_collection_pdf.setEnabled(True)
         self.button_clear_log.setEnabled(True)
         self.button_check_composition.setEnabled(True)
 
@@ -296,8 +342,10 @@ class MainWindow(QWidget):
         Старт процесса - блокирование кнопок
         """
         self.button_parse.setEnabled(False)
-        self.button_pdf.setEnabled(False)
+        # self.button_pdf.setEnabled(False)
         self.button_generate.setEnabled(False)
+        self.collection_number_input.setEnabled(False)
+        self.button_recreate_one_collection_pdf.setEnabled(False)
         self.button_clear_log.setEnabled(False)
         self.button_check_composition.setEnabled(False)
 
