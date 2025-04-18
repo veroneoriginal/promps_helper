@@ -1,7 +1,8 @@
 # Игнорировать всё в 00_base
 00_base/*
 .DS_Store
-
+BeautyHelper.spec
+BeautyHelper
 pay_attention/
 code_example.py
 

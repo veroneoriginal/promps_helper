@@ -175,7 +175,8 @@ class ExcelManager:
 
         # Обработка строк
         for row in sheet.iter_rows(min_row=2, values_only=True):
-            name = row[product_name_idx].lower().strip()
+            source_name = row[product_name_idx]
+            name = source_name.lower().strip()
             article = str(row[product_article_idx]).strip()
 
             # Создаем словарь данных по текущей строке
@@ -185,9 +186,16 @@ class ExcelManager:
                 if header and header != product_name_idx:
                     entry[header] = row[index]
                     if header == 'Элементы состава списком':
-                        entry['Элементы состава списком'] = (
-                            ast.literal_eval(entry['Элементы состава списком'])
-                        )
+                        try:
+                            entry['Элементы состава списком'] = (
+                                ast.literal_eval(entry['Элементы состава списком'])
+                            )
+                        except Exception:
+                            print(
+                                f'Ошибка: в базе данных в средстве "{source_name}" '
+                                f'не заполнено "Элементы состава списком".'
+                            )
+                            raise
 
             # Строим структуру
             if name not in data:

@@ -2,6 +2,9 @@
 lint:
 	pylint $(filter-out emojipy/%,$(shell git ls-files '*.py'))
 
+compile:
+	pyinstaller --onefile --noconsole --name BeautyHelper ui.py
+
 run_tests:
 	pytest -s
 
