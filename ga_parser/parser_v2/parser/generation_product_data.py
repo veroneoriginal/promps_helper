@@ -4,6 +4,7 @@
 Логика для обработки данных из словаря с карточной средства
 """
 import json
+import platform
 import re
 from pathlib import Path
 
@@ -19,6 +20,7 @@ from ga_parser.utils.utils import (
     leave_numbers,
 )
 
+OS_SYSTEM = platform.system()
 
 def get_product_data_dict(
         html: str,
@@ -93,11 +95,19 @@ def get_product_data_dict(
     }
 
 
-def get_detailed_product_type(
+def get_detailed_product_type(soup: Tag | NavigableString) -> str:
+    if OS_SYSTEM == "Linux":
+        return get_detailed_product_type_linux(soup)
+    if OS_SYSTEM == "Darwin":
+        return get_detailed_product_type_macos(soup)
+    raise NotImplementedError(f"Unsupported platform for parsing: {OS_SYSTEM}")
+
+
+def get_detailed_product_type_linux(
         soup: Tag | NavigableString,
 ) -> str:
     """
-    Для получения: Подробное описание
+    Для получения: Подробное описание на ОС Ubuntu
 
     :param soup: суп из HTML-контента
     :return: str
@@ -116,6 +126,30 @@ def get_detailed_product_type(
         detailed_product_type = None
 
     return detailed_product_type
+
+
+def get_detailed_product_type_macos(soup: Tag | NavigableString) -> str | None:
+    """
+    Для получения: Подробное описание на ОС MacOS, без привязки к классам
+
+    :param soup: суп из HTML-контента
+    :return: str
+    """
+    h1 = soup.find("h1")
+    if not h1:
+        return None
+
+    parent = h1.parent
+    if not parent:
+        return None
+
+    # Получаем все дочерние теги <div>
+    divs = list(parent.find_all('div', recursive=False))
+
+    if len(divs) >= 2:
+        return clean_text_2(divs[1].get_text(strip=True))
+
+    return None
 
 
 def get_characteristics(
