@@ -1,5 +1,6 @@
 # Игнорировать всё в 00_base
 00_base/*
+.DS_Store
 
 pay_attention/
 code_example.py
