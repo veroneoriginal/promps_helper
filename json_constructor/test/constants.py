@@ -891,42 +891,67 @@ BEST_SET_JSON = {
     'name': 'best_set',
     'strict': True, 'schema': {
         'type': 'object',
-        'properties': {'result': {'type': 'string', 'description': 'Итоговая рекомендация по лучшему набору, вывод'},
-                       'set_1': {'type': 'object', 'properties': {'result': {'type': 'string',
-                                                                             'description': 'Объяснение, почему этот набор выбран как лучший, или почему он не выбран'},
-                                                                  'best_set': {'type': 'boolean',
-                                                                               'description': 'Если этот набор выбран как лучший среди всех, поставь True; если нет — False'},
-                                                                  'product_1': {'type': 'object', 'properties': {
-                                                                      'title': {'type': 'string',
-                                                                                'description': 'Название средства №1'},
-                                                                      'article': {'type': 'string',
-                                                                                  'description': 'Артикул средства №1, только цифры'}},
-                                                                                'required': ['title', 'article'],
-                                                                                'additionalProperties': False},
-                                                                  'product_2': {'type': 'object', 'properties': {
-                                                                      'title': {'type': 'string',
-                                                                                'description': 'Название средства №2'},
-                                                                      'article': {'type': 'string',
-                                                                                  'description': 'Артикул средства №2, только цифры'}},
-                                                                                'required': ['title', 'article'],
-                                                                                'additionalProperties': False}},
-                                 'required': ['result', 'best_set', 'product_1', 'product_2'],
-                                 'additionalProperties': False}, 'set_2': {'type': 'object', 'properties': {
-                'result': {'type': 'string',
+        'properties':
+            {'result':
+                 {'type': 'string', 'description': 'Итоговая рекомендация по лучшему набору, вывод'},
+             'set_1':
+                 {'type': 'object', 'properties':
+                     {'result':
+                          {'type': 'string',
                            'description': 'Объяснение, почему этот набор выбран как лучший, или почему он не выбран'},
-                'best_set': {'type': 'boolean',
-                             'description': 'Если этот набор выбран как лучший среди всех, поставь True; если нет — False'},
-                'product_1': {'type': 'object',
-                              'properties': {'title': {'type': 'string', 'description': 'Название средства №1'},
-                                             'article': {'type': 'string',
-                                                         'description': 'Артикул средства №1, только цифры'}},
-                              'required': ['title', 'article'], 'additionalProperties': False},
-                'product_2': {'type': 'object',
-                              'properties': {'title': {'type': 'string', 'description': 'Название средства №2'},
-                                             'article': {'type': 'string',
-                                                         'description': 'Артикул средства №2, только цифры'}},
-                              'required': ['title', 'article'], 'additionalProperties': False}},
-                                                                           'required': ['result', 'best_set',
-                                                                                        'product_1', 'product_2'],
-                                                                           'additionalProperties': False}},
-        'required': ['result', 'set_1', 'set_2'], 'additionalProperties': False}}
+                      'best_set':
+                          {'type': 'boolean',
+                           'description': 'Если этот набор выбран как лучший среди всех, поставь True; если нет — False'},
+                      'product_1':
+                          {'type': 'object', 'properties': {
+                              'title': {'type': 'string',
+                                        'description': 'Название средства №1'},
+                              'article': {'type': 'string',
+                                          'description': 'Артикул средства №1, только цифры'}
+                          },
+                           'required': ['title', 'article'],
+                           'additionalProperties': False},
+                      'product_2': {'type': 'object', 'properties': {
+                          'title': {'type': 'string',
+                                    'description': 'Название средства №2'},
+                          'article': {'type': 'string',
+                                      'description': 'Артикул средства №2, только цифры'}
+                      },
+                                    'required': ['title', 'article'],
+                                    'additionalProperties': False}
+                      },
+                  'required': ['result', 'best_set', 'product_1', 'product_2'],
+                  'additionalProperties': False},
+             'set_2':
+                 {'type': 'object', 'properties':
+                     {'result':
+                          {'type': 'string',
+                           'description': 'Объяснение, почему этот набор выбран как лучший, или почему он не выбран'},
+                      'best_set':
+                          {'type': 'boolean',
+                           'description': 'Если этот набор выбран как лучший среди всех, поставь True; если нет — False'},
+                      'product_1':
+                          {'type': 'object',
+                           'properties':
+                               {'title':
+                                    {'type': 'string', 'description': 'Название средства №1'},
+                                'article':
+                                    {'type': 'string',
+                                     'description': 'Артикул средства №1, только цифры'}
+                                },
+                           'required': ['title', 'article'], 'additionalProperties': False},
+                      'product_2': {'type': 'object',
+                                    'properties':
+                                        {'title':
+                                             {'type': 'string', 'description': 'Название средства №2'},
+                                         'article':
+                                             {'type': 'string', 'description': 'Артикул средства №2, только цифры'}
+                                         },
+                                    'required': ['title', 'article'], 'additionalProperties': False}
+                      },
+                  'required': ['result', 'best_set', 'product_1', 'product_2'],
+                  'additionalProperties': False}
+             },
+        'required': ['result', 'set_1', 'set_2'],
+        'additionalProperties': False}
+}
