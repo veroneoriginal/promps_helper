@@ -1,3 +1,4 @@
+# from pprint import pprint
 from dotenv.variables import Literal
 
 
@@ -229,8 +230,8 @@ class PromptProcessingData:
             products=products,
             composition_elements=composition_elements
         )
-        # преобразование словаря со средствами в строку
 
+        # преобразование словаря со средствами в строку
         return self._conversion_products(cosmetic_products=formated_products)
 
     def decryption_product_detailed_analysis_composition(
@@ -268,6 +269,8 @@ class PromptProcessingData:
             formated_products[product_name_article]['Состав'] = ', '.join(composition_elements)
             formated_products[product_name_article]["Номер"] = product_key
 
+        # print('formated_products')
+        # pprint(formated_products)
         return formated_products
 
     def decrypting_info_code_best_product(
