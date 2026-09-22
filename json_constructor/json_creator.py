@@ -64,7 +64,7 @@ class JsonCreator:
             "type": "string",
             "description": "Итоговая рекомендация, вывод"
         }
-        # Если это последний шаг в задачу - просим вывод
+        # Если это последний шаг в задаче - просим вывод
         if self.data_collection['Шаг задачи последний или нет']:
             schema['schema']['properties']['result'] = result
             schema['schema']['required'].append('result')

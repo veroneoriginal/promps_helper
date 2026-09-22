@@ -25,7 +25,7 @@ GREEN_HORISONTAL_BRAND_LINE_PATH = BRAND_LINE_BASE_PATH / 'border_green_horizont
 FIOLET_HORISONTAL_BRAND_LINE_PATH = BRAND_LINE_BASE_PATH / 'border_fiolet_horizontal.jpg'
 # Папка с изображениями эмоджи
 EMOJI_IMAGE_DIR = BASE_PATH_TO_ASSETS / 'emoji/'
-# Папка с шрифтами
+# Папка со шрифтами
 FONTS_DIR = BASE_PATH_TO_ASSETS / 'fonts/'
 
 # Логотипы

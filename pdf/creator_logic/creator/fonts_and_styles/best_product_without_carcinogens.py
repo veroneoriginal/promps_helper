@@ -1,7 +1,8 @@
 from reportlab.lib.enums import (
     TA_CENTER,
     TA_RIGHT,
-    TA_LEFT, TA_JUSTIFY,
+    TA_LEFT,
+    TA_JUSTIFY,
 )
 from reportlab.lib.styles import ParagraphStyle
 

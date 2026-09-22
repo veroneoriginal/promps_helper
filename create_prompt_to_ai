@@ -1,0 +1,507 @@
+запрос 1
+("result={'system_prompt': 'Косметолог', 'prompt': 'Информация о средстве и "
+ 'его составе: Средство_1 - CLINIQUE Moisture Surge 100h. Артикул: '
+ '19000002015. Состав: 1_Water\\\\aqua\\\\eau, 2_Dimethicone, 3_Butylene '
+ 'Glycol, 4_Glycerin, 5_Trisiloxane, 6_Trehalose, 7_Sucrose, 8_Ammonium '
+ 'Acryloyldimethyltaurate/vp Copolymer, 9_Hydroxyethyl Urea, 10_Camellia '
+ 'Sinensis (green Tea) Leaf Extract. Тип продукта: гель для лица. .\\nУчти всю '
+ 'вышепредставленную информацию и проведи анализ каждого элемента состава. '
+ '\\nСохраняй нумерацию элементов.\\n    Ответ ты должен дать в следующем '
+ 'виде: Тебе дано средство и часть элементов его состава. Тебе надо разобрать '
+ 'каждый элемент состава средства. Внимательно изучаешь и выдаёшь результат в '
+ 'соответствии с json схемой. Ответы должны быть понятны человеку без '
+ 'медицинского образования, старайся отвечать понятно, без сложных '
+ "формулировок. Отвечай всегда на русском языке.'}")
+
+запрос 2
+('result={\'system_prompt\': \'Косметолог\', \'prompt\': "Информация о '
+ 'средстве и его составе: Средство_1 - CLINIQUE Moisture Surge 100h. Артикул: '
+ "19000002015. Состав: 11_Silybum Marianum (lady's Thistle) Extract, 12_Betula "
+ 'Alba (birch) Bark Extract, 13_Saccharomyces Lysate Extract, 14_Aloe '
+ 'Barbadensis Leaf Water, 15_Aloe Barbadensis Leaf Extract, 16_Thermus '
+ 'Thermophillus Ferment, 17_Caffeine, 18_Sorbitol, 19_Palmitoyl '
+ 'Hexapeptide-12, 20_Sodium Hyaluronate. Тип продукта: гель для лица. .\\nУчти '
+ 'всю вышепредставленную информацию и проведи анализ каждого элемента состава. '
+ '\\nСохраняй нумерацию элементов.\\n    Ответ ты должен дать в следующем '
+ 'виде: Тебе дано средство и часть элементов его состава. Тебе надо разобрать '
+ 'каждый элемент состава средства. Внимательно изучаешь и выдаёшь результат в '
+ 'соответствии с json схемой. Ответы должны быть понятны человеку без '
+ 'медицинского образования, старайся отвечать понятно, без сложных '
+ 'формулировок. Отвечай всегда на русском языке."}')
+
+
+запрос 3
+("result={'system_prompt': 'Косметолог', 'prompt': 'Информация о средстве и "
+ 'его составе: Средство_1 - CLINIQUE Moisture Surge 100h. Артикул: '
+ '19000002015. Состав: 21_Caprylyl Glycol, 22_Oleth-10, 23_Sodium '
+ 'Polyaspartate, 24_Aloe Barbadensis Leaf Polysaccharides, 25_Lactobacillus '
+ 'Ferment Lysate, 26_Saccharide Isomerate, 27_Hydrogenated Lecithin, '
+ '28_Tocopheryl Acetate, 29_Acrylates/c10-30 Alkyl Acrylate Crosspolymer, '
+ '30_Glyceryl Polymethacrylate. Тип продукта: гель для лица. .\\nУчти всю '
+ 'вышепредставленную информацию и проведи анализ каждого элемента состава. '
+ '\\nСохраняй нумерацию элементов.\\n    Ответ ты должен дать в следующем '
+ 'виде: Тебе дано средство и часть элементов его состава. Тебе надо разобрать '
+ 'каждый элемент состава средства. Внимательно изучаешь и выдаёшь результат в '
+ 'соответствии с json схемой. Ответы должны быть понятны человеку без '
+ 'медицинского образования, старайся отвечать понятно, без сложных '
+ "формулировок. Отвечай всегда на русском языке.'}")
+
+запрос 4
+("result={'system_prompt': 'Косметолог', 'prompt': 'Информация о средстве и "
+ 'его составе: Средство_1 - CLINIQUE Moisture Surge 100h. Артикул: '
+ '19000002015. Состав: 31_Tromethamine, 32_PEG-8, 33_Hexylene Glycol, '
+ '34_Magnesium Ascorbyl Phosphate, 35_Citric Acid, 36_BHT, 37_Disodium EDTA, '
+ '38_Sodium Citrate, 39_Potassium Sorbate, 40_Sodium Benzoate. Тип продукта: '
+ 'гель для лица. .\\nУчти всю вышепредставленную информацию и проведи анализ '
+ 'каждого элемента состава. \\nСохраняй нумерацию элементов.\\n    Ответ ты '
+ 'должен дать в следующем виде: Тебе дано средство и часть элементов его '
+ 'состава. Тебе надо разобрать каждый элемент состава средства. Внимательно '
+ 'изучаешь и выдаёшь результат в соответствии с json схемой. Ответы должны '
+ 'быть понятны человеку без медицинского образования, старайся отвечать '
+ "понятно, без сложных формулировок. Отвечай всегда на русском языке.'}")
+
+
+запрос 5
+("result={'system_prompt': 'Косметолог', 'prompt': 'Информация о средстве и "
+ 'его составе: Средство_1 - CLINIQUE Moisture Surge 100h. Артикул: '
+ '19000002015. Состав: 41_Phenoxyethanol, 42_Red 4 (ci 14700), 43_Yellow 5 (ci '
+ '19140). Тип продукта: гель для лица. .\\nУчти всю вышепредставленную '
+ 'информацию и проведи анализ каждого элемента состава. \\nСохраняй нумерацию '
+ 'элементов.\\n    Ответ ты должен дать в следующем виде: Тебе дано средство и '
+ 'часть элементов его состава. Тебе надо разобрать каждый элемент состава '
+ 'средства. Внимательно изучаешь и выдаёшь результат в соответствии с json '
+ 'схемой. Ответы должны быть понятны человеку без медицинского образования, '
+ 'старайся отвечать понятно, без сложных формулировок. Отвечай всегда на '
+ "русском языке.'}")
+
+то есть все промпты одинаковые
+
+и вывод он делает по последнему промпту.
+
+
+control_manager/main.py -> _create_pdf_jpg
+:param selection_result: данные с результатом нейронки по подборке
+{'element_1': {'element_danger_text': 'Вода безопасна и не вызывает аллергии.',
+               'element_stop_in_country': 'Не запрещён.',
+               'element_title': 'Water/aqua/eau',
+               'is_element_danger': False,
+               'what_is_element_used_for': 'Вода используется как растворитель '
+                                           'и основа для других ингредиентов в '
+                                           'косметических средствах.'},
+ 'element_10': {'element_danger_text': 'Безопасен и полезен для кожи.',
+                'element_stop_in_country': 'Не запрещён.',
+                'element_title': 'Camellia Sinensis (green Tea) Leaf Extract',
+                'is_element_danger': False,
+                'what_is_element_used_for': 'Экстракт листьев зелёного чая '
+                                            'используется как антиоксидант и '
+                                            'успокаивающее средство для кожи.'},
+ 'element_11': {'element_danger_text': 'Экстракт расторопши считается '
+                                       'безопасным для использования в '
+                                       'косметических средствах.',
+                'element_stop_in_country': 'Не запрещён.',
+                'element_title': "Silybum Marianum (lady's Thistle) Extract",
+                'is_element_danger': False,
+                'what_is_element_used_for': 'Экстракт расторопши используется '
+                                            'в косметике за его '
+                                            'антиоксидантные и '
+                                            'противовоспалительные свойства. '
+                                            'Он помогает защищать кожу от '
+                                            'повреждений, вызванных свободными '
+                                            'радикалами, и способствует её '
+                                            'восстановлению.'},
+ 'element_12': {'element_danger_text': 'Экстракт коры берёзы безопасен для '
+                                       'использования в косметике.',
+                'element_stop_in_country': 'Не запрещён.',
+                'element_title': 'Betula Alba (birch) Bark Extract',
+                'is_element_danger': False,
+                'what_is_element_used_for': 'Экстракт коры берёзы используется '
+                                            'за его успокаивающие и '
+                                            'противовоспалительные свойства. '
+                                            'Он помогает уменьшить покраснение '
+                                            'и раздражение кожи.'},
+ 'element_13': {'element_danger_text': 'Экстракт лизата дрожжей безопасен для '
+                                       'использования в косметике.',
+                'element_stop_in_country': 'Не запрещён.',
+                'element_title': 'Saccharomyces Lysate Extract',
+                'is_element_danger': False,
+                'what_is_element_used_for': 'Экстракт лизата дрожжей '
+                                            'используется для увлажнения и '
+                                            'улучшения текстуры кожи. Он также '
+                                            'может способствовать '
+                                            'восстановлению клеток кожи.'},
+ 'element_14': {'element_danger_text': 'Вода из листьев алоэ вера безопасна '
+                                       'для использования в косметике.',
+                'element_stop_in_country': 'Не запрещён.',
+                'element_title': 'Aloe Barbadensis Leaf Water',
+                'is_element_danger': False,
+                'what_is_element_used_for': 'Вода из листьев алоэ вера '
+                                            'используется за её увлажняющие и '
+                                            'успокаивающие свойства. Она '
+                                            'помогает увлажнять кожу и '
+                                            'уменьшать раздражение.'},
+ 'element_15': {'element_danger_text': 'Экстракт листьев алоэ вера безопасен '
+                                       'для использования в косметике.',
+                'element_stop_in_country': 'Не запрещён.',
+                'element_title': 'Aloe Barbadensis Leaf Extract',
+                'is_element_danger': False,
+                'what_is_element_used_for': 'Экстракт листьев алоэ вера '
+                                            'известен своими увлажняющими и '
+                                            'заживляющими свойствами. Он '
+                                            'помогает успокаивать и '
+                                            'восстанавливать кожу.'},
+ 'element_16': {'element_danger_text': 'Фермент Thermus Thermophillus '
+                                       'безопасен для использования в '
+                                       'косметике.',
+                'element_stop_in_country': 'Не запрещён.',
+                'element_title': 'Thermus Thermophillus Ferment',
+                'is_element_danger': False,
+                'what_is_element_used_for': 'Фермент Thermus Thermophillus '
+                                            'используется за его '
+                                            'антиоксидантные свойства и '
+                                            'способность защищать кожу от '
+                                            'повреждений, вызванных '
+                                            'ультрафиолетовым излучением.'},
+ 'element_17': {'element_danger_text': 'Кофеин безопасен для использования в '
+                                       'косметике, но в больших количествах '
+                                       'может вызывать раздражение.',
+                'element_stop_in_country': 'Не запрещён.',
+                'element_title': 'Caffeine',
+                'is_element_danger': False,
+                'what_is_element_used_for': 'Кофеин используется в косметике '
+                                            'за его способность уменьшать '
+                                            'отёки и улучшать микроциркуляцию '
+                                            'в коже. Он также может оказывать '
+                                            'антиоксидантное действие.'},
+ 'element_18': {'element_danger_text': 'Сорбитол безопасен для использования в '
+                                       'косметике.',
+                'element_stop_in_country': 'Не запрещён.',
+                'element_title': 'Sorbitol',
+                'is_element_danger': False,
+                'what_is_element_used_for': 'Сорбитол используется как '
+                                            'увлажнитель, который помогает '
+                                            'удерживать влагу в коже, делая её '
+                                            'более мягкой и гладкой.'},
+ 'element_19': {'element_danger_text': 'Пальмитоил гексапептид-12 безопасен '
+                                       'для использования в косметике.',
+                'element_stop_in_country': 'Не запрещён.',
+                'element_title': 'Palmitoyl Hexapeptide-12',
+                'is_element_danger': False,
+                'what_is_element_used_for': 'Пальмитоил гексапептид-12 '
+                                            'используется для улучшения '
+                                            'упругости кожи и уменьшения '
+                                            'видимости морщин. Он способствует '
+                                            'выработке коллагена.'},
+ 'element_2': {'element_danger_text': 'Диметикон считается безопасным, но '
+                                      'может вызывать раздражение у людей с '
+                                      'чувствительной кожей.',
+               'element_stop_in_country': 'Не запрещён.',
+               'element_title': 'Dimethicone',
+               'is_element_danger': False,
+               'what_is_element_used_for': 'Диметикон используется для '
+                                           'создания барьера на коже, который '
+                                           'удерживает влагу и придаёт коже '
+                                           'гладкость.'},
+ 'element_20': {'element_danger_text': 'Гиалуронат натрия безопасен для '
+                                       'использования в косметике.',
+                'element_stop_in_country': 'Не запрещён.',
+                'element_title': 'Sodium Hyaluronate',
+                'is_element_danger': False,
+                'what_is_element_used_for': 'Гиалуронат натрия используется за '
+                                            'его мощные увлажняющие свойства. '
+                                            'Он помогает удерживать влагу в '
+                                            'коже, делая её более упругой и '
+                                            'гладкой.'},
+ 'element_21': {'element_danger_text': 'Каприлгликоль считается безопасным для '
+                                       'использования в косметике и не '
+                                       'является канцерогеном.',
+                'element_stop_in_country': 'Не запрещён.',
+                'element_title': 'Caprylyl Glycol',
+                'is_element_danger': False,
+                'what_is_element_used_for': 'Каприлгликоль используется как '
+                                            'увлажняющий агент и консервант. '
+                                            'Он помогает удерживать влагу в '
+                                            'коже и предотвращает рост '
+                                            'бактерий и грибков в '
+                                            'косметических продуктах.'},
+ 'element_22': {'element_danger_text': 'Oleth-10 может вызывать раздражение '
+                                       'кожи у некоторых людей, но в целом '
+                                       'считается безопасным при использовании '
+                                       'в низких концентрациях.',
+                'element_stop_in_country': 'Не запрещён.',
+                'element_title': 'Oleth-10',
+                'is_element_danger': False,
+                'what_is_element_used_for': 'Oleth-10 используется как '
+                                            'эмульгатор и '
+                                            'поверхностно-активное вещество, '
+                                            'которое помогает смешивать масло '
+                                            'и воду в косметических '
+                                            'продуктах.'},
+ 'element_23': {'element_danger_text': 'Считается безопасным для использования '
+                                       'в косметике и не вызывает аллергии.',
+                'element_stop_in_country': 'Не запрещён.',
+                'element_title': 'Sodium Polyaspartate',
+                'is_element_danger': False,
+                'what_is_element_used_for': 'Натрий полиаспартат используется '
+                                            'как увлажняющий агент, который '
+                                            'помогает удерживать влагу в '
+                                            'коже.'},
+ 'element_24': {'element_danger_text': 'Считается безопасным и полезным для '
+                                       'кожи, не вызывает аллергии.',
+                'element_stop_in_country': 'Не запрещён.',
+                'element_title': 'Aloe Barbadensis Leaf Polysaccharides',
+                'is_element_danger': False,
+                'what_is_element_used_for': 'Полисахариды из листьев алоэ вера '
+                                            'используются для увлажнения и '
+                                            'успокоения кожи. Они известны '
+                                            'своими заживляющими и '
+                                            'противовоспалительными '
+                                            'свойствами.'},
+ 'element_25': {'element_danger_text': 'Считается безопасным и полезным для '
+                                       'кожи, не вызывает аллергии.',
+                'element_stop_in_country': 'Не запрещён.',
+                'element_title': 'Lactobacillus Ferment Lysate',
+                'is_element_danger': False,
+                'what_is_element_used_for': 'Лизат фермента лактобактерий '
+                                            'используется для улучшения '
+                                            'барьерной функции кожи и '
+                                            'поддержания её микробиома.'},
+ 'element_26': {'element_danger_text': 'Считается безопасным для использования '
+                                       'в косметике и не вызывает аллергии.',
+                'element_stop_in_country': 'Не запрещён.',
+                'element_title': 'Saccharide Isomerate',
+                'is_element_danger': False,
+                'what_is_element_used_for': 'Сахарид изомерат используется как '
+                                            'увлажняющий агент, который '
+                                            'помогает удерживать влагу в '
+                                            'коже.'},
+ 'element_27': {'element_danger_text': 'Считается безопасным для использования '
+                                       'в косметике и не вызывает аллергии.',
+                'element_stop_in_country': 'Не запрещён.',
+                'element_title': 'Hydrogenated Lecithin',
+                'is_element_danger': False,
+                'what_is_element_used_for': 'Гидрогенизированный лецитин '
+                                            'используется как эмульгатор и '
+                                            'увлажняющий агент, который '
+                                            'помогает улучшить текстуру и '
+                                            'увлажнение кожи.'},
+ 'element_28': {'element_danger_text': 'Считается безопасным и полезным для '
+                                       'кожи, не вызывает аллергии.',
+                'element_stop_in_country': 'Не запрещён.',
+                'element_title': 'Tocopheryl Acetate',
+                'is_element_danger': False,
+                'what_is_element_used_for': 'Ацетат токоферола, форма витамина '
+                                            'Е, используется как антиоксидант, '
+                                            'который защищает кожу от '
+                                            'повреждений свободными '
+                                            'радикалами.'},
+ 'element_29': {'element_danger_text': 'Считается безопасным для использования '
+                                       'в косметике и не вызывает аллергии.',
+                'element_stop_in_country': 'Не запрещён.',
+                'element_title': 'Acrylates/c10-30 Alkyl Acrylate Crosspolymer',
+                'is_element_danger': False,
+                'what_is_element_used_for': 'Этот полимер используется как '
+                                            'загуститель и стабилизатор в '
+                                            'косметических продуктах, улучшая '
+                                            'их текстуру и консистенцию.'},
+ 'element_3': {'element_danger_text': 'Безопасен в малых концентрациях, но '
+                                      'может вызывать раздражение у некоторых '
+                                      'людей.',
+               'element_stop_in_country': 'Не запрещён.',
+               'element_title': 'Butylene Glycol',
+               'is_element_danger': False,
+               'what_is_element_used_for': 'Бутиленгликоль используется как '
+                                           'увлажнитель и растворитель, '
+                                           'помогает другим ингредиентам '
+                                           'проникать в кожу.'},
+ 'element_30': {'element_danger_text': 'Считается безопасным для использования '
+                                       'в косметике и не вызывает аллергии.',
+                'element_stop_in_country': 'Не запрещён.',
+                'element_title': 'Glyceryl Polymethacrylate',
+                'is_element_danger': False,
+                'what_is_element_used_for': 'Глицерил полиметакрилат '
+                                            'используется как увлажняющий '
+                                            'агент и пленкообразователь, '
+                                            'который помогает удерживать влагу '
+                                            'в коже.'},
+ 'element_31': {'element_danger_text': 'Tromethamine считается безопасным для '
+                                       'использования в косметике в низких '
+                                       'концентрациях.',
+                'element_stop_in_country': 'Не запрещён.',
+                'element_title': 'Tromethamine',
+                'is_element_danger': False,
+                'what_is_element_used_for': 'Tromethamine используется в '
+                                            'косметике как регулятор pH, чтобы '
+                                            'поддерживать стабильность и '
+                                            'эффективность продукта.'},
+ 'element_32': {'element_danger_text': 'PEG-8 считается безопасным для '
+                                       'использования в косметике, но может '
+                                       'вызывать раздражение у людей с '
+                                       'чувствительной кожей.',
+                'element_stop_in_country': 'Не запрещён.',
+                'element_title': 'PEG-8',
+                'is_element_danger': False,
+                'what_is_element_used_for': 'PEG-8 используется как '
+                                            'увлажнитель и растворитель в '
+                                            'косметических продуктах.'},
+ 'element_33': {'element_danger_text': 'Hexylene Glycol может вызывать '
+                                       'раздражение кожи и глаз у некоторых '
+                                       'людей.',
+                'element_stop_in_country': 'Не запрещён.',
+                'element_title': 'Hexylene Glycol',
+                'is_element_danger': True,
+                'what_is_element_used_for': 'Hexylene Glycol используется как '
+                                            'увлажнитель и эмульгатор в '
+                                            'косметике.'},
+ 'element_34': {'element_danger_text': 'Считается безопасным для использования '
+                                       'в косметике.',
+                'element_stop_in_country': 'Не запрещён.',
+                'element_title': 'Magnesium Ascorbyl Phosphate',
+                'is_element_danger': False,
+                'what_is_element_used_for': 'Magnesium Ascorbyl Phosphate '
+                                            'является стабильной формой '
+                                            'витамина C и используется для '
+                                            'осветления кожи и уменьшения '
+                                            'признаков старения.'},
+ 'element_35': {'element_danger_text': 'Citric Acid может вызывать раздражение '
+                                       'у людей с чувствительной кожей.',
+                'element_stop_in_country': 'Не запрещён.',
+                'element_title': 'Citric Acid',
+                'is_element_danger': True,
+                'what_is_element_used_for': 'Citric Acid используется для '
+                                            'регулирования pH и как '
+                                            'антиоксидант в косметике.'},
+ 'element_36': {'element_danger_text': 'BHT может вызывать раздражение кожи и '
+                                       'является предметом обсуждений по '
+                                       'поводу его безопасности.',
+                'element_stop_in_country': 'Запрещён в некоторых странах, '
+                                           'таких как Япония.',
+                'element_title': 'BHT',
+                'is_element_danger': True,
+                'what_is_element_used_for': 'BHT используется как антиоксидант '
+                                            'для предотвращения окисления и '
+                                            'порчи продукта.'},
+ 'element_37': {'element_danger_text': 'Считается безопасным для использования '
+                                       'в косметике.',
+                'element_stop_in_country': 'Не запрещён.',
+                'element_title': 'Disodium EDTA',
+                'is_element_danger': False,
+                'what_is_element_used_for': 'Disodium EDTA используется для '
+                                            'стабилизации косметических '
+                                            'продуктов и улучшения их '
+                                            'текстуры.'},
+ 'element_38': {'element_danger_text': 'Считается безопасным для использования '
+                                       'в косметике.',
+                'element_stop_in_country': 'Не запрещён.',
+                'element_title': 'Sodium Citrate',
+                'is_element_danger': False,
+                'what_is_element_used_for': 'Sodium Citrate используется для '
+                                            'регулирования pH и как консервант '
+                                            'в косметике.'},
+ 'element_39': {'element_danger_text': 'Считается безопасным, но может '
+                                       'вызывать раздражение у некоторых '
+                                       'людей.',
+                'element_stop_in_country': 'Не запрещён.',
+                'element_title': 'Potassium Sorbate',
+                'is_element_danger': True,
+                'what_is_element_used_for': 'Potassium Sorbate используется '
+                                            'как консервант для предотвращения '
+                                            'роста плесени и дрожжей в '
+                                            'косметике.'},
+ 'element_4': {'element_danger_text': 'Глицерин безопасен и широко '
+                                      'используется в косметике.',
+               'element_stop_in_country': 'Не запрещён.',
+               'element_title': 'Glycerin',
+               'is_element_danger': False,
+               'what_is_element_used_for': 'Глицерин используется как '
+                                           'увлажнитель, притягивает влагу к '
+                                           'коже.'},
+ 'element_40': {'element_danger_text': 'Считается безопасным, но может '
+                                       'вызывать раздражение у некоторых '
+                                       'людей.',
+                'element_stop_in_country': 'Не запрещён.',
+                'element_title': 'Sodium Benzoate',
+                'is_element_danger': True,
+                'what_is_element_used_for': 'Sodium Benzoate используется как '
+                                            'консервант в косметике.'},
+ 'element_41': {'element_danger_text': 'Phenoxyethanol может вызвать '
+                                       'аллергические реакции у некоторых '
+                                       'людей, особенно при длительном '
+                                       'использовании.',
+                'element_stop_in_country': 'Не запрещён.',
+                'element_title': 'Phenoxyethanol',
+                'is_element_danger': True,
+                'what_is_element_used_for': 'Phenoxyethanol используется как '
+                                            'консервант в косметических '
+                                            'средствах. Он предотвращает рост '
+                                            'бактерий и грибков, продлевая '
+                                            'срок годности продукта.'},
+ 'element_42': {'element_danger_text': 'Red 4 может вызвать аллергические '
+                                       'реакции у людей с чувствительной '
+                                       'кожей.',
+                'element_stop_in_country': 'Не запрещён.',
+                'element_title': 'Red 4 (ci 14700)',
+                'is_element_danger': True,
+                'what_is_element_used_for': 'Red 4 (ci 14700) используется как '
+                                            'краситель в косметических '
+                                            'средствах, придавая продукту '
+                                            'привлекательный цвет.'},
+ 'element_43': {'element_danger_text': 'Yellow 5 может вызвать аллергические '
+                                       'реакции, особенно у людей с '
+                                       'чувствительной кожей.',
+                'element_stop_in_country': 'Не запрещён.',
+                'element_title': 'Yellow 5 (ci 19140)',
+                'is_element_danger': True,
+                'what_is_element_used_for': 'Yellow 5 (ci 19140) используется '
+                                            'как краситель в косметических '
+                                            'средствах, придавая продукту '
+                                            'желтый оттенок.'},
+ 'element_5': {'element_danger_text': 'Считается безопасным, но может вызывать '
+                                      'раздражение у людей с чувствительной '
+                                      'кожей.',
+               'element_stop_in_country': 'Не запрещён.',
+               'element_title': 'Trisiloxane',
+               'is_element_danger': False,
+               'what_is_element_used_for': 'Трисилоксан используется для '
+                                           'улучшения текстуры средства и '
+                                           'придания коже гладкости.'},
+ 'element_6': {'element_danger_text': 'Безопасна и не вызывает аллергии.',
+               'element_stop_in_country': 'Не запрещён.',
+               'element_title': 'Trehalose',
+               'is_element_danger': False,
+               'what_is_element_used_for': 'Трехалоза используется как '
+                                           'увлажнитель и антиоксидант, '
+                                           'помогает защитить кожу от '
+                                           'обезвоживания.'},
+ 'element_7': {'element_danger_text': 'Безопасна и не вызывает аллергии.',
+               'element_stop_in_country': 'Не запрещён.',
+               'element_title': 'Sucrose',
+               'is_element_danger': False,
+               'what_is_element_used_for': 'Сахароза используется как '
+                                           'увлажнитель и кондиционер для '
+                                           'кожи.'},
+ 'element_8': {'element_danger_text': 'Считается безопасным для использования '
+                                      'в косметике.',
+               'element_stop_in_country': 'Не запрещён.',
+               'element_title': 'Ammonium Acryloyldimethyltaurate/vp Copolymer',
+               'is_element_danger': False,
+               'what_is_element_used_for': 'Используется как загуститель и '
+                                           'стабилизатор в косметических '
+                                           'формулах.'},
+ 'element_9': {'element_danger_text': 'Безопасна и не вызывает аллергии.',
+               'element_stop_in_country': 'Не запрещён.',
+               'element_title': 'Hydroxyethyl Urea',
+               'is_element_danger': False,
+               'what_is_element_used_for': 'Гидроксиэтилмочевина используется '
+                                           'как увлажнитель, помогает '
+                                           'удерживать влагу в коже.'},
+ 'origin_product': {'article': '19000002015',
+                    'title': 'CLINIQUE Moisture Surge 100h'},
+ 'result': 'Средство CLINIQUE Moisture Surge 100h содержит три ключевых '
+           'элемента, которые мы рассмотрели. Phenoxyethanol используется как '
+           'консервант и не является канцерогеном, но может вызвать '
+           'аллергические реакции у некоторых людей. Red 4 (ci 14700) и Yellow '
+           '5 (ci 19140) используются как красители и могут вызвать '
+           'аллергические реакции, особенно у людей с чувствительной кожей. '
+           'Эти элементы регулируются в некоторых странах, но не запрещены. В '
+           'целом, средство безопасно для большинства пользователей, но людям '
+           'с чувствительной кожей следует быть осторожными.'}

@@ -19,9 +19,9 @@ def create_pdf(
     """
     Готовит PDF и изображения
 
-    :param collection_data: данные подборки
+    :param collection_data: Данные подборки
     :param info_data: данные со всеми средствами, врачами и т.д.
-    :param selection_result: данные с результатом нейронки по подборке
+    :param selection_result: Данные с результатом нейронки по подборке
     :param path_to_output_folder_pdf_file: путь к папке для сохранения PDF-файлов
     :param path_to_output_folder_jpg_file: путь к папке для сохранения JPG-файлов
     :return: None

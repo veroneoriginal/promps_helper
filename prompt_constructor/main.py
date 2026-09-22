@@ -38,7 +38,9 @@ def get_prompt(
         data_decrypted=decrypted_collection,
         task=data_collection['Задача'],
     )
-    # pprint(result)
+    # print("Функция get_prompt")
+    # pprint(f"{result=}")
+    # print()
     # result выглядит таким образом
     # {'prompt': 'Информация о средстве и его составе: Средство_1 - ONLY BIO EXTRA '
     #            'VIRGIN Almond de provence. Артикул: 19000286585. Состав: 1_Aqua, '

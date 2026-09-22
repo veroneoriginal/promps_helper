@@ -3,6 +3,7 @@
 """
 import os
 from pathlib import Path
+from pprint import pprint
 from typing import Optional
 
 from dotenv import load_dotenv
@@ -194,6 +195,11 @@ class ControlManager:
         :return: None
         """
 
+        print("control_manager/main.py -> _create_pdf_jpg")
+        print(":param selection_result: данные с результатом нейронки по подборке")
+        pprint(selection_result)
+
+
         create_pdf(
             collection_data=collection_data,
             info_data=info_data,
@@ -329,11 +335,11 @@ class ControlManager:
         """
         Метод для генерации новых подборок
 
-        :param file_path_tools: путь до таблицы со всей инфой о средствах, типах и прочем
+        :param file_path_tools: Путь до таблицы со всей инфой о средствах, типах и прочем
         :param file_path_collection: путь до таблицы с подборками
         :param path_to_output_folder: путь до папки, в которую идет сохранение ответа от OpenAI,
         промпта, картинок и текста.
-        :param create_one_collection: генерировать по одной подборке
+        :param create_one_collection: Генерировать по одной подборке
         :param repost_to_test_channel: отправлять подборки в тестовый канал
         :param progress_callback: колл-бек для отрисовки прогресс-бара
 

@@ -1,7 +1,6 @@
 # pylint: skip-file
 import unittest
 from pathlib import Path
-from pprint import pprint
 
 from pdf.tests.data_example import (
     TEST_BEST_PRODUCT_EXPECTED_RESULT_BEST_PRODUCT,

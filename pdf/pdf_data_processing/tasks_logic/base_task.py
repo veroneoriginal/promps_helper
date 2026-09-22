@@ -16,8 +16,8 @@ def get_base_info_by_product(
     """
     Получает базовые данные по средству
 
-    :param info_data: данные с всеми средствами, врачами и т.д.
-    :param product_name: название средства
+    :param info_data: Данные со всеми средствами, врачами и т.д.
+    :param product_name: Название средства
     :param product_article: Артикул средства в Золотом Яблоке
 
     """

@@ -79,8 +79,8 @@ class DetailedAnalysisCompositionPDFTemplateCreator:
     ):
         """
         :param collection_data: данные подборки
-        :param info_data: данные с всеми средствами, врачами и т.д.
-        :param rus_selection_result: словарь с данными по средству с русскими ключами
+        :param info_data: данные со всеми средствами, врачами и т.д.
+        :param rus_selection_result: Словарь с данными по средству с русскими ключами
         :param path_to_output_folder_pdf_file: путь к папке для сохранения pdf-файлов
         """
         self.collection_data = collection_data
@@ -159,7 +159,7 @@ class DetailedAnalysisCompositionPDFTemplateCreator:
             one_product_data: dict,
     ) -> list:
         """
-        Формирует словарь с стилями и абзацами дял вставки в шаблон
+        Формирует словарь со стилями и абзацами для вставки в шаблон
         :param one_product_data: данные ответа нейронки
         """
         result_data = []

@@ -61,11 +61,11 @@ class PDFDataProcessor:
 
     def process_data_with_task_code(self) -> list:
         """
-        Вызывает нужную логику в зависимости от кода задачи
+        Вызывает нужную логику в зависимости от кода задачи.
         Возвращает словарь с готовой полной информацией по подборке,
         для передачи в PDFCreator для создания PDF и изображений
 
-        :return: список с итоговыми данными для создания PDF. Каждый элемент списка -
+        :return: Список с итоговыми данными для создания PDF. Каждый элемент списка -
         словарь с данными для создания документа.
         """
 
@@ -74,6 +74,7 @@ class PDFDataProcessor:
         rus_selection_result = translate_keys_to_rus(data=deepcopy(self.selection_result))
 
         pdf_data_creator_class = self.method_for_task_code[task]()
+
         pdf_data_creator = pdf_data_creator_class(
             collection_data=self.collection_data,
             info_data=self.info_data,

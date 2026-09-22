@@ -1,0 +1,527 @@
+{
+  'element_1': {
+    'element_danger_text': 'Вода безопасна и не вызывает аллергии.',
+    'element_stop_in_country': 'Не запрещён.',
+    'element_title': 'Aqua / Water / Eau',
+    'is_element_danger': False,
+    'what_is_element_used_for': 'Вода используется как растворитель '
+    'в косметических средствах, '
+    'обеспечивая однородность и '
+    'легкость нанесения.'
+  },
+  'element_10': {
+    'element_danger_text': 'Считается безопасным и не вызывает '
+    'раздражения.',
+    'element_stop_in_country': 'Не запрещён.',
+    'element_title': 'Glyceryl Oleate',
+    'is_element_danger': False,
+    'what_is_element_used_for': 'Используется как эмульгатор и '
+    'смягчающее средство, которое '
+    'помогает удерживать влагу в коже '
+    'и волосах.'
+  },
+  'element_11': {
+    'element_danger_text': 'Может вызывать раздражение кожи и '
+    'аллергические реакции у некоторых '
+    'людей.',
+    'element_stop_in_country': 'Не запрещён.',
+    'element_title': 'Benzyl Alcohol',
+    'is_element_danger': True,
+    'what_is_element_used_for': 'Бензиловый спирт используется в '
+    'косметике как консервант и '
+    'растворитель. Он помогает '
+    'сохранить средство свежим и '
+    'предотвращает рост бактерий.'
+  },
+  'element_12': {
+    'element_danger_text': 'Безопасен для использования в '
+    'косметике.',
+    'element_stop_in_country': 'Не запрещён.',
+    'element_title': 'Panthenol',
+    'is_element_danger': False,
+    'what_is_element_used_for': 'Пантенол известен своими '
+    'увлажняющими и успокаивающими '
+    'свойствами. Он часто используется '
+    'в шампунях для улучшения '
+    'состояния волос и кожи головы.'
+  },
+  'element_13': {
+    'element_danger_text': 'Считается безопасным для использования '
+    'в косметике.',
+    'element_stop_in_country': 'Не запрещён.',
+    'element_title': 'Phenethyl Benzoate',
+    'is_element_danger': False,
+    'what_is_element_used_for': 'Фенэтилбензоат используется как '
+    'ароматизатор и кондиционирующий '
+    'агент для кожи и волос.'
+  },
+  'element_14': {
+    'element_danger_text': 'Безопасен для использования в '
+    'косметике.',
+    'element_stop_in_country': 'Не запрещён.',
+    'element_title': 'Acrylates/c10-30 Alkyl Acrylate Crosspolymer',
+    'is_element_danger': False,
+    'what_is_element_used_for': 'Этот полимер используется для '
+    'загущения и стабилизации '
+    'косметических средств.'
+  },
+  'element_15': {
+    'element_danger_text': 'Могут вызывать аллергические реакции у '
+    'чувствительных людей.',
+    'element_stop_in_country': 'Регулируется в некоторых странах.',
+    'element_title': 'Parfum / Fragrance',
+    'is_element_danger': True,
+    'what_is_element_used_for': 'Ароматизаторы добавляются в '
+    'косметику для придания приятного '
+    'запаха.'
+  },
+  'element_16': {
+    'element_danger_text': 'Считается безопасным для использования '
+    'в косметике.',
+    'element_stop_in_country': 'Не запрещён.',
+    'element_title': 'Glycol Distearate',
+    'is_element_danger': False,
+    'what_is_element_used_for': 'Гликоль дистеарат используется '
+    'для придания шампуням '
+    'перламутрового блеска и улучшения '
+    'текстуры.'
+  },
+  'element_17': {
+    'element_danger_text': 'Безопасен для использования в '
+    'косметике.',
+    'element_stop_in_country': 'Не запрещён.',
+    'element_title': 'Sodium Methyl 2-Sulfolaurate',
+    'is_element_danger': False,
+    'what_is_element_used_for': 'Это поверхностно-активное '
+    'вещество, которое помогает '
+    'очищать волосы и кожу.'
+  },
+  'element_18': {
+    'element_danger_text': 'Считается безопасным, но в больших '
+    'концентрациях может вызывать '
+    'раздражение кожи.',
+    'element_stop_in_country': 'Не запрещён.',
+    'element_title': 'Sodium Benzoate',
+    'is_element_danger': False,
+    'what_is_element_used_for': 'Сорбат натрия используется как '
+    'консервант для предотвращения '
+    'роста бактерий и грибков.'
+  },
+  'element_19': {
+    'element_danger_text': 'Считается безопасным для использования '
+    'в косметике.',
+    'element_stop_in_country': 'Не запрещён.',
+    'element_title': 'Dicaprylyl Ether',
+    'is_element_danger': False,
+    'what_is_element_used_for': 'Дикаприлил эфир используется как '
+    'смягчающее средство, которое '
+    'делает кожу и волосы более '
+    'мягкими.'
+  },
+  'element_2': {
+    'element_danger_text': 'Может вызывать легкое раздражение у '
+    'людей с очень чувствительной кожей.',
+    'element_stop_in_country': 'Не запрещён.',
+    'element_title': 'Disodium Laureth Sulfosuccinate',
+    'is_element_danger': False,
+    'what_is_element_used_for': 'Это мягкий поверхностно-активный '
+    'агент, который используется для '
+    'очищения кожи и волос. Он помогает '
+    'удалять грязь и жир, не вызывая '
+    'раздражения.'
+  },
+  'element_20': {
+    'element_danger_text': 'Считается безопасным, но может '
+    'вызывать раздражение у чувствительных '
+    'людей.',
+    'element_stop_in_country': 'Не запрещён.',
+    'element_title': 'Disodium EDTA',
+    'is_element_danger': True,
+    'what_is_element_used_for': 'Динатрий ЭДТА используется для '
+    'стабилизации формулы и улучшения '
+    'эффективности консервантов.'
+  },
+  'element_21': {
+    'element_danger_text': 'Buteth-3 может вызывать раздражение '
+    'кожи и глаз у некоторых людей, но в '
+    'целом считается безопасным при '
+    'использовании в рекомендуемых '
+    'концентрациях.',
+    'element_stop_in_country': 'Не запрещён.',
+    'element_title': 'Buteth-3',
+    'is_element_danger': False,
+    'what_is_element_used_for': 'Buteth-3 используется в '
+    'косметических средствах как '
+    'эмульгатор и стабилизатор. Он '
+    'помогает смешивать воду и масла, '
+    'создавая однородную текстуру '
+    'продукта. Не является '
+    'канцерогеном.'
+  },
+  'element_22': {
+    'element_danger_text': 'Может вызывать раздражение кожи и '
+    'глаз, особенно у людей с '
+    'чувствительной кожей.',
+    'element_stop_in_country': 'Не запрещён.',
+    'element_title': 'Lauryl Alcohol',
+    'is_element_danger': False,
+    'what_is_element_used_for': 'Lauryl Alcohol используется как '
+    'эмульгатор и пенообразователь в '
+    'шампунях и других косметических '
+    'средствах. Не является '
+    'канцерогеном.'
+  },
+  'element_23': {
+    'element_danger_text': 'Считается безопасным для использования '
+    'в косметических продуктах.',
+    'element_stop_in_country': 'Не запрещён.',
+    'element_title': 'Polyquaternium-7',
+    'is_element_danger': False,
+    'what_is_element_used_for': 'Polyquaternium-7 используется как '
+    'кондиционирующий агент, который '
+    'помогает улучшить текстуру волос, '
+    'делая их более мягкими и '
+    'послушными. Не является '
+    'канцерогеном.'
+  },
+  'element_24': {
+    'element_danger_text': 'Считается безопасным для использования '
+    'в косметических продуктах.',
+    'element_stop_in_country': 'Не запрещён.',
+    'element_title': 'Polyquaternium-10',
+    'is_element_danger': False,
+    'what_is_element_used_for': 'Polyquaternium-10 используется '
+    'для улучшения текстуры волос и '
+    'предотвращения статического '
+    'электричества. Не является '
+    'канцерогеном.'
+  },
+  'element_25': {
+    'element_danger_text': 'Считается безопасным для использования '
+    'в косметических продуктах.',
+    'element_stop_in_country': 'Не запрещён.',
+    'element_title': 'Amodimethicone',
+    'is_element_danger': False,
+    'what_is_element_used_for': 'Amodimethicone используется как '
+    'кондиционирующий агент, который '
+    'помогает улучшить текстуру волос '
+    'и облегчает их расчесывание. Не '
+    'является канцерогеном.'
+  },
+  'element_26': {
+    'element_danger_text': 'Может вызывать раздражение кожи у '
+    'некоторых людей, но в целом считается '
+    'безопасным.',
+    'element_stop_in_country': 'Не запрещён.',
+    'element_title': 'Sodium Benzotriazolyl Butylphenol Sulfonate',
+    'is_element_danger': False,
+    'what_is_element_used_for': 'Sodium Benzotriazolyl Butylphenol '
+    'Sulfonate используется как '
+    'УФ-фильтр, защищающий продукт от '
+    'разрушения под воздействием '
+    'солнечного света. Не является '
+    'канцерогеном.'
+  },
+  'element_27': {
+    'element_danger_text': 'Считается безопасным для использования '
+    'в косметических продуктах.',
+    'element_stop_in_country': 'Не запрещён.',
+    'element_title': 'Trisodium Ethylenediamine Disuccinate',
+    'is_element_danger': False,
+    'what_is_element_used_for': 'Trisodium Ethylenediamine '
+    'Disuccinate используется как '
+    'хелатирующий агент, который '
+    'помогает стабилизировать формулу '
+    'продукта, предотвращая негативное '
+    'воздействие ионов металлов. Не '
+    'является канцерогеном.'
+  },
+  'element_28': {
+    'element_danger_text': 'Может вызывать раздражение кожи и глаз '
+    'при высоких концентрациях, но в '
+    'косметике используется в безопасных '
+    'дозах.',
+    'element_stop_in_country': 'Не запрещён.',
+    'element_title': 'Sodium Hydroxide',
+    'is_element_danger': False,
+    'what_is_element_used_for': 'Sodium Hydroxide используется для '
+    'регулирования pH уровня продукта. '
+    'Не является канцерогеном.'
+  },
+  'element_29': {
+    'element_danger_text': 'Считается безопасным для использования '
+    'в косметических продуктах.',
+    'element_stop_in_country': 'Не запрещён.',
+    'element_title': 'Disodium 2-Sulfolaurate',
+    'is_element_danger': False,
+    'what_is_element_used_for': 'Disodium 2-Sulfolaurate '
+    'используется как '
+    'поверхностно-активное вещество, '
+    'которое помогает очищать кожу и '
+    'волосы. Не является '
+    'канцерогеном.'
+  },
+  'element_3': {
+    'element_danger_text': 'Глицерин безопасен и редко вызывает '
+    'аллергические реакции.',
+    'element_stop_in_country': 'Не запрещён.',
+    'element_title': 'Glycerin',
+    'is_element_danger': False,
+    'what_is_element_used_for': 'Глицерин используется как '
+    'увлажнитель, который помогает '
+    'удерживать влагу в коже и '
+    'волосах.'
+  },
+  'element_30': {
+    'element_danger_text': 'Считается безопасным для использования '
+    'в косметических продуктах.',
+    'element_stop_in_country': 'Не запрещён.',
+    'element_title': 'Solanum Lycopersicum Fruit Extract / Solanum '
+    'Lycopersicum (tomato) Fruit Extract',
+    'is_element_danger': False,
+    'what_is_element_used_for': 'Экстракт плодов томата '
+    'используется за его '
+    'антиоксидантные свойства, которые '
+    'помогают защищать кожу и волосы '
+    'от повреждений. Не является '
+    'канцерогеном.'
+  },
+  'element_31': {
+    'element_danger_text': 'Цитратная кислота обычно безопасна, но '
+    'в редких случаях может вызвать '
+    'раздражение кожи или аллергическую '
+    'реакцию.',
+    'element_stop_in_country': 'Не запрещён.',
+    'element_title': 'Citric Acid',
+    'is_element_danger': False,
+    'what_is_element_used_for': 'Цитратная кислота используется '
+    'для регулирования уровня pH в '
+    'шампуне и улучшения его '
+    'консистенции. Она также может '
+    'действовать как мягкий '
+    'консервант.'
+  },
+  'element_32': {
+    'element_danger_text': 'Может вызвать раздражение кожи и глаз '
+    'при высокой концентрации, но в '
+    'шампунях используется в безопасных '
+    'количествах.',
+    'element_stop_in_country': 'Не запрещён.',
+    'element_title': 'C11-15 Pareth-7',
+    'is_element_danger': False,
+    'what_is_element_used_for': 'C11-15 Pareth-7 используется как '
+    'эмульгатор и '
+    'поверхностно-активное вещество, '
+    'которое помогает смешивать воду с '
+    'маслами и другими ингредиентами.'
+  },
+  'element_33': {
+    'element_danger_text': 'Считается безопасным для использования '
+    'в косметике.',
+    'element_stop_in_country': 'Не запрещён.',
+    'element_title': 'Glyceryl Stearate',
+    'is_element_danger': False,
+    'what_is_element_used_for': 'Глицерил стеарат используется как '
+    'эмульгатор и увлажнитель, который '
+    'помогает удерживать влагу в '
+    'волосах и коже.'
+  },
+  'element_34': {
+    'element_danger_text': 'Может сушить кожу и волосы при частом '
+    'использовании, но в небольших '
+    'количествах безопасен.',
+    'element_stop_in_country': 'Не запрещён.',
+    'element_title': 'Alcohol',
+    'is_element_danger': False,
+    'what_is_element_used_for': 'Алкоголь используется как '
+    'растворитель и антисептик, а '
+    'также для ускорения высыхания '
+    'продукта.'
+  },
+  'element_35': {
+    'element_danger_text': 'Безопасен в используемых количествах, '
+    'но может вызывать сухость кожи и '
+    'волос.',
+    'element_stop_in_country': 'Не запрещён.',
+    'element_title': 'Sodium Chloride',
+    'is_element_danger': False,
+    'what_is_element_used_for': 'Хлорид натрия, или поваренная '
+    'соль, используется для загущения '
+    'шампуня.'
+  },
+  'element_36': {
+    'element_danger_text': 'Может вызывать раздражение кожи и '
+    'глаз, но в безопасных концентрациях не '
+    'опасен.',
+    'element_stop_in_country': 'Не запрещён.',
+    'element_title': 'Laureth-9',
+    'is_element_danger': False,
+    'what_is_element_used_for': 'Laureth-9 используется как '
+    'эмульгатор и пенообразователь.'
+  },
+  'element_37': {
+    'element_danger_text': 'Считается безопасным для использования '
+    'в косметике.',
+    'element_stop_in_country': 'Не запрещён.',
+    'element_title': 'Trideceth-12',
+    'is_element_danger': False,
+    'what_is_element_used_for': 'Trideceth-12 используется как '
+    'эмульгатор и стабилизатор.'
+  },
+  'element_38': {
+    'element_danger_text': 'Может вызывать аллергические реакции у '
+    'чувствительных людей.',
+    'element_stop_in_country': 'Не запрещён.',
+    'element_title': 'Linalool',
+    'is_element_danger': True,
+    'what_is_element_used_for': 'Линалоол используется как '
+    'ароматизатор, придающий продукту '
+    'приятный запах.'
+  },
+  'element_39': {
+    'element_danger_text': 'Может вызывать аллергические реакции у '
+    'чувствительных людей.',
+    'element_stop_in_country': 'Не запрещён.',
+    'element_title': 'Geraniol',
+    'is_element_danger': True,
+    'what_is_element_used_for': 'Гераниол используется как '
+    'ароматизатор с цветочным '
+    'запахом.'
+  },
+  'element_4': {
+    'element_danger_text': 'Безопасен для большинства типов кожи, '
+    'но может вызывать раздражение у людей с '
+    'очень чувствительной кожей.',
+    'element_stop_in_country': 'Не запрещён.',
+    'element_title': 'Sodium Cocoyl Isethionate',
+    'is_element_danger': False,
+    'what_is_element_used_for': 'Это мягкий очищающий агент, '
+    'который образует пену и очищает '
+    'кожу и волосы, не пересушивая их.'
+  },
+  'element_40': {
+    'element_danger_text': 'Считается безопасным для использования '
+    'в косметике.',
+    'element_stop_in_country': 'Не запрещён.',
+    'element_title': 'Tris(tetramethylhydroxypiperidinol) Citrate',
+    'is_element_danger': False,
+    'what_is_element_used_for': 'Используется как антиоксидант и '
+    'стабилизатор для предотвращения '
+    'окисления других ингредиентов.'
+  },
+  'element_41': {
+    'element_danger_text': 'Tributyl Citrate не вызывает аллергии '
+    'и не является опасным.',
+    'element_stop_in_country': 'Не запрещён.',
+    'element_title': 'Tributyl Citrate',
+    'is_element_danger': False,
+    'what_is_element_used_for': 'Tributyl Citrate используется как '
+    'пластификатор и стабилизатор в '
+    'косметических средствах. Он не '
+    'является канцерогеном и обычно '
+    'считается безопасным для '
+    'использования в косметике.'
+  },
+  'element_42': {
+    'element_danger_text': 'Может вызывать аллергические реакции, '
+    'особенно у людей с астмой или '
+    'аллергией на аспирин.',
+    'element_stop_in_country': 'Запрещён в некоторых странах ЕС '
+    'для использования в продуктах '
+    'питания.',
+    'element_title': 'CI 19140 / Yellow 5',
+    'is_element_danger': True,
+    'what_is_element_used_for': 'CI 19140, также известный как '
+    'Yellow 5, используется как '
+    'синтетический желтый краситель в '
+    'косметике и продуктах питания. '
+    'Может вызывать аллергические '
+    'реакции у некоторых людей.'
+  },
+  'element_43': {
+    'element_danger_text': 'Может вызывать аллергические реакции у '
+    'чувствительных людей.',
+    'element_stop_in_country': 'Не запрещён.',
+    'element_title': 'CI 14700 / Red 4',
+    'is_element_danger': True,
+    'what_is_element_used_for': 'CI 14700, или Red 4, используется '
+    'как синтетический красный '
+    'краситель в косметике. Не '
+    'является канцерогеном, но может '
+    'вызывать аллергические реакции.'
+  },
+  'element_44': {
+    'element_danger_text': 'Может вызывать аллергические реакции у '
+    'некоторых людей.',
+    'element_stop_in_country': 'Не запрещён.',
+    'element_title': 'CI 61570 / Green 5',
+    'is_element_danger': True,
+    'what_is_element_used_for': 'CI 61570, известный как Green 5, '
+    'используется как синтетический '
+    'зеленый краситель в косметике. Не '
+    'является канцерогеном, но может '
+    'вызывать аллергические реакции.'
+  },
+  'element_5': {
+    'element_danger_text': 'Считается безопасным и не вызывает '
+    'раздражения.',
+    'element_stop_in_country': 'Не запрещён.',
+    'element_title': 'Sodium Lauroyl Methyl Isethionate',
+    'is_element_danger': False,
+    'what_is_element_used_for': 'Используется как мягкий очищающий '
+    'агент, который помогает создавать '
+    'пену и очищать кожу и волосы.'
+  },
+  'element_6': {
+    'element_danger_text': 'Может вызывать аллергические реакции у '
+    'некоторых людей.',
+    'element_stop_in_country': 'Не запрещён.',
+    'element_title': 'Cocamidopropyl Betaine',
+    'is_element_danger': True,
+    'what_is_element_used_for': 'Это амфотерный '
+    'поверхностно-активный агент, '
+    'который используется для улучшения '
+    'пенообразования и уменьшения '
+    'раздражающего действия других '
+    'очищающих агентов.'
+  },
+  'element_7': {
+    'element_danger_text': 'Считается безопасным, но может вызывать '
+    'раздражение у людей с чувствительной '
+    'кожей.',
+    'element_stop_in_country': 'Не запрещён.',
+    'element_title': 'Sodium Lauroyl Sarcosinate',
+    'is_element_danger': False,
+    'what_is_element_used_for': 'Мягкий очищающий агент, который '
+    'помогает удалять загрязнения и жир '
+    'с кожи и волос.'
+  },
+  'element_8': {
+    'element_danger_text': 'Считается безопасным и не вызывает '
+    'раздражения.',
+    'element_stop_in_country': 'Не запрещён.',
+    'element_title': 'Sodium Lauryl Sulfoacetate',
+    'is_element_danger': False,
+    'what_is_element_used_for': 'Используется как очищающий агент, '
+    'который помогает создавать пену и '
+    'очищать кожу и волосы.'
+  },
+  'element_9': {
+    'element_danger_text': 'Безопасен и не вызывает раздражения.',
+    'element_stop_in_country': 'Не запрещён.',
+    'element_title': 'Coco-Glucoside',
+    'is_element_danger': False,
+    'what_is_element_used_for': 'Это мягкий очищающий агент, '
+    'получаемый из кокосового масла и '
+    'сахара, который используется для '
+    'очищения кожи и волос.'
+  },
+  'origin_product': {
+    'article': '28140300004',
+    'title': 'DAVINES NOUNOU shampoo'
+  },
+  'result': 'Шампунь DAVINES NOUNOU содержит несколько красителей, которые '
+  'могут вызывать аллергические реакции у чувствительных людей. '
+  'Рекомендуется использовать с осторожностью, если у вас есть '
+  'склонность к аллергии.'
+}
